@@ -59,13 +59,17 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function upload(Request $request)
+    public function store(Request $request)
     {
-        if($request->hasFile('image')){
-            $filename = $request->image->getClientOriginalName();
-            $request->image->storeAs('images',$filename,'public');
-            // TODO: Safe image
-        }
-        return redirect()->back();
+        $request->validate([
+            'image' => 'required|image',
+        ]);
+
+        $imageName = time().'.'.$request->image->getClientOriginalExtension();
+        $request->image->move(public_path('images'), $imageName);
+
+        Auth()->user()?->update(['image'=>$imageName]);
+
+        return back()->with('success', 'Profile image updated successfully.');
     }
 }
