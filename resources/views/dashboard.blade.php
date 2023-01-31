@@ -1,3 +1,9 @@
+<script>
+    function myFunction() {
+        var element = document.getElementById("newVacReq");
+        element.classList.toggle("hidden");
+    }
+</script>
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -25,10 +31,50 @@
                     <button
                         type="button"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-large rounded-lg text-md px-4 py-0.5 mr-2 mb-4 mt-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        onclick=" myFunction()"
                     >
                         {{ __("+ Stelle einen Urlaubsantrag") }}
 
                     </button>
+                </div>
+
+                <div id="newVacReq" class="flex flex-row justify-center pb-5 hidden">
+                    <form method="POST" action="{{url('dashboard')}}">
+                        @csrf
+                        <label
+                            for="start_date"
+                            class="mb-2 text-sm font-medium text-gray-900"
+                        >
+                            Start Datum:
+                        </label>
+                        <input
+                            id="start_date"
+                            type="date"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 mr-10"
+                            placeholder="20.20.22"
+                            required
+                        >
+                        <label
+                            for="end_date"
+                            class="mb-2 text-sm font-medium text-gray-900"
+                        >
+                            End Datum:
+                        </label>
+                        <input
+                            id="end_date"
+                            type="date"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                            placeholder="21.20.22"
+                            required
+                        >
+
+                        <button
+                            type="submit"
+                            class="ml-10 text-white rounded-lg text-sm mt-2 px-8 py-3 bg-green-600 font-medium rounded-lg text-sm px-4 py-2"
+                        >
+                            Anfragen
+                        </button>
+                    </form>
                 </div>
 
                 <div class="pb-4">
@@ -44,7 +90,7 @@
                                             End Datum
                                         </th>
                                         <th scope="col" class="px-6 py-3">
-                                            Gesamte Urlaubstage
+                                            Angefragt
                                         </th>
                                         <th scope="col" class="px-6 py-3">
                                             Stand
@@ -81,7 +127,7 @@
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->end_date->diffForHumans() - $vacationRequest_start_date->diffForHumans() }}
+                                                    {{ $vacationRequest->created_at->diffForHumans() }}
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
@@ -99,7 +145,7 @@
         </div>
     </div>
 
-    <div class="pb-12">
+    <div id="Test" class="pb-12 hidden">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <h2 class="p-6 text-gray-900">
@@ -109,4 +155,3 @@
         </div>
     </div>
 </x-app-layout>
-

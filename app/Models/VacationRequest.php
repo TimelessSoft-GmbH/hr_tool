@@ -10,6 +10,7 @@ class VacationRequest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'accepted',
+        'start_date',
+        'end_date',
     ];
 }

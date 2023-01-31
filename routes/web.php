@@ -20,10 +20,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/dashboard', [DashboardController::class, 'store'])->middleware(['auth', 'verified'])->name('dashboard');
 
-//Route::get('/dashboard', function () {
-//return view('dashboard');
-//})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/urlaub', function () {
     return view('urlaub');
