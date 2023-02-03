@@ -12,5 +12,6 @@ class VacationRequest extends Model
     protected $fillable = [
         'start_date',
         'end_date',
+        'user_id',
     ];
 }

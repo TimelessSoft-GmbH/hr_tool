@@ -39,7 +39,7 @@
                 </div>
 
                 <div id="newVacReq" class="flex flex-row justify-center pb-5 hidden">
-                    <form method="POST" action="{{url('dashboard')}}">
+                    <form method="POST" action="/dashboard">
                         @csrf
                         <label
                             for="start_date"
@@ -48,10 +48,10 @@
                             Start Datum:
                         </label>
                         <input
-                            id="start_date"
-                            type="date"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 mr-10"
-                            placeholder="20.20.22"
+                            type="date"
+                            name="start_date"
+                            id="start_date"
                             required
                         >
                         <label
@@ -61,12 +61,13 @@
                             End Datum:
                         </label>
                         <input
-                            id="end_date"
-                            type="date"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                            placeholder="21.20.22"
+                            type="date"
+                            name="end_date"
+                            id="end_date"
                             required
                         >
+                        <input type="hidden" name="user_id" value="{{Auth::id()}}">
 
                         <button
                             type="submit"
@@ -83,6 +84,9 @@
                             <table class="w-full text-sm text-left text-gray-500">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-200">
                                     <tr>
+                                        <th scope="col" class="px-6 py-3">
+                                            User
+                                        </th>
                                         <th scope="col" class="px-6 py-3">
                                             Start Datum
                                         </th>
@@ -114,20 +118,27 @@
                                         <td class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("---------") }}
                                         </td>
+                                        <td class="py-4 px-6 text-sm text-gray-400 italic">
+                                            {{ __("---------") }}
+                                        </td>
                                     </tr>
                                 @else
                                     @foreach ($vacationRequests as $vacationRequest)
                                             <tr class="bg-gray-100">
                                                 <th class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->start_date->diffForHumans() }}
+                                                    {{ Auth::user()->name }}
+                                                </th>
+
+                                                <th class="py-4 px-6 text-sm text-gray-700">
+                                                    {{ $vacationRequest->start_date }}
                                                 </th>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->end_date->diffForHumans() }}
+                                                    {{ $vacationRequest->end_date }}
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->created_at->diffForHumans() }}
+                                                    {{ $vacationRequest->created_at->toDateString() }}
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">

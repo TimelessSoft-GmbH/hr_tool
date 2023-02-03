@@ -18,8 +18,9 @@ class DashboardController extends Controller
     {
         // TODO: Create a new Vacation Request
         $attributes = request()?->validate([
-            'start_date' => ['required'],
-            'end_date' => ['required'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date'],
+            'user_id' => ['required'],
         ]);
 
         VacationRequest::create($attributes);
