@@ -9,6 +9,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        //TODO: Give Admin roles to one user and display based on that role
+        if (Auth::user()->hasrole = '') {
+            return view('admin-dashboard', [
+                'vacationRequests' => VacationRequest::all(),
+            ]);
+        }
+
         return view('dashboard', [
             'vacationRequests' => VacationRequest::all(),
         ]);
@@ -16,7 +23,6 @@ class DashboardController extends Controller
 
     public function store()
     {
-        // TODO: Create a new Vacation Request
         $attributes = request()?->validate([
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date'],

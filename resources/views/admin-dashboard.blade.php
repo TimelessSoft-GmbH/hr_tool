@@ -7,7 +7,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('Dashboard-Admin') }}
         </h2>
     </x-slot>
 
@@ -73,23 +73,23 @@
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table class="w-full text-sm text-left text-gray-500">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-200">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3">
-                                            User
-                                        </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            Start Datum
-                                        </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            End Datum
-                                        </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            Angefragt
-                                        </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            Stand
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">
+                                        User
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Start Datum
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        End Datum
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Angefragt
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Stand
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody>
 
@@ -114,32 +114,32 @@
                                     </tr>
                                 @else
                                     @foreach ($vacationRequests as $vacationRequest)
-                                            <tr class="bg-gray-100">
-                                                <th class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ Auth::user()->name }}
-                                                </th>
+                                        <tr class="bg-gray-100">
+                                            <th class="py-4 px-6 text-sm text-gray-700">
+                                                {{ Auth::user()->name }}
+                                            </th>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->start_date }}
-                                                </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $vacationRequest->start_date }}
+                                            </td>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->end_date }}
-                                                </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $vacationRequest->end_date }}
+                                            </td>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->created_at->toDateString() }}
-                                                </td>
-                                                <td class="py-4 px-6 text-sm">
-                                                        <div @class([
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $vacationRequest->created_at->toDateString() }}
+                                            </td>
+                                            <td class="py-4 px-6 text-sm">
+                                                <div @class([
                                                                     'text-green-500' =>  $vacationRequest->accepted === 'accepted',
                                                                     'text-yellow-600' =>  $vacationRequest->accepted === 'pending',
                                                                     'text-red-500' =>  $vacationRequest->accepted === 'declined',
                                                         ])>
-                                                            {{ $vacationRequest->accepted }}
-                                                        </div>
-                                                </td>
-                                            </tr>
+                                                    {{ $vacationRequest->accepted }}
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 @endif
                                 </tbody>
