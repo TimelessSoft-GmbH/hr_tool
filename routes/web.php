@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\DashboardController;
 
@@ -22,6 +21,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::post('/dashboard', [DashboardController::class, 'store'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/dashboard/sickness', [DashboardController::class, 'storeSick'])->middleware(['auth', 'verified'])->name('dashboard-sickness');
 
 
 Route::get('/urlaub', function () {
