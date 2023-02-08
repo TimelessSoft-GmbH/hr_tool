@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 use \App\Http\Controllers\DashboardController;
 
 /*
@@ -23,10 +24,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::post('/dashboard', [DashboardController::class, 'store'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::post('/dashboard/sickness', [DashboardController::class, 'storeSick'])->middleware(['auth', 'verified'])->name('dashboard-sickness');
 
-
-Route::get('/urlaub', function () {
-    return view('urlaub');
-})->middleware(['auth', 'verified'])->name('urlaub');
+Route::get('/urlaub', [AdminController::class, 'index'])->middleware(['auth','verified'])->name('urlaub');
 
 Route::get('/krankenstand', function () {
     return view('krankenstand');

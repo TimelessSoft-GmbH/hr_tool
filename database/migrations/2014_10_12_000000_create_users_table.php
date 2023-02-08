@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->integer('urlaub_insg')->default(25);
+            $table->integer('urlaub_verbl')->nullable();
+            $table->integer('krankheitstage')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });
