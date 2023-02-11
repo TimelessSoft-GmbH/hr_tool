@@ -126,15 +126,15 @@
                                                 </th>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->start_date }}
+                                                    {{ $vacationRequest->start_date->format('d M') }}
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->end_date }}
+                                                    {{ $vacationRequest->end_date->format('d M') }}
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->created_at->toDateString() }}
+                                                    {{ $vacationRequest->created_at->format('d M') }}
                                                 </td>
                                                 <td class="py-4 px-6 text-sm">
                                                     <div @class([
@@ -269,15 +269,15 @@
                                                     </th>
 
                                                     <td class="py-4 px-6 text-sm text-gray-700">
-                                                        {{ $sicknessRequest->start_date }}
+                                                        {{ $sicknessRequest->start_date->format('d M') }}
                                                     </td>
 
                                                     <td class="py-4 px-6 text-sm text-gray-700">
-                                                        {{ $sicknessRequest->end_date }}
+                                                        {{ $sicknessRequest->end_date->format('d M') }}
                                                     </td>
 
                                                     <td class="py-4 px-6 text-sm text-gray-700">
-                                                        {{ $sicknessRequest->created_at->toDateString() }}
+                                                        {{ $sicknessRequest->created_at->format('d M') }}
                                                     </td>
                                                     <td class="py-4 px-6 text-sm">
                                                         <div @class([

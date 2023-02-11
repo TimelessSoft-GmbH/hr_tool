@@ -1,3 +1,11 @@
+<script>
+    function hideButton() {
+        var element = document.getElementById("buttonSub");
+        element.classList.toggle("hidden");
+    }
+
+</script>
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -12,24 +20,43 @@
                     <h2>Angestellte</h2>
                     <!--Table for Users-->
                     <div class="pb-4">
-                        <div class="w-2/3 mx-auto">
+                        <div class="w-3/4 mx-auto">
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table class="w-full text-sm text-left text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-200">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3">Id</th>
+                                        <th scope="col" class="px-6 py-3">Image</th>
                                         <th scope="col" class="px-6 py-3">Username</th>
                                         <th scope="col" class="px-6 py-3">Email</th>
                                         <th scope="col" class="px-6 py-3">Role</th>
+                                        <th scope="col" class="px-6 py-3">Edit Role</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($users as $user)
                                         <tr class="bg-gray-100">
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$user->id}}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700"><img class="image rounded-circle" src="{{asset('/images/'.Auth::user()->image)}}" alt="profile_image" style="width: 40px;height: 40px; margin-left: 4px;"></td>
                                             <td class="py-4 px-6 text-sm text-gray-700">{{$user->name}}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700">{{$user->email}}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$user->hasrole}}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                <div @class([
+                                                                    'text-green-500 font-medium' =>  $user->hasrole === 'user',
+                                                                    'text-red-600 font-bold' =>  $user->hasrole === 'admin',
+                                                        ])>
+                                                {{Str::upper($user->hasrole)}}
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                <form method="POST" action="{{ route('role.update', [$user->id]) }}">
+                                                    @csrf
+                                                        <button
+                                                            class="text-blue-400 focus:ring-4 font-medium text-xs py-1 "
+                                                            type="submit"
+                                                            onclick="return confirm('Bist du sicher dass du die Rolle tauschen willst?')"
+                                                        >
+                                                        Swop Roles
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -49,32 +76,62 @@
                     <h2>Urlaub-Requests</h2>
                     <!--Table for Users-->
                     <div class="pb-4">
-                        <div class="w-2/3 mx-auto">
+                        <div class="w-3/4 mx-auto">
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table class="w-full text-sm text-left text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-200">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3">Name</th>
-                                        <th scope="col" class="px-6 py-3">Start Datum</th>
-                                        <th scope="col" class="px-6 py-3">End Datum</th>
-                                        <th scope="col" class="px-6 py-3">Tage Insg</th>
-                                        <th scope="col" class="px-6 py-3">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Name</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Start Datum</th>
+                                        <th scope="col" class="px-6 py-3 text-center">End Datum</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Tage Insg</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Antwort</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($vacationRequests as $vacationRequest)
                                         <tr class="bg-gray-100">
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{ \App\Models\User::find($vacationRequest->user_id)->name }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$vacationRequest->start_date}}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$vacationRequest->end_date}}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">inc days insg.</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700"><div @class([
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ \App\Models\User::find($vacationRequest->user_id)->name }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$vacationRequest->start_date->format('d M') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$vacationRequest->end_date->format('d M') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center font-bold">{{$vacationRequest->end_date->diffInDays($vacationRequest->start_date) }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center"><div @class([
                                                                     'text-green-500' =>  $vacationRequest->accepted === 'accepted',
                                                                     'text-yellow-600' =>  $vacationRequest->accepted === 'pending',
                                                                     'text-red-500' =>  $vacationRequest->accepted === 'declined',
                                                         ])>
                                                     {{ $vacationRequest->accepted }}
                                                 </div>
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+
+                                                @if($vacationRequest->accepted === 'pending')
+                                                <form method="POST" action="{{ route('updateAnswerDB') }}">
+                                                    @csrf
+                                                    <select
+                                                        onchange="hideButton()"
+                                                        name="antwort"
+                                                        required
+                                                        class="border-red-500 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-center"
+                                                    >
+                                                        <option disabled selected value> -- select an option -- </option>
+                                                        <option value="accepted">accepted</option>
+                                                        <option value="declined">declined</option>
+                                                    </select>
+
+                                                    <button
+                                                        type="submit"
+                                                        id="buttonSub"
+                                                        class="hidden ml-10 text-white rounded-lg text-sm mt-2 px-8 py-3 bg-green-600 font-medium rounded-lg text-sm px-4 py-2"
+                                                    >
+                                                        Submit
+                                                    </button>
+                                                </form>
+
+                                                @else
+                                                    <p class="text-gray-400 italic text-center">Bereits bearbeitet</p>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -111,9 +168,9 @@
                                     @foreach($sicknessRequests as $sicknessRequest)
                                         <tr class="bg-gray-100">
                                             <td class="py-4 px-6 text-sm text-gray-700">{{ \App\Models\User::find($sicknessRequest->user_id)->name }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$sicknessRequest->start_date}}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$sicknessRequest->end_date}}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">inc days insg.</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">{{$sicknessRequest->start_date->format('d M') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">{{$sicknessRequest->end_date->format('d M') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">{{$sicknessRequest->end_date->diffInDays($sicknessRequest->start_date) }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700"><div @class([
                                                                     'text-green-500' =>  $sicknessRequest->accepted === 'accepted',
                                                                     'text-yellow-600' =>  $sicknessRequest->accepted === 'pending',

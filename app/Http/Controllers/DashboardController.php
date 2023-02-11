@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\VacationRequest;
 use App\Models\SicknessRequest;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -27,8 +28,8 @@ class DashboardController extends Controller
     public function store()
     {
         $attributes = request()?->validate([
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date'],
+            'start_date' => ['required', 'date:Y-m-d'],
+            'end_date' => ['required', 'date:Y-m-d'],
             'user_id' => ['required'],
         ]);
 
