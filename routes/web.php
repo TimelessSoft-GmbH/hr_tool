@@ -29,10 +29,6 @@ Route::post('/admin/{id}', [AdminController::class, 'update'])->middleware(['aut
 Route::post('/admin/submitAnswer', [AdminController::class, 'updateAnswerDB'])->middleware(['auth','verified'])->name('updateAnswerDB');
 
 
-Route::get('/krankenstand', function () {
-    return view('krankenstand');
-})->middleware(['auth', 'verified'])->name('krankenstand');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
