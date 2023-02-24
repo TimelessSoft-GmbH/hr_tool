@@ -24,9 +24,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::post('/dashboard', [DashboardController::class, 'store'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::post('/dashboard/sickness', [DashboardController::class, 'storeSick'])->middleware(['auth', 'verified'])->name('dashboard-sickness');
 
-Route::get('/admin', [AdminController::class, 'index'])->middleware(['auth','verified'])->name('admin');
-Route::post('/admin/{id}', [AdminController::class, 'update'])->middleware(['auth','verified'])->name('role.update');
-Route::post('/admin/submitAnswer', [AdminController::class, 'updateAnswerDB'])->middleware(['auth','verified'])->name('updateAnswerDB');
+Route::get('/admin', [AdminController::class, 'index'])->middleware('admin')->name('admin');
+Route::post('/admin/{id}', [AdminController::class, 'update'])->middleware('admin')->name('role.update');
+Route::post('/admin/submitAnswer', [AdminController::class, 'updateAnswerDB'])->middleware('admin')->name('updateAnswerDB');
 
 
 Route::middleware('auth')->group(function () {
