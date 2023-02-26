@@ -36,10 +36,13 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $initials = $this->initials($request->name);
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'initials' => $initials,
         ]);
 
         event(new Registered($user));
@@ -47,5 +50,13 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
+    }
+
+    public function initials ($str) {
+        $ret = '';
+        foreach(explode(' ', $str) as $word) {
+            $ret .= strtoupper($word[0]);
+        }
+        return $ret;
     }
 }

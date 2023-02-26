@@ -35,25 +35,36 @@
                                     <tbody>
                                     @foreach($users as $user)
                                         <tr class="bg-gray-100">
-                                            <td class="py-4 px-6 text-sm text-gray-700"><img class="image rounded-circle" src="{{asset('/images/'.Auth::user()->image)}}" alt="profile_image" style="width: 40px;height: 40px; margin-left: 4px;"></td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                @if(Auth::user()->image !== '')
+                                                    <img class="image rounded-circle" src="{{asset('/images/'.Auth::user()->image)}}" alt="profile_image" style="width: 40px;height: 40px; margin-left: 4px;"></td>
+                                                @else
+                                                    <div class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full mr-2">
+                                                        <span class="font-medium text-gray-600 dark:text-gray-500">{{ Auth::user()->initials }}</span>
+                                                    </div>
+                                                @endif
                                             <td class="py-4 px-6 text-sm text-gray-700">{{$user->name}}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700">{{$user->email}}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700">
                                                 <div @class([
-                                                                    'text-green-500 font-medium' =>  $user->hasrole === 'user',
-                                                                    'text-red-600 font-bold' =>  $user->hasrole === 'admin',
+                                                                    'text-green-500 font-medium' => $user->hasRole('user'),
+                                                                    'text-red-600 font-bold' =>  $user->hasRole('admin'),
                                                         ])>
-                                                {{Str::upper($user->hasrole)}}
+                                                @if($user->hasRole('admin'))
+                                                    {{Str::upper('admin')}}
+                                                @else
+                                                    {{Str::upper('user')}}
+                                                @endif
                                             </td>
                                             <td class="py-4 px-6 text-sm text-gray-700">
                                                 <form method="POST" action="{{ route('role.update', [$user->id]) }}">
                                                     @csrf
                                                         <button
-                                                            class="text-blue-400 focus:ring-4 font-medium text-xs py-1 "
+                                                            class="text-center text-blue-400 focus:ring-4 font-medium text-xs py-1 "
                                                             type="submit"
                                                             onclick="return confirm('Bist du sicher dass du die Rolle tauschen willst?')"
                                                         >
-                                                        Swop Roles
+                                                                Swop Roles
                                                     </button>
                                                 </form>
                                             </td>

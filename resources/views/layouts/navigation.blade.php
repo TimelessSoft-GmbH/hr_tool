@@ -30,6 +30,10 @@
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             @if(Auth::user()->image)
                                 <img class="image rounded-circle" src="{{asset('/images/'.Auth::user()->image)}}" alt="profile_image" style="width: 45px;height: 45px; padding: 5px;">
+                            @elseif(Auth::user()->image === '')
+                                <div class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full mr-2">
+                                    <span class="font-medium text-gray-600 dark:text-gray-300">{{ Auth::user()->initials }}</span>
+                                </div>
                             @endif
                             <div>{{ Auth::user()->name }}</div>
                             <div class="ml-1">
