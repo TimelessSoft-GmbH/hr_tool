@@ -3,6 +3,10 @@
         var element = document.getElementById("buttonSub");
         element.classList.toggle("hidden");
     }
+    function hideButtonSick() {
+        var element = document.getElementById("buttonSubSick");
+        element.classList.toggle("hidden");
+    }
 
 </script>
 
@@ -188,7 +192,7 @@
                     <h2>Sickness-Requests</h2>
                     <!--Table for Users-->
                     <div class="pb-4">
-                        <div class="w-2/3 mx-auto">
+                        <div class="w-3/4 mx-auto">
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table class="w-full text-sm text-left text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-200">
@@ -198,6 +202,7 @@
                                         <th scope="col" class="px-6 py-3">End Datum</th>
                                         <th scope="col" class="px-6 py-3">Tage Insg</th>
                                         <th scope="col" class="px-6 py-3">Status</th>
+                                        <th scope="col" class="px-6 py-3">Antwort</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -214,6 +219,35 @@
                                                         ])>
                                                     {{ $sicknessRequest->accepted }}
                                                 </div>
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                @if($sicknessRequest->accepted === 'pending')
+                                                    <form method="POST" action="{{ route('sickness.answerUpdate', ['id' => $sicknessRequest->id]) }}">
+                                                        @csrf
+                                                        @method('POST')
+                                                        <select
+                                                            onchange="hideButtonSick()"
+                                                            name="antwortSicknessRequest"
+                                                            required
+                                                            class="border-red-500 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-center"
+                                                        >
+                                                            <option disabled selected value> -- select an option -- </option>
+                                                            <option value="accepted">accepted</option>
+                                                            <option value="declined">declined</option>
+                                                        </select>
+
+                                                        <button
+                                                            type="submit"
+                                                            id="buttonSubSick"
+                                                            class="hidden ml-10 text-white rounded-lg text-sm mt-2 px-8 py-3 bg-green-600 font-medium rounded-lg text-sm px-4 py-2"
+                                                        >
+                                                            Submit
+                                                        </button>
+                                                    </form>
+
+                                                @else
+                                                    <p class="text-gray-400 italic text-center">Bereits bearbeitet</p>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

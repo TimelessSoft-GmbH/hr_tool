@@ -57,6 +57,14 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
+    public function answerUpdateSickness(Request $request, $id){
+        DB::table('sickness_requests')
+            ->where('id', $id)
+            ->update(['accepted' => $request->antwort]);
+
+        return redirect('/admin');
+    }
+
     public function destroy($id){
         User::find($id)->delete();
         return redirect('/admin');
