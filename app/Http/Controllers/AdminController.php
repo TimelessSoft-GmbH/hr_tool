@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SicknessRequest;
 use App\Models\User;
 use App\Models\VacationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -19,7 +20,7 @@ class AdminController extends Controller
             'users' => User::all(),
         ]);
     }
-    public function update($id){
+    public function roleChange($id){
         //Get necessary Data
         $user = User::findOrFail($id);
         $adminRole = Role::findOrFail(1);
@@ -48,13 +49,16 @@ class AdminController extends Controller
         return redirect('/admin')->with('success', 'Role updated successfully.');
     }
 
-//TODO: IT DOESNT GET REDIRECTED TO THE CORRECT FORM
-    public function updateAnswerDB($request){
-        ddd($request);
-        //DB::table('vacation_requests')
-            //->where('id', $id)
-            //->update(['antwort' => $antwort]);
+    public function answerUpdateVacation(Request $request, $id){
+        DB::table('vacation_requests')
+            ->where('id', $id)
+            ->update(['accepted' => $request->antwort]);
 
-        //return redirect('/admin');
+        return redirect('/admin');
+    }
+
+    public function destroy($id){
+        User::find($id)->delete();
+        return redirect('/admin');
     }
 }

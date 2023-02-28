@@ -30,28 +30,25 @@
                                         <th scope="col" class="px-6 py-3">Email</th>
                                         <th scope="col" class="px-6 py-3">Role</th>
                                         <th scope="col" class="px-6 py-3">Edit Role</th>
+                                        <th scope="col" class="pr-2 py-3">Delete</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($users as $user)
                                         <tr class="bg-gray-100">
                                             <td class="py-4 px-6 text-sm text-gray-700">
-                                                @if(Auth::user()->image !== '')
-                                                    <img class="image rounded-circle" src="{{asset('/images/'.Auth::user()->image)}}" alt="profile_image" style="width: 40px;height: 40px; margin-left: 4px;"></td>
+                                                @if($user->image !== '')
+                                                    <img class="image rounded-circle" src="{{asset('/images/'.$user->image)}}" alt="profile_image" style="width: 40px;height: 40px; margin-left: 4px;"></td>
                                                 @else
                                                     <div class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full mr-2">
-                                                        <span class="font-medium text-gray-600 dark:text-gray-500">{{ Auth::user()->initials }}</span>
+                                                        <span class="font-medium text-gray-600 dark:text-gray-500">{{ $user->initials }}</span>
                                                     </div>
                                                 @endif
                                             <td class="py-4 px-6 text-sm text-gray-700">{{$user->name}}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700">{{$user->email}}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700">
-                                                <div @class([
-                                                                    'text-green-500 font-medium' => $user->hasRole('user'),
-                                                                    'text-red-600 font-bold' =>  $user->hasRole('admin'),
-                                                        ])>
                                                 @if($user->hasRole('admin'))
-                                                    {{Str::upper('admin')}}
+                                                    <b>{{Str::upper('admin')}}</b>
                                                 @else
                                                     {{Str::upper('user')}}
                                                 @endif
@@ -60,13 +57,30 @@
                                                 <form method="POST" action="{{ route('role.update', [$user->id]) }}">
                                                     @csrf
                                                         <button
-                                                            class="text-center text-blue-400 focus:ring-4 font-medium text-xs py-1 "
+                                                            class="pt-3 text-blue-400 font-medium text-sm"
                                                             type="submit"
                                                             onclick="return confirm('Bist du sicher dass du die Rolle tauschen willst?')"
                                                         >
                                                                 Swop Roles
                                                     </button>
                                                 </form>
+                                            </td>
+                                            <td class="py-4">
+                                                @if($user->id === Auth::user()->id)
+                                                    <p class="italic text-gray-500">-------</p>
+                                                @else
+                                                <form method="POST" action="{{ route('user.delete', $user->id) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button
+                                                        class="text-center text-red-400 font-medium text-sm pt-3"
+                                                        type="submit"
+                                                        onclick="return confirm('Are you sure that you want to delete {{ $user->url }}?')"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -75,6 +89,16 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pb-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h1>hi</h1>
                 </div>
             </div>
         </div>
@@ -104,9 +128,9 @@
                                     @foreach($vacationRequests as $vacationRequest)
                                         <tr class="bg-gray-100">
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ \App\Models\User::find($vacationRequest->user_id)->name }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$vacationRequest->start_date->format('d M') }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$vacationRequest->end_date->format('d M') }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700 text-center font-bold">{{$vacationRequest->end_date->diffInDays($vacationRequest->start_date) }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ $vacationRequest->start_date->format('d M') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ $vacationRequest->end_date->format('d M') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center font-bold">{{ $vacationRequest->end_date->diffInDays($vacationRequest->start_date) }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center"><div @class([
                                                                     'text-green-500' =>  $vacationRequest->accepted === 'accepted',
                                                                     'text-yellow-600' =>  $vacationRequest->accepted === 'pending',
@@ -118,8 +142,9 @@
                                             <td class="py-4 px-6 text-sm text-gray-700">
 
                                                 @if($vacationRequest->accepted === 'pending')
-                                                <form method="POST" action="{{ route('updateAnswerDB') }}">
+                                                <form method="POST" action="{{ route('vacation.answerUpdate', ['id' => $vacationRequest->id]) }}">
                                                     @csrf
+                                                    @method('POST')
                                                     <select
                                                         onchange="hideButton()"
                                                         name="antwort"
@@ -201,39 +226,5 @@
             </div>
         </div>
     </div>
-
-    <!--
-    FOR TABS:
-    <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
-    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-        <li class="mr-2" role="presentation">
-            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
-        </li>
-        <li class="mr-2" role="presentation">
-            <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">Dashboard</button>
-        </li>
-        <li class="mr-2" role="presentation">
-            <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
-        </li>
-        <li role="presentation">
-            <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">Contacts</button>
-        </li>
-    </ul>
-</div>
-<div id="myTabContent">
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-        <p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Profile tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
-    </div>
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-        <p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Dashboard tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
-    </div>
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-        <p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Settings tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
-    </div>
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-        <p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Contacts tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
-    </div>
-</div>
-    -->
 </x-app-layout>
 
