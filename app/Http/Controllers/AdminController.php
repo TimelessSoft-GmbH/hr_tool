@@ -18,6 +18,7 @@ class AdminController extends Controller
             'vacationRequests' => VacationRequest::all(),
             'sicknessRequests' => SicknessRequest::all(),
             'users' => User::all(),
+            'roles' => Role::all()
         ]);
     }
     public function roleChange($id){
