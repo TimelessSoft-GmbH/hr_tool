@@ -70,4 +70,13 @@ class AdminController extends Controller
         User::find($id)->delete();
         return redirect('/admin');
     }
+
+    public function update(Request $request, $id){
+        foreach ($request->all() as $index => $value) {
+            DB::table('users')
+                ->where('id', $id)
+                ->update([$index => $value]);
+        }
+        return redirect('/admin');
+    }
 }

@@ -8,6 +8,10 @@
         var element = document.getElementById("buttonSubSick");
         element.classList.toggle("hidden");
     }
+    function showUserUpdateForm() {
+        var element = document.getElementById("UserUpdateForm");
+        element.classList.toggle("hidden");
+    }
 
 </script>
 
@@ -63,45 +67,39 @@
                                                 @endif
                                             </td>
                                             <td class="py-4 px-6 text-sm text-gray-700">
-                                                <button data-target="medium-modal" data-toggle="medium-modal"
+                                                <button onclick="showUserUpdateForm()"
                                                         class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                                         type="button">
                                                     Edit
                                                 </button>
                                             </td>
-                                            <!--<td class="py-4 px-6 text-sm text-gray-700">
-                                                <form method="POST" action="{{ route('role.update', [$user->id]) }}">
+                                        <!--<td class="py-4 px-6 text-sm text-gray-700">
+                                                <form method="POST" action="{{ route('user.update', [$user->id]) }}">
                                                     @csrf
-                                            <button
-                                                class="pt-3 text-blue-400 font-medium text-sm"
-                                                type="submit"
-                                                onclick="return confirm('Bist du sicher dass du die Rolle tauschen willst?')"
-                                            >
-                                                    Swop Roles
-                                        </button>
-                                    </form>
-                                </td>-->
-                                            <!--<td class="py-4">
-                                                @if($user->id === Auth::user()->id)
+                                                        <button
+                                                            class="pt-3 text-blue-400 font-medium text-sm"
+                                                            type="submit"
+                                                            onclick="return confirm('Bist du sicher dass du die Rolle tauschen willst?')"
+                                                        >
+                                                                Swop Roles
+                                                        </button>
+                                                </form>
+                                            </td>-->
+                                        <!--<td class="py-4">
+                                            @if($user->id === Auth::user()->id)
                                                 <p class="italic text-gray-500">-------</p>
-
-
-
                                             @else
                                                 <form method="POST" action="{{ route('user.delete', $user->id) }}">
                                                     @csrf
-                                                @method('DELETE')
-                                                <button
-                                                    class="text-center text-red-400 font-medium text-sm pt-3"
-                                                    type="submit"
-                                                    onclick="return confirm('Are you sure that you want to delete {{ $user->url }}?')"
-                                                    >
-                                                        Delete
-                                                    </button>
+                                                    @method('DELETE')
+                                                        <button
+                                                            class="text-center text-red-400 font-medium text-sm pt-3"
+                                                            type="submit"
+                                                            onclick="return confirm('Are you sure that you want to delete {{ $user->url }}?')"
+                                                            >
+                                                                Delete
+                                                        </button>
                                                 </form>
-
-
-
                                             @endif
                                             </td>-->
                                         </tr>
@@ -284,6 +282,7 @@
             </div>
         </div>
     </div>
-    @include('components.modal.edit')
+    <div id="UserUpdateForm" class="hidden">
+        @include('components.modal.edit')
+    </div>
 </x-app-layout>
-
