@@ -1,4 +1,4 @@
-<div id="editUser" tabindex="-1" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+<div id="editUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
     <div class="relative w-full h-full max-w-lg md:h-auto">
         <!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow">
