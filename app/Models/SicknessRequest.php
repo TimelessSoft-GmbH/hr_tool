@@ -13,6 +13,7 @@ class SicknessRequest extends Model
         'start_date',
         'end_date',
         'user_id',
+        'total_days',
     ];
 
     protected $casts = [

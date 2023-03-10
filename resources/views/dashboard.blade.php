@@ -89,7 +89,7 @@
                                             End Datum
                                         </th>
                                         <th scope="col" class="px-6 py-3">
-                                            Angefragt
+                                            Total Days
                                         </th>
                                         <th scope="col" class="px-6 py-3">
                                             Stand
@@ -134,7 +134,7 @@
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->created_at->format('d M') }}
+                                                    {{ $vacationRequest->total_days }}
                                                 </td>
                                                 <td class="py-4 px-6 text-sm">
                                                     <div @class([
@@ -232,7 +232,7 @@
                                         End Datum
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Angefragt
+                                        Total Days
                                     </th>
                                     <th scope="col" class="px-6 py-3">
                                         Stand
@@ -277,7 +277,7 @@
                                                     </td>
 
                                                     <td class="py-4 px-6 text-sm text-gray-700">
-                                                        {{ $sicknessRequest->created_at->format('d M') }}
+                                                        {{ $sicknessRequest->total_days }}
                                                     </td>
                                                     <td class="py-4 px-6 text-sm">
                                                         <div @class([

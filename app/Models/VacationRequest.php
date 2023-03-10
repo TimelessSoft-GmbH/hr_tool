@@ -13,7 +13,9 @@ class VacationRequest extends Model
         'start_date',
         'end_date',
         'user_id',
+        'total_days',
     ];
+
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',

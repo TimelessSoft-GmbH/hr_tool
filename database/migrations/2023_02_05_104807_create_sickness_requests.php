@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->integer('total_days')->nullable();
             $table->string('accepted')->default('pending');
-            $table->string('image')->default('basicUser.png');
             $table->timestamps();
         });
     }

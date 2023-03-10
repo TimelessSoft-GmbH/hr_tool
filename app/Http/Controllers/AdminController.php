@@ -49,28 +49,10 @@ class AdminController extends Controller
 
         return redirect('/admin')->with('success', 'Role updated successfully.');
     }
-
-    public function answerUpdateVacation(Request $request, $id){
-        DB::table('vacation_requests')
-            ->where('id', $id)
-            ->update(['accepted' => $request->antwort]);
-
-        return redirect('/admin');
-    }
-
-    public function answerUpdateSickness(Request $request, $id){
-        DB::table('sickness_requests')
-            ->where('id', $id)
-            ->update(['accepted' => $request->antwort]);
-
-        return redirect('/admin');
-    }
-
     public function destroy($id){
         User::find($id)->delete();
         return redirect('/admin');
     }
-
     public function update(Request $request, $id){
         foreach ($request->all() as $index => $value) {
             DB::table('users')
@@ -78,5 +60,47 @@ class AdminController extends Controller
                 ->update([$index => $value]);
         }
         return redirect('/admin');
+    }
+
+    public function answerUpdateVacation(Request $request, $id){
+        DB::table('vacation_requests')
+            ->where('id', $id)
+            ->update(['accepted' => $request->antwort]);
+
+        if($request->antwort === 'accepted'){
+            $this->updateVacationDays($id);
+        }
+        return redirect('/admin');
+    }
+
+    public function answerUpdateSickness(Request $request, $id){
+        DB::table('sickness_requests')
+            ->where('id', $id)
+            ->update(['accepted' => $request->antwortSicknessRequest]);
+
+        if($request->antwortSicknessRequest === 'accepted'){
+            $this->updateSicknessLeave($id);
+        }
+        return redirect('/admin');
+    }
+
+    public function updateVacationDays($id){
+        $vacationreq = VacationRequest::findOrFail($id);
+        $user = User::findOrFail($vacationreq->user_id);
+        $vacationDays_left = $user->vacationDays - $vacationreq->total_days;
+
+        DB::table('users')
+            ->where('id', $vacationreq->user_id)
+            ->update(['vacationDays_left' => $vacationDays_left]);
+    }
+
+    public function updateSicknessLeave($id){
+        $sicknessReq = VacationRequest::findOrFail($id);
+        $user = User::findOrFail($sicknessReq->user_id);
+        $sicknessLeave = $user->sicknessLeave + $sicknessReq->total_days;
+
+        DB::table('users')
+            ->where('id', $sicknessReq->user_id)
+            ->update(['sicknessLeave' => $sicknessLeave]);
     }
 }
