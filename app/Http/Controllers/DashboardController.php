@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\VacationRequest;
 use App\Models\SicknessRequest;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
@@ -58,9 +59,26 @@ class DashboardController extends Controller
             'user_id' => ['required'],
         ]);
 
+        $client = new Client();
+        $year = date('Y');
+        $response = $client->get("https://date.nager.at/api/v3/PublicHolidays/{$year}/AT");
+        $holidays = json_decode($response->getBody(), true);
+
+        $holiday_dates = [];
+        foreach ($holidays as $holiday) {
+            $holiday_dates[] = $holiday['date'];
+        }
         $start_date = Carbon::parse($attributes['start_date']);
         $end_date = Carbon::parse($attributes['end_date']);
-        $attributes['total_days'] = $end_date->diffInWeekdays($start_date);
+        $total_days = 0;
+        for ($date = $start_date; $date->lte($end_date); $date->addDay()) {
+            if ($date->isWeekday() && !in_array($date->format('Y-m-d'), $holiday_dates)) {
+                $total_days++;
+            }
+        }
+
+        $attributes['total_days'] = $total_days;
+
         return $attributes;
     }
 }
