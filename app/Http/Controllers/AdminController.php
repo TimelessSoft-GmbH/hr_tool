@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AnswerEmail;
+use App\Mail\MyEmail;
 use App\Models\SicknessRequest;
 use App\Models\User;
 use App\Models\VacationRequest;
@@ -9,6 +11,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -22,11 +25,13 @@ class AdminController extends Controller
             'roles' => Role::all()
         ]);
     }
+
     public function roleChange($id){
         //Get necessary Data
         $user = User::findOrFail($id);
         $adminRole = Role::findOrFail(1);
         $userRole = Role::findOrFail(2);
+
         //Detach current role of user
         $user->roles()->detach();
 
@@ -48,18 +53,22 @@ class AdminController extends Controller
                 ->update(['hasrole' => 'user']);
         }
 
-        return redirect('/admin')->with('success', 'Role updated successfully.');
+        return redirect('/admin');
     }
+
     public function destroy($id){
         User::find($id)->delete();
         return redirect('/admin');
     }
+
+    //CURRENTLY NOT USED (For User-Update)
     public function update(Request $request, $id){
         foreach ($request->all() as $index => $value) {
             DB::table('users')
                 ->where('id', $id)
                 ->update([$index => $value]);
         }
+
         return redirect('/admin');
     }
 
@@ -71,6 +80,10 @@ class AdminController extends Controller
         if($request->antwort === 'accepted'){
             $this->updateVacationDays($id);
         }
+
+        $user = User::findOrFail(VacationRequest::findOrFail($id)->user_id);
+
+        $this->emailNotification($request->antwort, $user, 'Urlaubsantrag');
         return redirect('/admin');
     }
 
@@ -82,6 +95,10 @@ class AdminController extends Controller
         if($request->antwortSicknessRequest === 'accepted'){
             $this->updateSicknessLeave($id);
         }
+
+        $user = User::findOrFail(SicknessRequest::findOrFail($id)->user_id);
+        $this->emailNotification($request->antwortSicknessRequest, $user, 'Krankheitsurlaub');
+
         return redirect('/admin');
     }
 
@@ -96,12 +113,27 @@ class AdminController extends Controller
     }
 
     public function updateSicknessLeave($id){
-        $sicknessReq = VacationRequest::findOrFail($id);
+        $sicknessReq = SicknessRequest::findOrFail($id);
         $user = User::findOrFail($sicknessReq->user_id);
         $sicknessLeave = $user->sicknessLeave + $sicknessReq->total_days;
 
         DB::table('users')
             ->where('id', $sicknessReq->user_id)
             ->update(['sicknessLeave' => $sicknessLeave]);
+    }
+
+    public function emailNotification($answer, $user, $typeOfNotification): void
+    {
+        $email = new AnswerEmail();
+
+        //Get Data for Email
+        $email->data = [
+            'user_id' => $user,
+            'answer' => $answer,
+            'type_of_notification' => $typeOfNotification,
+        ];
+
+        //Send Email to all Admins
+        Mail::to($user->email)->send($email);
     }
 }

@@ -26,9 +26,8 @@ class DashboardController extends Controller
     {
         //Get Attributes
         $attributes = $this->getAttributes();
-
+        //Create Vacation Request
         VacationRequest::create($attributes);
-
         //Send Email Notification
         $this->emailNotification($attributes, 'Urlaubsantrag');
         return redirect('/dashboard');
@@ -38,9 +37,8 @@ class DashboardController extends Controller
     {
         //Get Attributes
         $attributes = $this->getAttributes();
-
+        //Create Sickness Request
         SicknessRequest::create($attributes);
-
         //Send Email Notification
         $this->emailNotification($attributes, 'Krankheitsurlaub');
         return redirect('/dashboard');
