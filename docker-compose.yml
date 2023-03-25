@@ -14,7 +14,7 @@ services:
       - ./:/var/www
       - ./.docker:/data
     networks:
-      - backend_network
+      - tlsoft_hr_network
     depends_on:
       - db
   nginx:
@@ -27,7 +27,7 @@ services:
       - ./:/var/www
       - ./.docker/nginx:/etc/nginx/conf.d/
     networks:
-      - backend_network
+      - tlsoft_hr_network
     depends_on:
       - app
   db:
@@ -46,7 +46,7 @@ services:
     volumes:
       - "tlsoft-hr-mariadb:/var/lib/mysql"
     networks:
-      - backend_network
+      - tlsoft_hr_network
   phpmyadmin:
     image: "phpmyadmin"
     container_name: ${DOCKER_CONTAINER_PHPMYADMIN:-tlsoft_hr_phpmyadmin}
@@ -56,11 +56,9 @@ services:
     ports:
       - "${DOCKER_PHPMYADMIN_PORT:-8009}:80"
     networks:
-      - backend_network
+      - tlsoft_hr_network
 networks:
-  backend_network:
-    external:
-      name: docker_default
+  tlsoft_hr_network:
     driver: bridge
 volumes:
   tlsoft-hr-mariadb:
