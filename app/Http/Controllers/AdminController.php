@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AnswerEmail;
-use App\Mail\MyEmail;
 use App\Models\SicknessRequest;
 use App\Models\User;
 use App\Models\VacationRequest;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
@@ -58,17 +55,6 @@ class AdminController extends Controller
 
     public function destroy($id){
         User::find($id)->delete();
-        return redirect('/admin');
-    }
-
-    //CURRENTLY NOT USED (For User-Update)
-    public function update(Request $request, $id){
-        foreach ($request->all() as $index => $value) {
-            DB::table('users')
-                ->where('id', $id)
-                ->update([$index => $value]);
-        }
-
         return redirect('/admin');
     }
 

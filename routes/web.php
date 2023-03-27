@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UpdateUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use \App\Http\Controllers\DashboardController;
@@ -27,6 +28,9 @@ Route::post('/dashboard/sickness', [DashboardController::class, 'storeSick'])->m
 Route::get('/admin', [AdminController::class, 'index'])->middleware('admin')->name('admin');
 Route::post('/admin/{id}', [AdminController::class, 'roleChange'])->middleware('admin')->name('role.update');
 Route::post('/admin/{id}/update', [AdminController::class, 'update'])->middleware('admin')->name('user.update');
+Route::get('/admin/user/update/{id}', [UpdateUserController::class, 'index'])->middleware('admin')->name('index.update.user');
+Route::post('/admin/user/updated/{id}', [UpdateUserController::class, 'update'])->middleware('admin')->name('index.updated.user');
+Route::delete('/admin/user/deleted/{id}', [UpdateUserController::class, 'destroy'])->middleware('admin')->name('index.delete.user');
 Route::post('/admin/{id}/submitAnswer', [AdminController::class, 'answerUpdateVacation'])->middleware('admin')->name('vacation.answerUpdate');
 Route::post('/admin/{id}/submitAnswer2', [AdminController::class, 'answerUpdateSickness'])->middleware('admin')->name('sickness.answerUpdate');
 Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->middleware('admin')->name('user.delete');
