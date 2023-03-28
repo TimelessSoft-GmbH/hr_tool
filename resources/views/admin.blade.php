@@ -62,19 +62,6 @@ function hideButtonSick() {
                                                 @endif
                                             </td>
 
-                                            <!--<td class="py-4 px-6 text-sm text-gray-700">
-                                            <form method="POST" action="{{ route('user.update', [$user->id]) }}">
-                                                @csrf
-                                            <button
-                                                class="pt-3 text-blue-400 font-medium text-sm"
-                                                type="submit"
-                                                onclick="return confirm('Bist du sicher dass du die Rolle tauschen willst?')"
-                                            >
-                                                    Swop Roles
-                                            </button>
-                                    </form>
-                                </td>-->
-
                                             <td class="py-4 text-sm text-gray-700">
                                                 <a href="{{ URL('/admin/user/update/'.$user->id)}}">
                                                     <button

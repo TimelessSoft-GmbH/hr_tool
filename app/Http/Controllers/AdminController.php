@@ -23,36 +23,6 @@ class AdminController extends Controller
         ]);
     }
 
-    public function roleChange($id){
-        //Get necessary Data
-        $user = User::findOrFail($id);
-        $adminRole = Role::findOrFail(1);
-        $userRole = Role::findOrFail(2);
-
-        //Detach current role of user
-        $user->roles()->detach();
-
-        //If user is user
-        if ($user->hasrole === 'user') {
-            $user->syncRoles([$adminRole->name]);
-
-            DB::table('users')
-              ->where('id', $id)
-              ->update(['hasrole' => 'admin']);
-        }
-
-        //If user is admin
-        if ($user->hasrole === 'admin') {
-            $user->syncRoles([$userRole->name]);
-
-            DB::table('users')
-                ->where('id', $id)
-                ->update(['hasrole' => 'user']);
-        }
-
-        return redirect('/admin');
-    }
-
     public function destroy($id){
         User::find($id)->delete();
         return redirect('/admin');

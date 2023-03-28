@@ -98,6 +98,7 @@
                                     <label for="phoneNumber" class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number</label>
                                 </div>
                             </div>
+
                             <!--ADRESSE -->
                             <div class="relative z-0 w-full mb-6 group">
                                 @if($user->adress !== '')
@@ -125,8 +126,8 @@
                                 </label>
                             </div>
 
+                            <!--Urlaubstage -->
                             <div class="pt-4 grid md:grid-cols-2 md:gap-6">
-                                <!--Urlaubstage -->
                                 <div class="relative z-0 w-full group">
                                     @if($user->vacationDays !== '')
                                         <input
@@ -155,9 +156,9 @@
 
                                 <!--Rolle -->
                                 <div class="relative z-0 w-full group">
-                                    <select id="roles" size="1" class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                    <select name="hasrole" id="roles" size="1" class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                         @foreach ($roles as $role)
-                                            @if($user->hasRole($role->name))
+                                            @if($role->name === $user->hasrole)
                                                 <option selected value="{{ $role->name }}">{{ $role->name }}</option>
                                             @else
                                                 <option value="{{ $role->name }}">{{ $role->name }}</option>
@@ -173,8 +174,8 @@
                                 </div>
                             </div>
 
+                            <!--Salary -->
                             <div class="grid md:grid-cols-2 md:gap-6">
-                                <!--Salary -->
                                 <div class="relative z-0 w-full mb-6 group">
                                     @if($user->salary !== '')
                                         <input

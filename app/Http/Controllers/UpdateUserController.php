@@ -25,8 +25,12 @@ class UpdateUserController extends Controller
     //CURRENTLY NOT USED (For User-Update)
     public function update(Request $request, $id){
         $data = $request->except("_token");
+        $user = User::findOrFail($id);
 
         foreach ($data as $index => $value) {
+            if ($index === 'hasrole') {
+                $this->changeUserRole($id, $value);
+            }
             if($value !== null){
                 DB::table('users')
                     ->where('id', $id)
@@ -44,33 +48,22 @@ class UpdateUserController extends Controller
         return redirect('/admin');
     }
 
-    public function roleChange($id){
-        //Get necessary Data
-        $user = User::findOrFail($id);
-        $adminRole = Role::findOrFail(1);
-        $userRole = Role::findOrFail(2);
 
-        //Detach current role of user
-        $user->roles()->detach();
+    function changeUserRole($userId, $newRoleName) {
+        $user = User::findOrFail($userId);
+        $oldRole = $user->roles()->first();
+        $newRole = Role::findByName($newRoleName);
 
-        //If user is user
-        if ($user->hasrole === 'user') {
-            $user->syncRoles([$adminRole->name]);
-
-            DB::table('users')
-                ->where('id', $id)
-                ->update(['hasrole' => 'admin']);
+        if ($oldRole) {
+            $user->removeRole($oldRole);
         }
 
-        //If user is admin
-        if ($user->hasrole === 'admin') {
-            $user->syncRoles([$userRole->name]);
+        $user->assignRole($newRole);
 
-            DB::table('users')
-                ->where('id', $id)
-                ->update(['hasrole' => 'user']);
-        }
+        DB::table('users')
+            ->where('id', $userId)
+            ->update(['hasrole' => $newRole]);
 
-        return redirect('update-user');
+        return true;
     }
 }
