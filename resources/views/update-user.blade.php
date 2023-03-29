@@ -8,16 +8,11 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class ="flex">
-                    <h2 class="p-6 text-gray-900">
-                        {{ __("Vacation Request: ") }}
-                    </h2>
-                </div>
-                <!--Open Form-->
+
                 <div class="p-6">
                     <div class="flex items-center justify-center pt-1">
-
-                    <form method="POST"
+                        <!--Open Form-->
+                        <form method="POST"
                           action="{{ route('index.updated.user', ['id' => $user->id]) }}">
                         @csrf
                             <!-- IMAGE -->
@@ -228,10 +223,43 @@
                                         Dienstbeginn
                                     </label>
                                 </div>
+
+                                <!--Start Day-->
+                                <!--<div class="flex justify-start w-1/2">
+                                    <select name="" id="starting_day" class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer">
+                                        <option selected disabled class="text-slate-400">Anfang</option>
+                                        <option value="US">Montag</option>
+                                        <option value="CA">Dienstag</option>
+                                        <option value="FR">Mittwoch</option>
+                                        <option value="DE">Donnerstag</option>
+                                        <option value="DE">Freitag</option>
+                                        <option value="DE">Samstag</option>
+                                        <option value="DE">Sonntag</option>
+                                    </select>
+
+                                    <p class="mx-4 pt-3">Bis</p>-->
+
+                                    <!--End Day-->
+                                   <!-- <label for="ending_day"
+                                           class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                    >
+                                        Test to check
+                                    </label>
+                                    <select id="ending_day" class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer">
+                                        <option selected disabled>Ende</option>
+                                        <option value="US">Montag</option>
+                                        <option value="CA">Dienstag</option>
+                                        <option value="FR">Mittwoch</option>
+                                        <option value="DE">Donnerstag</option>
+                                        <option value="DE">Freitag</option>
+                                        <option value="DE">Samstag</option>
+                                        <option value="DE">Sonntag</option>
+                                    </select>
+                                </div>-->
                             </div>
-                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Submit</button>
-                    </form>
-                </div>
+                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-7 py-3 text-center">Update</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

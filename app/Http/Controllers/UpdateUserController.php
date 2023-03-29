@@ -18,14 +18,11 @@ class UpdateUserController extends Controller
             'roles' => Role::all(),
             'vacationRequests' => VacationRequest::all(),
             'sicknessRequests' => SicknessRequest::all(),
-
         ]);
     }
 
-    //CURRENTLY NOT USED (For User-Update)
     public function update(Request $request, $id){
         $data = $request->except("_token");
-        $user = User::findOrFail($id);
 
         foreach ($data as $index => $value) {
             if ($index === 'hasrole') {
