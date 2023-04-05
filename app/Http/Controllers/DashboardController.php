@@ -28,7 +28,7 @@ class DashboardController extends Controller
         //Create Vacation Request
         VacationRequest::create($attributes);
         //Send Email Notification
-        $this->emailNotification($attributes, 'Urlaubsantrag');
+        //$this->emailNotification($attributes, 'Urlaubsantrag');
         return redirect('/dashboard');
     }
 
@@ -39,7 +39,7 @@ class DashboardController extends Controller
         //Create Sickness Request
         SicknessRequest::create($attributes);
         //Send Email Notification
-        $this->emailNotification($attributes, 'Krankheitsurlaub');
+        //$this->emailNotification($attributes, 'Krankheitsurlaub');
         return redirect('/dashboard');
     }
 
@@ -63,20 +63,40 @@ class DashboardController extends Controller
         $holidays = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $holiday_dates = [];
         foreach ($holidays as $holiday) {
-            $holiday_dates[] = $holiday['date'];
+            $holiday_dates[] = (string) $holiday['date'];
         }
 
-        //Calculate total Days without public Holidays and Weekends
-        $start_date = Carbon::parse($attributes['start_date']);
-        $end_date = Carbon::parse($attributes['end_date']);
+        // Get user's workdays
+        $user = User::findOrFail($attributes['user_id']);
+        $workdays = json_decode($user->workdays, true, 512, JSON_THROW_ON_ERROR) ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+
+        // Get user's workdays
+        $user = User::findOrFail($attributes['user_id']);
+        $workdays = json_decode($user->workdays, true, 512, JSON_THROW_ON_ERROR) ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+        //Calculate total Days without public Holidays
+        $start_date = Carbon::parse($attributes['start_date'])->startOfDay();
+        $end_date = Carbon::parse($attributes['end_date'])->startOfDay()->addDay();
         $total_days = 0;
-        for ($date = $start_date; $date->lte($end_date); $date->addDay()) {
-            if ($date->isWeekday() && !in_array($date->format('Y-m-d'), $holiday_dates, true)) {
+
+        //Check if the start date is a workday of the user before adding them to the total days:
+        if (in_array($start_date->format('l'), $workdays, true) && !in_array($start_date->format('Y-m-d'), $holiday_dates, true)) {
+            $total_days++;
+        }
+        //Loop for adding total days
+        for ($date = $start_date->copy()->addDay(); $date->lt($end_date); $date->addDay()) {
+            if (in_array($date->format('l'), $workdays, true) && !in_array($date->format('Y-m-d'), $holiday_dates, true)) {
                 $total_days++;
             }
         }
-        //Add Total Days to attribute to safe it in DB
-        $attributes['total_days'] = $total_days;
+        //Add one if Endday is in total Days
+        if (in_array($end_date->format('l'), $workdays, true) && !in_array($end_date->format('Y-m-d'), $holiday_dates, true)) {
+            $total_days++;
+        }
+
+        //Add Total Days to attribute to save it in DB
+        $attributes['total_days'] = (string) $total_days;
 
         return $attributes;
     }

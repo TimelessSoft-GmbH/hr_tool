@@ -20,6 +20,14 @@ class DatabaseSeeder extends Seeder
         $userRole = Role::create(['name' => 'user']);
         // \App\Models\User::factory(10)->create();
 
+        User::factory()->create([
+            'name' => 'Georg Polak',
+            'email' => 'georg.polak@tlsoft.at',
+            'password' => bcrypt('password'),
+            'initials' => 'GH',
+            'hasrole' => 'admin',
+        ])->assignRole('admin');
+
        User::factory()->create([
            'name' => 'Paul Hager',
            'email' => 'paul.hager888@gmail.com',
