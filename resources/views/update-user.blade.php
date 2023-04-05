@@ -239,7 +239,7 @@
                         </div>
 
                         <p class="text-sm text-gray-400">Workdays:</p>
-                        <ul id="workdaysList" class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
+                        <ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
                             <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                 <div class="flex items-center pl-3">
                                     <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
