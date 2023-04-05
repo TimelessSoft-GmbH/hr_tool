@@ -230,141 +230,80 @@
                                     Dienstbeginn
                                 </label>
                             </div>
-
-                           <!-- <div class="flex justify-start w-full">
-                                <div class="relative z-0 w-full group">
-                                    <select name="starting_day_of_workweek" id="starting_day_of_workweek" size="1"
-                                            class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer">
-                                        <option disabled class="text-slate-400">Anfang</option>
-                                        @if($user->starting_day_of_workweek ==='Monday')
-                                            <option selected value="Monday">Montag</option>
-                                        @else
-                                            <option value="Monday">Montag</option>
-                                        @endif
-                                        @if($user->starting_day_of_workweek ==='Tuesday')
-                                            <option selected value="Tuesday">Dienstag</option>
-                                        @else
-                                            <option value="Tuesday">Dienstag</option>
-                                        @endif
-                                        @if($user->starting_day_of_workweek ==='Wednesday')
-                                            <option selected value="Wednesday">Mittwoch</option>
-                                        @else
-                                            <option value="Wednesday">Mittwoch</option>
-                                        @endif
-                                        @if($user->starting_day_of_workweek ==='Thursday')
-                                            <option selected value="Thursday">Donnerstag</option>
-                                        @else
-                                            <option value="Thursday">Donnerstag</option>
-                                        @endif
-                                        @if($user->starting_day_of_workweek ==='Friday')
-                                            <option selected value="Friday">Freitag</option>
-                                        @else
-                                            <option value="Friday">Freitag</option>
-                                        @endif
-                                        @if($user->starting_day_of_workweek ==='Saturday')
-                                            <option selected value="Saturday">Samstag</option>
-                                        @else
-                                            <option value="Saturday">Samstag</option>
-                                        @endif
-                                        @if($user->starting_day_of_workweek ==='Sunday')
-                                        <option selected value="Sunday">Sonntag</option>
-                                        @else
-                                            <option value="Sunday">Sonntag</option>
-                                        @endif
-                                    </select>
-                                    <label
-                                        for="starting_day_of_workweek"
-                                        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                    >
-                                        Start-Arbeitswoche
-                                    </label>
-                                </div>
-
-                                <p class="mx-4 pt-3">bis</p>
-
-                                <div class="relative z-0 w-full group">
-                                    <select id="ending_day_of_workweek" name="ending_day_of_workweek"
-                                            class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer">
-                                        <option disabled>Ende</option>
-
-                                        @if($user->ending_day_of_workweek ==='Monday')
-                                            <option selected value="Monday">Montag</option>
-                                        @else
-                                            <option value="Monday">Montag</option>
-                                        @endif
-                                        @if($user->ending_day_of_workweek ==='Tuesday')
-                                            <option selected value="Tuesday">Dienstag</option>
-                                        @else
-                                            <option value="Tuesday">Dienstag</option>
-                                        @endif
-                                        @if($user->ending_day_of_workweek ==='Wednesday')
-                                            <option selected value="Wednesday">Mittwoch</option>
-                                        @else
-                                            <option value="Wednesday">Mittwoch</option>
-                                        @endif
-                                        @if($user->ending_day_of_workweek ==='Thursday')
-                                            <option selected value="Thursday">Donnerstag</option>
-                                        @else
-                                            <option value="Thursday">Donnerstag</option>
-                                        @endif
-                                        @if($user->ending_day_of_workweek ==='Friday')
-                                            <option selected value="Friday">Freitag</option>
-                                        @else
-                                            <option value="Friday">Freitag</option>
-                                        @endif
-                                        @if($user->ending_day_of_workweek ==='Saturday')
-                                            <option selected value="Saturday">Samstag</option>
-                                        @else
-                                            <option value="Saturday">Samstag</option>
-                                        @endif
-                                        @if($user->ending_day_of_workweek ==='Sunday')
-                                            <option selected value="Sunday">Sonntag</option>
-                                        @else
-                                            <option value="Sunday">Sonntag</option>
-                                        @endif
-                                    </select>
-
-                                    <label for="ending_day_of_workweek"
-                                           class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                    >
-                                        Ende-Arbeitswoche
-                                    </label>
-                                </div>-->
-                            </div>
-
-                        <div class="flex flex-row space-x-4">
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="workdays[]" value="Monday" @if(!is_null($user->workdays) && in_array('Monday', json_decode($user->workdays))) checked @endif>
-                                <span class="ml-2">Monday</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="workdays[]" value="Tuesday" @if(!is_null($user->workdays) && in_array('Tuesday', json_decode($user->workdays))) checked @endif>
-                                <span class="ml-2">Tuesday</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="workdays[]" value="Wednesday" @if(!is_null($user->workdays) && in_array('Wednesday', json_decode($user->workdays))) checked @endif>
-                                <span class="ml-2">Wednesday</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="workdays[]" value="Thursday" @if(!is_null($user->workdays) && in_array('Thursday', json_decode($user->workdays))) checked @endif>
-                                <span class="ml-2">Thursday</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="workdays[]" value="Friday" @if(!is_null($user->workdays) && in_array('Friday', json_decode($user->workdays))) checked @endif>
-                                <span class="ml-2">Friday</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="workdays[]" value="Saturday" @if(!is_null($user->workdays) && in_array('Saturday', json_decode($user->workdays))) checked @endif>
-                                <span class="ml-2">Saturday</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="workdays[]" value="Sunday" @if(!is_null($user->workdays) && in_array('Sunday', json_decode($user->workdays))) checked @endif>
-                                <span class="ml-2">Sunday</span>
+                            <label
+                                for="workdaysList"
+                                class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                            >
+                                Dienstbeginn
                             </label>
                         </div>
 
-
-
+                        <p class="text-sm text-gray-400">Workdays:</p>
+                        <ul id="workdaysList" class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
+                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                <div class="flex items-center pl-3">
+                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                        <input type="checkbox" name="workdays[]" value="Monday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                               @if(!is_null($user->workdays) && in_array('Monday', json_decode($user->workdays))) checked @endif>
+                                        <span class="ml-2">Monday</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                <div class="flex items-center pl-3">
+                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                        <input type="checkbox" name="workdays[]" value="Tuesday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                               @if(!is_null($user->workdays) && in_array('Tuesday', json_decode($user->workdays))) checked @endif>
+                                        <span class="ml-2">Tuesday</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                <div class="flex items-center pl-3">
+                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                        <input type="checkbox" name="workdays[]" value="Wednesday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                               @if(!is_null($user->workdays) && in_array('Wednesday', json_decode($user->workdays))) checked @endif>
+                                        <span class="ml-2">Wednesday</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                <div class="flex items-center pl-3">
+                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                        <input type="checkbox" name="workdays[]" value="Thursday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                               @if(!is_null($user->workdays) && in_array('Thursday', json_decode($user->workdays))) checked @endif>
+                                        <span class="ml-2">Thursday</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                <div class="flex items-center pl-3">
+                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                        <input type="checkbox" name="workdays[]" value="Friday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                               @if(!is_null($user->workdays) && in_array('Friday', json_decode($user->workdays))) checked @endif>
+                                        <span class="ml-2">Friday</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                <div class="flex items-center pl-3">
+                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                        <input type="checkbox" name="workdays[]" value="Saturday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                               @if(!is_null($user->workdays) && in_array('Saturday', json_decode($user->workdays))) checked @endif>
+                                        <span class="ml-2">Saturday</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li class="w-full">
+                                <div class="flex items-center pl-3">
+                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                        <input type="checkbox" name="workdays[]" value="Sunday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                               @if(!is_null($user->workdays) && in_array('Sunday', json_decode($user->workdays))) checked @endif>
+                                        <span class="ml-2">Sunday</span>
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
 
                         <button type="submit"
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-7 py-3 text-center">

@@ -28,7 +28,7 @@ class DashboardController extends Controller
         //Create Vacation Request
         VacationRequest::create($attributes);
         //Send Email Notification
-        //$this->emailNotification($attributes, 'Urlaubsantrag');
+        $this->emailNotification($attributes, 'Urlaubsantrag');
         return redirect('/dashboard');
     }
 
@@ -39,7 +39,7 @@ class DashboardController extends Controller
         //Create Sickness Request
         SicknessRequest::create($attributes);
         //Send Email Notification
-        //$this->emailNotification($attributes, 'Krankheitsurlaub');
+        $this->emailNotification($attributes, 'Krankheitsurlaub');
         return redirect('/dashboard');
     }
 
