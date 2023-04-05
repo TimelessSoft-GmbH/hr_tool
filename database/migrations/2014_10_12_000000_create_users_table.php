@@ -29,6 +29,8 @@ return new class extends Migration
             $table->integer('vacationDays_left')->nullable();
             $table->integer('sicknessLeave')->default(0);
             $table->date('start_of_work')->nullable();
+            $table->string('starting_day')->default('Monday');
+            $table->string('ending_day')->default('Friday');
             $table->rememberToken();
             $table->timestamps();
         });
