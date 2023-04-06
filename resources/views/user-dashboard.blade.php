@@ -98,7 +98,7 @@
                                 </thead>
                                 <tbody>
 
-                                @if(count($vacationRequests) < 1)
+                                @if(\App\Models\VacationRequest::where('user_id', Auth::id())->doesntExist())
 
                                     <tr class="bg-gray-100">
                                         <th class="py-4 px-6 text-sm text-gray-400 italic">
@@ -241,7 +241,7 @@
                                 </thead>
                                 <tbody>
 
-                                @if(count($sicknessRequests) < 1)
+                                @if(\App\Models\SicknessRequest::where('user_id', Auth::id())->doesntExist())
 
                                     <tr class="bg-gray-100">
                                         <th class="py-4 px-6 text-sm text-gray-400 italic">

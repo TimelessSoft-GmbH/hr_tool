@@ -15,7 +15,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('dashboard', [
+        return view('user-dashboard', [
             'vacationRequests' => VacationRequest::all(),
             'sicknessRequests' => SicknessRequest::all(),
         ]);
