@@ -178,7 +178,7 @@
 
                         <!--Salary -->
                         <div class="grid md:grid-cols-2 md:gap-6">
-                            <div class="relative z-0 w-full mb-6 group">
+                            <div class="relative z-0 w-full group">
                                 @if($user->salary !== '')
                                     <input
                                         type="number"
@@ -200,12 +200,12 @@
                                     for="salary"
                                     class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                 >
-                                    Gehalt
+                                    Aktuelles Gehalt
                                 </label>
                             </div>
 
                             <!--Start of Work -->
-                            <div class="relative z-0 w-full mb-6 group">
+                            <div class="relative z-0 w-full mb-0 group">
                                 @if($user->start_of_work !== '')
                                     <input
                                         type="date"
@@ -230,12 +230,23 @@
                                     Dienstbeginn
                                 </label>
                             </div>
-                            <label
-                                for="workdaysList"
-                                class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                            >
-                                Dienstbeginn
-                            </label>
+
+                            @if($user->pastSalaries->count() !== 0)
+                                @php
+                                    $pastSalaries = $user->pastSalaries;
+                                @endphp
+                                <div class="grid md:grid-cols-2 md:gap-6 bg-slate-100 p-3 text-xs custom-line-height shadow-inner">
+                                    <div class="font-bold">Vergangenes Gehalt</div><div></div>
+                                    <div class="text-xs underline custom-line-height"> Datum </div>
+                                    <div class="text-xs underline custom-line-height"> Gehalt </div>
+                                    @foreach($pastSalaries as $pastSalary)
+                                        @if($pastSalary->salary !== $user->salary)
+                                            <div class="text-xs pl-2 custom-line-height">{{ Carbon\Carbon::parse($pastSalary->effective_date)->format('d M Y') }}</div>
+                                            <div class="text-xs pl-2 custom-line-height">{{ $pastSalary->salary }}€</div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
 
                         <p class="text-sm text-gray-400">Workdays:</p>
@@ -316,3 +327,8 @@
         </div>
     </div>
 </x-app-layout>
+<style>
+    .custom-line-height {
+        line-height: 0;
+    }
+</style>
