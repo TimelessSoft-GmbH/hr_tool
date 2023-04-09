@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PastSalary;
 use App\Models\SicknessRequest;
 use App\Models\User;
 use App\Models\VacationRequest;
@@ -23,10 +24,19 @@ class UpdateUserController extends Controller
 
     public function update(Request $request, $id){
         $data = $request->except("_token");
+        $user = User::findOrFail($id);
 
         foreach ($data as $index => $value) {
             if ($index === 'hasrole') {
                 $this->changeUserRole($id, $value);
+            }
+            if ($index === 'salary' && $value !== $user->salary) {
+                // Save new past salary in the past_salaries table
+                $pastSalary = new PastSalary;
+                $pastSalary->user_id = $id;
+                $pastSalary->salary = $value;
+                $pastSalary->effective_date = now();
+                $pastSalary->save();
             }
             if($value !== null){
                 DB::table('users')
