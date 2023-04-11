@@ -85,7 +85,7 @@ class DashboardController extends Controller
                 $total_days++;
             }
         }
-        //Add one if Endday is in total Days
+        //Add one if End-day is a workday
         if (in_array($end_date->format('l'), $workdays, true) && !in_array($end_date->format('Y-m-d'), $holiday_dates, true)) {
             $total_days++;
         }
