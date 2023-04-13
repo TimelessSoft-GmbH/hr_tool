@@ -8,7 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-
                 <div class="p-6">
                     <div class="flex items-center justify-center pt-1">
                         <!--Open Form-->
@@ -16,22 +15,22 @@
                               action="{{ route('index.updated.user', ['id' => $user->id]) }}"
                               enctype="multipart/form-data"
                         >
-                            @csrf
-                            <!-- IMAGE -->
-                            @if($user->image !== '')
-                                <img class="image rounded-circle"
-                                     src="{{asset('/images/'.$user->image)}}" alt="profile_image"
-                                     style="width: 80px;height: 80px;">
-                            @else
-                                <div
-                                    class="relative inline-flex items-center justify-center w-20 h-20 overflow-hidden bg-gray-300 rounded-full mr-2">
-                                    <span class="text-3xl text-gray-600">{{ $user->initials }}</span>
-                                </div>
+                        @csrf
+                        <!-- IMAGE -->
+                        @if($user->image !== '')
+                            <img class="image rounded-circle"
+                                 src="{{asset('/images/'.$user->image)}}" alt="profile_image"
+                                 style="width: 80px;height: 80px;">
+                        @else
+                            <div
+                                class="relative inline-flex items-center justify-center w-20 h-20 overflow-hidden bg-gray-300 rounded-full mr-2">
+                                <span class="text-3xl text-gray-600">{{ $user->initials }}</span>
+                            </div>
                         @endif
                     </div>
                     <div class="p-10 space-y-6">
                         <!-- EMAIL -->
-                        <div class="relative z-0 w-full mb-6 group">
+                        <div class="relative z-0 w-full group">
                             @if($user->email !== '')
                                 <input
                                     type="email"
@@ -74,7 +73,8 @@
                                     />
                                 @endif
                                 <label for="name"
-                                       class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Name</label>
+                                       class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Name
+                                </label>
                             </div>
 
                             <!-- PHONE NUMBER -->
@@ -98,35 +98,64 @@
                                 @endif
                                 <label for="phoneNumber"
                                        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone
-                                    number</label>
+                                    number
+                                </label>
                             </div>
                         </div>
 
                         <!--ADRESSE -->
-                        <div class="relative z-0 w-full mb-6 group">
-                            @if($user->adress !== '')
-                                <input
-                                    type="text"
-                                    name="adress"
-                                    id="adress"
-                                    class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                                    value="{{ $user->adress }}"
-                                />
-                            @else
-                                <input
-                                    type="text"
-                                    name="adress"
-                                    id="adress"
-                                    class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                                    placeholder=" "
-                                />
-                            @endif
-                            <label
-                                for="adress"
-                                class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                            >
-                                Adresse
-                            </label>
+                        <div class="pt-4 grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full group">
+                                @if($user->adress !== '')
+                                    <input
+                                        type="text"
+                                        name="adress"
+                                        id="adress"
+                                        class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                                        value="{{ $user->adress }}"
+                                    />
+                                @else
+                                    <input
+                                        type="text"
+                                        name="adress"
+                                        id="adress"
+                                        class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                                        placeholder=" "
+                                    />
+                                @endif
+                                <label
+                                    for="adress"
+                                    class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                >
+                                    Adresse
+                                </label>
+                            </div>
+
+                            <div class="relative z-0 w-full group">
+                                @if($user->hours_per_week !== '')
+                                    <input
+                                        type="number"
+                                        name="hours_per_week"
+                                        id="hours_per_week"
+                                        class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                                        value="{{ $user->hours_per_week }}"
+                                    />
+                                @else
+                                    <input
+                                        type="number"
+                                        name="hours_per_week"
+                                        id="hours_per_week"
+                                        class="block py-2.5 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                                        placeholder="40"
+                                    />
+                                @endif
+                                <label
+                                    for="hours_per_week"
+                                    class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                >
+                                    Wochenstunden
+                                </label>
+                            </div>
                         </div>
 
                         <!--Urlaubstage -->
@@ -232,115 +261,138 @@
                                     Dienstbeginn
                                 </label>
                             </div>
+                        </div>
 
+                        <!--Past Salaries-->
+                        <!--TODO: User kann datum einstellen-->
+                        <div class="grid md:grid-cols-2 md:gap-6">
                             @if($user->pastSalaries->count() !== 0)
                                 @php
                                     $pastSalaries = $user->pastSalaries;
                                 @endphp
-                                <div class="grid md:grid-cols-2 md:gap-6 bg-slate-100 p-3 text-xs custom-line-height shadow-inner">
-                                    <div class="font-bold">Vergangenes Gehalt</div><div></div>
-                                    <div class="text-xs underline custom-line-height"> Datum </div>
-                                    <div class="text-xs underline custom-line-height"> Gehalt </div>
+                                <div
+                                    class="grid md:grid-cols-2 md:gap-6 bg-slate-100 p-3 text-xs custom-line-height shadow-inner">
+                                    <div class="font-bold">Vergangenes Gehalt</div>
+                                    <div></div>
+                                    <div class="text-xs underline custom-line-height"> Datum</div>
+                                    <div class="text-xs underline custom-line-height"> Gehalt</div>
                                     @foreach($pastSalaries as $pastSalary)
                                         @if($pastSalary->salary !== $user->salary)
-                                            <div class="text-xs pl-2 custom-line-height">{{ Carbon\Carbon::parse($pastSalary->effective_date)->format('d M Y') }}</div>
-                                            <div class="text-xs pl-2 custom-line-height">{{ $pastSalary->salary }}€</div>
+                                            <div
+                                                class="text-xs pl-2 custom-line-height">{{ Carbon\Carbon::parse($pastSalary->effective_date)->format('d M Y') }}</div>
+                                            <div class="text-xs pl-2 custom-line-height">{{ $pastSalary->salary }}€
+                                            </div>
                                         @endif
                                     @endforeach
                                 </div>
                             @endif
+
                             <!--File Input-->
                             <div class="relative z-0 w-full mb-0 group">
                                 <input
                                     type="file"
-                                    class="mb-5 mt-2 block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none placeholder-gray-400"
+                                    class="mb-2 mt-2 block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none placeholder-gray-400"
                                     id="contract"
                                     name="contract"
                                 >
-                                @if ($user->contract !== "" && $user->contract !== null)
-                                    <a href="{{ asset($user->contract) }}" target="_blank" class="mt-10 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none ">Aktueller Vertrag</a>
-                                @endif
                                 <label
                                     for="contract"
                                     class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                 >
-                                    Arbeitsvertrag
+                                    PDF's
                                 </label>
+
+                                @if ($user->contract !== "" && $user->contract !== null)
+                                    <div class="flex flex-wrap">
+                                        @foreach ($fileHistories as $fileHistory)
+                                            <a href="{{ asset('/storage/' . $fileHistory->file_path) }}" target="_blank"
+                                               class="mr-2 mb-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">{{ $fileHistory->file_name }}</a>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
                         </div>
-
-                        <p class="text-sm text-gray-400">Workdays:</p>
-                        <ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
-                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                <div class="flex items-center pl-3">
-                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
-                                        <input type="checkbox" name="workdays[]" value="Monday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                               @if(!is_null($user->workdays) && in_array('Monday', json_decode($user->workdays))) checked @endif>
-                                        <span class="ml-2">Monday</span>
-                                    </label>
-                                </div>
-                            </li>
-                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                <div class="flex items-center pl-3">
-                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
-                                        <input type="checkbox" name="workdays[]" value="Tuesday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                               @if(!is_null($user->workdays) && in_array('Tuesday', json_decode($user->workdays))) checked @endif>
-                                        <span class="ml-2">Tuesday</span>
-                                    </label>
-                                </div>
-                            </li>
-                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                <div class="flex items-center pl-3">
-                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
-                                        <input type="checkbox" name="workdays[]" value="Wednesday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                               @if(!is_null($user->workdays) && in_array('Wednesday', json_decode($user->workdays))) checked @endif>
-                                        <span class="ml-2">Wednesday</span>
-                                    </label>
-                                </div>
-                            </li>
-                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                <div class="flex items-center pl-3">
-                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
-                                        <input type="checkbox" name="workdays[]" value="Thursday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                               @if(!is_null($user->workdays) && in_array('Thursday', json_decode($user->workdays))) checked @endif>
-                                        <span class="ml-2">Thursday</span>
-                                    </label>
-                                </div>
-                            </li>
-                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                <div class="flex items-center pl-3">
-                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
-                                        <input type="checkbox" name="workdays[]" value="Friday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                               @if(!is_null($user->workdays) && in_array('Friday', json_decode($user->workdays))) checked @endif>
-                                        <span class="ml-2">Friday</span>
-                                    </label>
-                                </div>
-                            </li>
-                            <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                <div class="flex items-center pl-3">
-                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
-                                        <input type="checkbox" name="workdays[]" value="Saturday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                               @if(!is_null($user->workdays) && in_array('Saturday', json_decode($user->workdays))) checked @endif>
-                                        <span class="ml-2">Saturday</span>
-                                    </label>
-                                </div>
-                            </li>
-                            <li class="w-full">
-                                <div class="flex items-center pl-3">
-                                    <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
-                                        <input type="checkbox" name="workdays[]" value="Sunday" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                               @if(!is_null($user->workdays) && in_array('Sunday', json_decode($user->workdays))) checked @endif>
-                                        <span class="ml-2">Sunday</span>
-                                    </label>
-                                </div>
-                            </li>
-                        </ul>
+                        <!--Workdays-->
+                        <div class="grid">
+                            <p class="text-sm text-gray-400">Workdays:</p>
+                            <ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
+                                <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                    <div class="flex items-center pl-3">
+                                        <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                            <input type="checkbox" name="workdays[]" value="Monday"
+                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                   @if(!is_null($user->workdays) && in_array('Monday', json_decode($user->workdays))) checked @endif>
+                                            <span class="ml-2">Monday</span>
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                    <div class="flex items-center pl-3">
+                                        <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                            <input type="checkbox" name="workdays[]" value="Tuesday"
+                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                   @if(!is_null($user->workdays) && in_array('Tuesday', json_decode($user->workdays))) checked @endif>
+                                            <span class="ml-2">Tuesday</span>
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                    <div class="flex items-center pl-3">
+                                        <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                            <input type="checkbox" name="workdays[]" value="Wednesday"
+                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                   @if(!is_null($user->workdays) && in_array('Wednesday', json_decode($user->workdays))) checked @endif>
+                                            <span class="ml-2">Wednesday</span>
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                    <div class="flex items-center pl-3">
+                                        <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                            <input type="checkbox" name="workdays[]" value="Thursday"
+                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                   @if(!is_null($user->workdays) && in_array('Thursday', json_decode($user->workdays))) checked @endif>
+                                            <span class="ml-2">Thursday</span>
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                    <div class="flex items-center pl-3">
+                                        <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                            <input type="checkbox" name="workdays[]" value="Friday"
+                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                   @if(!is_null($user->workdays) && in_array('Friday', json_decode($user->workdays))) checked @endif>
+                                            <span class="ml-2">Friday</span>
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                    <div class="flex items-center pl-3">
+                                        <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                            <input type="checkbox" name="workdays[]" value="Saturday"
+                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                   @if(!is_null($user->workdays) && in_array('Saturday', json_decode($user->workdays))) checked @endif>
+                                            <span class="ml-2">Saturday</span>
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="w-full">
+                                    <div class="flex items-center pl-3">
+                                        <label class="w-full py-3 ml-2 text-sm font-medium text-gray-900">
+                                            <input type="checkbox" name="workdays[]" value="Sunday"
+                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                   @if(!is_null($user->workdays) && in_array('Sunday', json_decode($user->workdays))) checked @endif>
+                                            <span class="ml-2">Sunday</span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
 
                         <button type="submit"
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-7 py-3 text-center">
                             Update
                         </button>
-                        </form>
                     </div>
                 </div>
             </div>

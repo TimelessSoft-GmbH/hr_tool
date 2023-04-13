@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasColumn('users', 'contract')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->string('contract')->nullable();
-            });
-        }
+        Schema::table('users', function (Blueprint $table) {
+            $table->integer('hours_per_week')->nullable();
+        });
     }
 
     /**
@@ -28,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('contract');
+            $table->dropColumn('hours_per_week');
         });
     }
 };
