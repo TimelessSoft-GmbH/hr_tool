@@ -13,7 +13,9 @@
                     <div class="flex items-center justify-center pt-1">
                         <!--Open Form-->
                         <form method="POST"
-                              action="{{ route('index.updated.user', ['id' => $user->id]) }}">
+                              action="{{ route('index.updated.user', ['id' => $user->id]) }}"
+                              enctype="multipart/form-data"
+                        >
                             @csrf
                             <!-- IMAGE -->
                             @if($user->image !== '')
@@ -247,6 +249,24 @@
                                     @endforeach
                                 </div>
                             @endif
+                            <!--File Input-->
+                            <div class="relative z-0 w-full mb-0 group">
+                                <input
+                                    type="file"
+                                    class="mb-5 mt-2 block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none placeholder-gray-400"
+                                    id="contract"
+                                    name="contract"
+                                >
+                                @if ($user->contract !== "" && $user->contract !== null)
+                                    <a href="{{ asset($user->contract) }}" target="_blank" class="mt-10 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none ">Aktueller Vertrag</a>
+                                @endif
+                                <label
+                                    for="contract"
+                                    class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                >
+                                    Arbeitsvertrag
+                                </label>
+                            </div>
                         </div>
 
                         <p class="text-sm text-gray-400">Workdays:</p>
