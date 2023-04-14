@@ -30,39 +30,23 @@ class UpdateUserController extends Controller
     }
 
     public function update(Request $request, $id){
-        $data = $request->except("_token");
         $user = User::findOrFail($id);
+        //Get Data without effective Dates, which get handled in separate function:
+        $data = $request->except(array_merge(["_token"], preg_grep('/^effective_date_/', array_keys($request->all()))));
 
         foreach ($data as $index => $value) {
             if ($index === 'hasrole') {
                 $this->changeUserRole($id, $value);
             }
             if ($index === 'contract' && $request->hasFile('contract')){
-                // store the new file
-                $pdf = $request->file('contract');
-                $path = $pdf->store('contracts', 'public');
-
-                // Create a new file history record
-                DB::table('file_history')->insert([
-                    'user_id' => $user->id,
-                    'file_name' => $pdf->getClientOriginalName(),
-                    'file_path' => $path,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-                DB::table('users')
-                    ->where('id', $id)
-                    ->update(["contract" => Storage::url($path)]);
+                // Store the new file
+                $this->pdfFileUpload($request, $user);
             }
             if ($index === 'salary' && $value !== $user->salary) {
                 // Save new past salary in the past_salaries table
-                $pastSalary = new PastSalary;
-                $pastSalary->user_id = $id;
-                $pastSalary->salary = $value;
-                $pastSalary->effective_date = now();
-                $pastSalary->save();
+                $this->newPastSalary($id, $value);
             }
+
             if($value !== null && $index !== "contract"){
                 DB::table('users')
                     ->where('id', $id)
@@ -70,6 +54,8 @@ class UpdateUserController extends Controller
             }
         }
 
+        //Update the past salaries
+        $this->updateOldPastSalariesDates($user, $request);
         return redirect('/admin');
     }
 
@@ -79,7 +65,6 @@ class UpdateUserController extends Controller
         User::find($id)->delete();
         return redirect('/admin');
     }
-
 
     function changeUserRole($userId, $newRoleName) {
         $user = User::findOrFail($userId);
@@ -98,15 +83,47 @@ class UpdateUserController extends Controller
 
         return true;
     }
-    public function downloadContract($id)
-    {
-        $user = User::findOrFail($id);
-        $filePath = $user->contract;
 
-        if (Storage::exists($filePath)) {
-            return Storage::download($filePath);
-        } else {
-            abort(404);
+    public function pdfFileUpload($request, $user)
+    {
+        $pdf = $request->file('contract');
+        $path = $pdf->store('contracts', 'public');
+
+        // Create a new file history record
+        DB::table('file_history')->insert([
+            'user_id' => $user->id,
+            'file_name' => $pdf->getClientOriginalName(),
+            'file_path' => $path,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('users')
+            ->where('id', $user->id)
+            ->update(["contract" => Storage::url($path)]);
+    }
+
+    public function newPastSalary($id, $value){
+        $pastSalary = new PastSalary;
+        $pastSalary->user_id = $id;
+        $pastSalary->salary = $value;
+        $pastSalary->effective_date = now();
+        $pastSalary->save();
+    }
+
+    public function updateOldPastSalariesDates($user, $request){
+        $pastSalaries = $user->pastSalaries;
+
+        // Update only changed effective_dates
+        foreach ($pastSalaries as $pastSalary) {
+            if ($pastSalary->salary !== $user->salary) {
+                $effectiveDate = $request->input("effective_date_{$pastSalary->id}");
+                if ($effectiveDate !== null && $effectiveDate !== $pastSalary->effective_date) {
+                    $pastSalary->update([
+                        'effective_date' => $effectiveDate,
+                    ]);
+                }
+            }
         }
     }
 }

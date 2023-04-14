@@ -264,54 +264,59 @@
                         </div>
 
                         <!--Past Salaries-->
-                        <!--TODO: User kann datum einstellen-->
-                        <div class="grid md:grid-cols-2 md:gap-6">
-                            @if($user->pastSalaries->count() !== 0)
+                        <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6">
+                            @if($user->pastSalaries->count() > 1)
                                 @php
                                     $pastSalaries = $user->pastSalaries;
                                 @endphp
-                                <div
-                                    class="grid md:grid-cols-2 md:gap-6 bg-slate-100 p-3 text-xs custom-line-height shadow-inner">
-                                    <div class="font-bold">Vergangenes Gehalt</div>
-                                    <div></div>
-                                    <div class="text-xs underline custom-line-height"> Datum</div>
-                                    <div class="text-xs underline custom-line-height"> Gehalt</div>
-                                    @foreach($pastSalaries as $pastSalary)
-                                        @if($pastSalary->salary !== $user->salary)
-                                            <div
-                                                class="text-xs pl-2 custom-line-height">{{ Carbon\Carbon::parse($pastSalary->effective_date)->format('d M Y') }}</div>
-                                            <div class="text-xs pl-2 custom-line-height">{{ $pastSalary->salary }}€
-                                            </div>
-                                        @endif
-                                    @endforeach
+                                <div class="bg-gray-100 p-4 shadow-inner">
+                                    <h2 class="text-lg font-bold mb-2">Vergangenes Gehalt</h2>
+                                    <div class="grid grid-cols-2 gap-2 mb-2 text-sm font-medium">
+                                        @foreach($pastSalaries as $pastSalary)
+                                            @if($pastSalary->salary !== $user->salary)
+                                                <div class="col-span-2">
+                                                    <div class="grid grid-cols-2 gap-2 items-center">
+                                                        <div class="text-gray-500">Datum</div>
+                                                        <div class="text-gray-500">Gehalt</div>
+                                                        <div>
+                                                            <input type="date" name="effective_date_{{ $pastSalary->id }}" value="{{ $pastSalary->effective_date }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                                        </div>
+                                                        <div>
+                                                            <p class="pl-3 text-base w-full border-gray-300 rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">{{ $pastSalary->salary }}€</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
 
-                            <!--File Input-->
+                        <!--File Input-->
                             <div class="relative z-0 w-full mb-0 group">
-                                <input
-                                    type="file"
-                                    class="mb-2 mt-2 block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none placeholder-gray-400"
-                                    id="contract"
-                                    name="contract"
+                                <input type="file"
+                                       class="mb-2 mt-2 block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none placeholder-gray-400 py-2 px-3 leading-5"
+                                       id="contract"
+                                       name="contract"
                                 >
-                                <label
-                                    for="contract"
-                                    class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                >
+                                <label for="contract"
+                                       class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                                     PDF's
                                 </label>
 
                                 @if ($user->contract !== "" && $user->contract !== null)
-                                    <div class="flex flex-wrap">
+                                    <div class="flex flex-wrap mt-2">
                                         @foreach ($fileHistories as $fileHistory)
                                             <a href="{{ asset('/storage/' . $fileHistory->file_path) }}" target="_blank"
-                                               class="mr-2 mb-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">{{ $fileHistory->file_name }}</a>
+                                               class="mr-2 mb-1 py-2 px-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white font-medium rounded-lg text-sm focus:outline-none">
+                                                {{ $fileHistory->file_name }}
+                                            </a>
                                         @endforeach
                                     </div>
                                 @endif
                             </div>
                         </div>
+
                         <!--Workdays-->
                         <div class="grid">
                             <p class="text-sm text-gray-400">Workdays:</p>
@@ -399,8 +404,3 @@
         </div>
     </div>
 </x-app-layout>
-<style>
-    .custom-line-height {
-        line-height: 0;
-    }
-</style>
