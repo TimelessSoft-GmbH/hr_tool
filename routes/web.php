@@ -27,6 +27,7 @@ Route::post('/dashboard', [DashboardController::class, 'store'])->middleware(['a
 Route::post('/dashboard/sickness', [DashboardController::class, 'storeSick'])->middleware(['auth', 'verified'])->name('dashboard-sickness');
 
 Route::get('/admin', [AdminController::class, 'index'])->middleware('admin')->name('admin');
+Route::post('/admin', [AdminController::class, 'storePastVac'])->middleware(['admin'])->name('dashboard-vacation');
 Route::post('/admin/{id}', [AdminController::class, 'roleChange'])->middleware('admin')->name('role.update');
 Route::post('/admin/{id}/update', [AdminController::class, 'update'])->middleware('admin')->name('user.update');
 Route::get('/admin/user/update/{id}', [UpdateUserController::class, 'index'])->middleware('admin')->name('index.update.user');

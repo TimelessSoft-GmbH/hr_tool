@@ -8,6 +8,7 @@ use App\Models\VacationRequest;
 use App\Models\SicknessRequest;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Mail;
 
@@ -21,7 +22,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function store()
+    public function store(Request $request)
     {
         //Get Attributes
         $attributes = $this->getAttributes();

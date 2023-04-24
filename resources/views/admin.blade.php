@@ -8,6 +8,10 @@ function hideButtonSick() {
     var element = document.getElementById("buttonSubSick");
     element.classList.toggle("hidden");
 }
+function addRowBtn() {
+    var element = document.getElementById("addRowBtn");
+    element.classList.toggle("hidden");
+}
 </script>
 
 <x-app-layout>
@@ -123,7 +127,7 @@ function hideButtonSick() {
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h2>Urlaub-Requests</h2>
-                    <!--Table for Users-->
+                    <!--Table for Vacation-Requests-->
                     <div class="pb-4">
                         <div class="w-3/4 mx-auto">
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -188,9 +192,60 @@ function hideButtonSick() {
                                             </td>
                                         </tr>
                                     @endforeach
+                                        <tr class="bg-gray-100 hidden" id="addRowBtn">
+                                            <form method="POST"
+                                                  action="{{ route('dashboard-vacation') }}">
+                                                @csrf
+                                                <td class=" px-3 text-sm text-gray-700">
+                                                    <select
+                                                        name="user_id"
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 text-center"
+                                                    >
+                                                        @foreach($users as $user)
+                                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td class="py-4 px-3 text-sm text-gray-700 justify-center">
+                                                    <input
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                                        type="date"
+                                                        name="start_date"
+                                                    >
+                                                </td>
+                                                <td class="py-4 px-3 text-sm text-gray-700">
+                                                    <input
+                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                                        type="date"
+                                                        name="end_date"
+                                                    >
+                                                </td>
+                                                <td class="py-4 px-6 text-sm text-gray-700">
+                                                    <button
+                                                        class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                        type="submit"
+                                                    >
+                                                        Eintragen
+                                                    </button>
+                                                </td>
+                                                <td class="py-4 px-6 text-sm text-gray-700">
+
+                                                </td>
+                                                <td class="py-4 px-6 text-sm text-gray-700">
+
+                                                </td>
+                                            </form>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
+                            <button
+                                class="mt-5 ml-4 block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                type="button"
+                                onclick="addRowBtn()"
+                            >
+                                <span class="font-bold">+</span> Urlaub nachtragen
+                            </button>
                         </div>
                     </div>
                 </div>

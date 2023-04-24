@@ -6,6 +6,8 @@ use App\Mail\AnswerEmail;
 use App\Models\SicknessRequest;
 use App\Models\User;
 use App\Models\VacationRequest;
+use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -61,7 +63,7 @@ class AdminController extends Controller
     public function updateVacationDays($id){
         $vacationreq = VacationRequest::findOrFail($id);
         $user = User::findOrFail($vacationreq->user_id);
-        $vacationDays_left = $user->vacationDays - $vacationreq->total_days;
+        $vacationDays_left = $user->vacationDays_left - $vacationreq->total_days;
 
         DB::table('users')
             ->where('id', $vacationreq->user_id)
@@ -91,5 +93,71 @@ class AdminController extends Controller
 
         //Send Email to all Admins
         Mail::to($user->email)->send($email);
+    }
+
+    public function storePastVac(Request $request)
+    {
+        //Get Attributes
+        $attributes = $this->getAttributes();
+        //Create Vacation Request
+        $newVac = VacationRequest::create($attributes);
+
+        //Setting it directly to accepted
+        DB::table('vacation_requests')
+            ->where('id', $newVac->id)
+            ->update(['accepted' => 'accepted']);
+
+        $this->updateVacationDays($newVac->id);
+
+        return redirect('/admin');
+    }
+
+    public function getAttributes(): array
+    {
+        $attributes = request()?->validate([
+            'start_date' => ['required', 'date:Y-m-d'],
+            'end_date' => ['required', 'date:Y-m-d'],
+            'total_days' => [],
+            'user_id' => ['required'],
+        ]);
+
+        //Get Public Holidays from API
+        $client = new Client();
+        $year = date('Y');
+        $response = $client->get("https://date.nager.at/api/v3/PublicHolidays/{$year}/AT");
+        $holidays = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $holiday_dates = [];
+        foreach ($holidays as $holiday) {
+            $holiday_dates[] = (string) $holiday['date'];
+        }
+
+        // Get user's workdays
+        $user = User::findOrFail($attributes['user_id']);
+        $workdays = json_decode($user->workdays, true, 512, JSON_THROW_ON_ERROR) ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+        //Calculate total Days without public Holidays
+        $start_date = Carbon::parse($attributes['start_date'])->startOfDay();
+        $end_date = Carbon::parse($attributes['end_date'])->startOfDay();
+        $total_days = 0;
+
+        //Check if the start date is a workday of the user before adding them to the total days:
+        if (in_array($start_date->format('l'), $workdays, true) && !in_array($start_date->format('Y-m-d'), $holiday_dates, true)) {
+            $total_days++;
+        }
+        //Loop for adding total days
+        for ($date = $start_date->copy()->addDay(); $date->lt($end_date); $date->addDay()) {
+            if (in_array($date->format('l'), $workdays, true) && !in_array($date->format('Y-m-d'), $holiday_dates, true)) {
+                $total_days++;
+            }
+        }
+        //Add one if End-day is a workday
+        if (in_array($end_date->format('l'), $workdays, true) && !in_array($end_date->format('Y-m-d'), $holiday_dates, true)) {
+            $total_days++;
+        }
+
+        //Add Total Days to attribute to save it in DB
+        $attributes['total_days'] = (string) $total_days;
+
+        return $attributes;
     }
 }
