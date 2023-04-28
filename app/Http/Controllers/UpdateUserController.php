@@ -67,7 +67,13 @@ class UpdateUserController extends Controller
     }
 
     public function destroyVacationRequest($id){
+        $totalDays = VacationRequest::where('id', $id)->value('total_days');
+        $user = User::find(VacationRequest::where('id', $id)->value('user_id'));
         VacationRequest::where('id', $id)->delete();
+        //Reset the vacationDays_left
+        $newTotalDays = $user->vacationDays_left + $totalDays;
+        $user->vacationDays_left = $newTotalDays;
+        $user->save();
         return redirect('/admin');
     }
 
