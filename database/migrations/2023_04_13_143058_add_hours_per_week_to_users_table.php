@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('hours_per_week')->nullable();
+            $table->decimal('hours_per_week')->nullable();
         });
     }
 
