@@ -66,6 +66,11 @@ class UpdateUserController extends Controller
         return redirect('/admin');
     }
 
+    public function destroyVacationRequest($id){
+        VacationRequest::where('id', $id)->delete();
+        return redirect('/admin');
+    }
+
     function changeUserRole($userId, $newRoleName) {
         $user = User::findOrFail($userId);
         $oldRole = $user->roles()->first();

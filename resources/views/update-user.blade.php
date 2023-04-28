@@ -134,7 +134,7 @@
                             <div class="relative z-0 w-full group">
                                 @if($user->hours_per_week !== '')
                                     <input
-                                        type="number"
+                                        type="text"
                                         name="hours_per_week"
                                         id="hours_per_week"
                                         class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
@@ -142,11 +142,11 @@
                                     />
                                 @else
                                     <input
-                                        type="number"
+                                        type="text"
                                         name="hours_per_week"
                                         id="hours_per_week"
                                         class="block py-2.5 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                                        placeholder="40"
+                                        placeholder=" "
                                     />
                                 @endif
                                 <label
@@ -212,7 +212,7 @@
                             <div class="relative z-0 w-full group">
                                 @if($user->salary !== '')
                                     <input
-                                        type="number"
+                                        type="text"
                                         name="salary"
                                         id="salary"
                                         class="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
@@ -220,7 +220,7 @@
                                     />
                                 @else
                                     <input
-                                        type="number"
+                                        type="text"
                                         name="salary"
                                         id="salary"
                                         class="block py-2.5 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
@@ -404,3 +404,18 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    const salaryInput = document.getElementById('salary');
+    const weeklyHoursInput = document.getElementById('hours_per_week');
+
+    salaryInput.addEventListener('input', (event) => {
+        // Replace any commas with periods
+        event.target.value = event.target.value.replace(',', '.');
+    });
+
+    weeklyHoursInput.addEventListener('input', (event) => {
+        // Replace any commas with periods
+        event.target.value = event.target.value.replace(',', '.');
+    });
+</script>

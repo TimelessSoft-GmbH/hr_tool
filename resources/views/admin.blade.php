@@ -140,6 +140,7 @@ function addRowBtn() {
                                         <th scope="col" class="px-6 py-3 text-center">Tage Insg</th>
                                         <th scope="col" class="px-6 py-3 text-center">Status</th>
                                         <th scope="col" class="px-6 py-3 text-center">Antwort</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Löschen</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -190,6 +191,19 @@ function addRowBtn() {
                                                     <p class="text-gray-400 italic text-center">Bereits bearbeitet</p>
                                                 @endif
                                             </td>
+                                            <td class="px-6 text-sm text-gray-700">
+                                                <form method="POST" action="{{ route('vacation.delete', $vacationRequest->id) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button
+                                                        class="font-bold text-red-500 font-medium rounded-lg text-sm w-full sm:w-auto pt-3 text-center"
+                                                        type="submit"
+                                                        onclick="return confirm('Are you sure that you want to delete this?')"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                         <tr class="bg-gray-100 hidden" id="addRowBtn">
@@ -227,6 +241,9 @@ function addRowBtn() {
                                                     >
                                                         Eintragen
                                                     </button>
+                                                </td>
+                                                <td class="py-4 px-6 text-sm text-gray-700">
+
                                                 </td>
                                                 <td class="py-4 px-6 text-sm text-gray-700">
 

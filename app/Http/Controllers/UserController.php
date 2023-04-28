@@ -61,4 +61,8 @@ class UserController extends Controller
         }
         return $ret;
     }
+
+    public function destroyVacationRequest(){
+
+    }
 }

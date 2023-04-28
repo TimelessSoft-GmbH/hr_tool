@@ -38,6 +38,7 @@ Route::post('/admin/user/updated/{id}', [UpdateUserController::class, 'update'])
 Route::delete('/admin/user/deleted/{id}', [UpdateUserController::class, 'destroy'])->middleware('admin')->name('index.delete.user');
 Route::post('/admin/{id}/submitAnswer', [AdminController::class, 'answerUpdateVacation'])->middleware('admin')->name('vacation.answerUpdate');
 Route::post('/admin/{id}/submitAnswer2', [AdminController::class, 'answerUpdateSickness'])->middleware('admin')->name('sickness.answerUpdate');
+Route::delete('/admin/user/vacation/{id}', [UpdateUserController::class, 'destroyVacationRequest'])->middleware('admin')->name('vacation.delete');
 Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->middleware('admin')->name('user.delete');
 
 
