@@ -393,6 +393,42 @@
                                 </li>
                             </ul>
                         </div>
+                        @if($user->hours_per_week !== null && $user->workdays !== null)
+                            @php
+                                $workingHours = app('App\Http\Controllers\UpdateUserController')->getWorkingHoursInMonth($user);
+                                $workingDays = app('App\Http\Controllers\UpdateUserController')->getWorkingDaysInMonth($user);
+                            @endphp
+                            <div class="pt-4 grid md:grid-cols-1 md:gap-6">
+                                <div class="bg-slate-100 rounded-lg shadow overflow-hidden">
+                                    <div class="px-4 py-5 sm:px-6">
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                            Statistik für aktuellen Monat {{ date('F') }}:
+                                        </h3>
+                                    </div>
+                                    <div class="border-t border-gray-200">
+                                        <dl>
+                                            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                <dt class="text-sm font-medium text-gray-500">
+                                                    Arbeitstage
+                                                </dt>
+                                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                                    {{ $workingDays }}
+                                                </dd>
+                                            </div>
+                                            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                <dt class="text-sm font-medium text-gray-500">
+                                                    Arbeitsstunden
+                                                </dt>
+                                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                                    {{ number_format($workingHours, 2) }}
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
 
                         <button type="submit"
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-7 py-3 text-center">
