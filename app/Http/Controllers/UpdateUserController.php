@@ -41,16 +41,15 @@ class UpdateUserController extends Controller
             if ($index === 'hasrole') {
                 $this->changeUserRole($id, $value);
             }
-            if ($index === 'contract' && $request->hasFile('contract')) {
-                // Store the new file
-                $this->pdfFileUpload($request, $user);
-            }
             if ($index === 'salary' && $value !== $user->salary) {
-                // Save new past salary in the past_salaries table
                 $this->newPastSalary($id, $value);
             }
+            if ($index === 'file' && $request->hasFile('file')) {
+                continue;
+                //$this->pdfFileUpload($request, $user);
+            }
 
-            if ($value !== null && $index !== "contract") {
+            if ($value !== null && $index !== "file") {
                 DB::table('users')
                     ->where('id', $id)
                     ->update([$index => $value]);
@@ -59,26 +58,6 @@ class UpdateUserController extends Controller
 
         //Update the past salaries
         $this->updateOldPastSalariesDates($user, $request);
-        return redirect('/admin');
-    }
-
-    public function destroy($id)
-    {
-        VacationRequest::where('user_id', $id)->delete();
-        SicknessRequest::where('user_id', $id)->delete();
-        User::find($id)->delete();
-        return redirect('/admin');
-    }
-
-    public function destroyVacationRequest($id)
-    {
-        $totalDays = VacationRequest::where('id', $id)->value('total_days');
-        $user = User::find(VacationRequest::where('id', $id)->value('user_id'));
-        VacationRequest::where('id', $id)->delete();
-        //Reset the vacationDays_left
-        $newTotalDays = $user->vacationDays_left + $totalDays;
-        $user->vacationDays_left = $newTotalDays;
-        $user->save();
         return redirect('/admin');
     }
 
@@ -103,22 +82,15 @@ class UpdateUserController extends Controller
 
     public function pdfFileUpload($request, $user)
     {
-        $pdf = $request->file('contract');
-        $path = $pdf->store('contracts', 'public');
-
-        // Create a new file history record
-        DB::table('file_history')->insert([
-            'user_id' => $user->id,
-            'file_name' => $pdf->getClientOriginalName(),
-            'file_path' => $path,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('users')
-            ->where('id', $user->id)
-            ->update(["contract" => Storage::url($path)]);
+        //TODO: PDF Upload
     }
+
+
+    public function deleteFile($id)
+    {
+        //TODO: PDF DELETE
+    }
+
 
     public function newPastSalary($id, $value)
     {
@@ -127,6 +99,8 @@ class UpdateUserController extends Controller
         $pastSalary->salary = $value;
         $pastSalary->effective_date = now();
         $pastSalary->save();
+
+        return;
     }
 
     public function updateOldPastSalariesDates($user, $request)
@@ -183,5 +157,25 @@ class UpdateUserController extends Controller
         $averageHoursPerDay = $user->hours_per_week / count($workdays);
 
         return $workingDaysInMonth * $averageHoursPerDay;
+    }
+
+    public function destroy($id)
+    {
+        VacationRequest::where('user_id', $id)->delete();
+        SicknessRequest::where('user_id', $id)->delete();
+        User::find($id)->delete();
+        return redirect('/admin');
+    }
+
+    public function destroyVacationRequest($id)
+    {
+        $totalDays = VacationRequest::where('id', $id)->value('total_days');
+        $user = User::find(VacationRequest::where('id', $id)->value('user_id'));
+        VacationRequest::where('id', $id)->delete();
+        //Reset the vacationDays_left
+        $newTotalDays = $user->vacationDays_left + $totalDays;
+        $user->vacationDays_left = $newTotalDays;
+        $user->save();
+        return redirect('/admin');
     }
 }

@@ -15,17 +15,17 @@
                               action="{{ route('index.updated.user', ['id' => $user->id]) }}"
                               enctype="multipart/form-data"
                         >
-                        @csrf
-                        <!-- IMAGE -->
-                        @if($user->image !== '')
-                            <img class="image rounded-circle"
-                                 src="{{asset('/images/'.$user->image)}}" alt="profile_image"
-                                 style="width: 80px;height: 80px;">
-                        @else
-                            <div
-                                class="relative inline-flex items-center justify-center w-20 h-20 overflow-hidden bg-gray-300 rounded-full mr-2">
-                                <span class="text-3xl text-gray-600">{{ $user->initials }}</span>
-                            </div>
+                            @csrf
+                            <!-- IMAGE -->
+                            @if($user->image !== '')
+                                <img class="image rounded-circle"
+                                     src="{{asset('/images/'.$user->image)}}" alt="profile_image"
+                                     style="width: 80px;height: 80px;">
+                            @else
+                                <div
+                                    class="relative inline-flex items-center justify-center w-20 h-20 overflow-hidden bg-gray-300 rounded-full mr-2">
+                                    <span class="text-3xl text-gray-600">{{ $user->initials }}</span>
+                                </div>
                         @endif
                     </div>
                     <div class="p-10 space-y-6">
@@ -279,10 +279,14 @@
                                                         <div class="text-gray-500">Datum</div>
                                                         <div class="text-gray-500">Gehalt</div>
                                                         <div>
-                                                            <input type="date" name="effective_date_{{ $pastSalary->id }}" value="{{ $pastSalary->effective_date }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                                            <input type="date"
+                                                                   name="effective_date_{{ $pastSalary->id }}"
+                                                                   value="{{ $pastSalary->effective_date }}"
+                                                                   class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                                         </div>
                                                         <div>
-                                                            <p class="pl-3 text-base w-full border-gray-300 rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">{{ $pastSalary->salary }}€</p>
+                                                            <p class="pl-3 text-base w-full border-gray-300 rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">{{ $pastSalary->salary }}
+                                                                €</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -292,28 +296,18 @@
                                 </div>
                             @endif
 
-                        <!--File Input-->
+                            <!--File Input-->
                             <div class="relative z-0 w-full mb-0 group">
                                 <input type="file"
                                        class="mb-2 mt-2 block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none placeholder-gray-400 py-2 px-3 leading-5"
-                                       id="contract"
-                                       name="contract"
+                                       id="file"
+                                       name="file"
+                                       disabled
                                 >
-                                <label for="contract"
+                                <label for="file"
                                        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                                     PDF's
                                 </label>
-
-                                @if ($user->contract !== "" && $user->contract !== null)
-                                    <div class="flex flex-wrap mt-2">
-                                        @foreach ($fileHistories as $fileHistory)
-                                            <a href="{{ asset('/storage/' . $fileHistory->file_path) }}" target="_blank"
-                                               class="mr-2 mb-1 py-2 px-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white font-medium rounded-lg text-sm focus:outline-none">
-                                                {{ $fileHistory->file_name }}
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                @endif
                             </div>
                         </div>
 
@@ -393,42 +387,83 @@
                                 </li>
                             </ul>
                         </div>
-                        @if($user->hours_per_week !== null && $user->workdays !== null)
-                            @php
-                                $workingHours = app('App\Http\Controllers\UpdateUserController')->getWorkingHoursInMonth($user);
-                                $workingDays = app('App\Http\Controllers\UpdateUserController')->getWorkingDaysInMonth($user);
-                            @endphp
-                            <div class="pt-4 grid md:grid-cols-1 md:gap-6">
-                                <div class="bg-slate-100 rounded-lg shadow overflow-hidden">
-                                    <div class="px-4 py-5 sm:px-6">
-                                        <h3 class="text-lg leading-6 font-medium text-gray-900">
-                                            Statistik für aktuellen Monat {{ date('F') }}:
-                                        </h3>
-                                    </div>
-                                    <div class="border-t border-gray-200">
-                                        <dl>
-                                            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                                <dt class="text-sm font-medium text-gray-500">
-                                                    Arbeitstage
-                                                </dt>
-                                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                                    {{ $workingDays }}
-                                                </dd>
-                                            </div>
-                                            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                                <dt class="text-sm font-medium text-gray-500">
-                                                    Arbeitsstunden
-                                                </dt>
-                                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                                    {{ number_format($workingHours, 2) }}
-                                                </dd>
-                                            </div>
-                                        </dl>
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            @if($user->hours_per_week !== null && $user->workdays !== null)
+                                @php
+                                    $workingHours = app('App\Http\Controllers\UpdateUserController')->getWorkingHoursInMonth($user);
+                                    $workingDays = app('App\Http\Controllers\UpdateUserController')->getWorkingDaysInMonth($user);
+                                @endphp
+                                <div class="pt-4 grid md:grid-cols-1 md:gap-6">
+                                    <div class="bg-slate-100 rounded-lg shadow overflow-hidden">
+                                        <div class="px-4 py-5 sm:px-6">
+                                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                                Statistik für aktuellen Monat {{ date('F') }}:
+                                            </h3>
+                                        </div>
+                                        <div class="border-t border-gray-200">
+                                            <dl>
+                                                <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                    <dt class="text-sm font-medium text-gray-500">
+                                                        Arbeitstage
+                                                    </dt>
+                                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                                        {{ $workingDays }}
+                                                    </dd>
+                                                </div>
+                                                <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                    <dt class="text-sm font-medium text-gray-500">
+                                                        Arbeitsstunden
+                                                    </dt>
+                                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                                        {{ number_format($workingHours, 2) }}
+                                                    </dd>
+                                                </div>
+                                            </dl>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
 
+                            @if(!$fileHistories->where('user_id', $user->id)->isEmpty())
+                                <div class="pt-4 grid md:grid-cols-1 md:gap-6 w-full">
+                                    <div class="bg-slate-100 rounded-lg shadow overflow-hidden">
+                                        <div class="px-4 py-5 sm:px-6">
+                                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                                Dateien
+                                            </h3>
+                                        </div>
+                                        <div class="border-t border-gray-200">
+                                            <dl>
+                                                @foreach ($fileHistories as $fileHistory)
+                                                    @if ($fileHistory->user_id === $user->id)
+                                                        <div class="px-5 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                            <dt class="text-sm font-medium text-gray-500">
+                                                                <a href="{{ asset('/storage/' . $fileHistory->file_path) }}"
+                                                                   target="_blank"
+                                                                   class="text-blue-700 hover:underline focus:outline-none">
+                                                                    {{ $fileHistory->file_name }}
+                                                                </a>
+                                                            </dt>
+                                                            <dt class="mt-1 text-sm text-gray-400 italic sm:mt-0">
+                                                                {{ $fileHistory->updated_at->format('jS \of F') }}
+                                                            </dt>
+                                                            <dt class="mt-1 text-sm sm:mt-0">
+                                                                <button
+                                                                    class="font-bold text-red-500 font-medium rounded-lg text-sm sm:w-auto"
+                                                                    type="submit"
+                                                                    onclick="return confirm('Are you sure that you want to delete this?')">
+                                                                    Delete
+                                                                </button>
+                                                            </dt>
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
 
                         <button type="submit"
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-7 py-3 text-center">
