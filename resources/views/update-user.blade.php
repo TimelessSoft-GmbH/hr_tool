@@ -300,14 +300,16 @@
                             <div class="relative z-0 w-full mb-0 group">
                                 <input type="file"
                                        class="mb-2 mt-2 block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none placeholder-gray-400 py-2 px-3 leading-5"
-                                       id="file"
-                                       name="file"
-                                       disabled
+                                       id="files"
+                                       name="files[]"
+                                       accept=".pdf"
+                                       multiple
                                 >
-                                <label for="file"
+                                <label for="files[]"
                                        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                                     PDF's
                                 </label>
+                                <small class="form-text text-muted">Nur PDF files sind erlaubt</small>
                             </div>
                         </div>
 
@@ -387,6 +389,11 @@
                                 </li>
                             </ul>
                         </div>
+                        <button type="submit"
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-10 py-3 text-center">
+                            Update
+                        </button>
+
                         <div class="grid md:grid-cols-2 md:gap-6">
                             @if($user->hours_per_week !== null && $user->workdays !== null)
                                 @php
@@ -438,7 +445,7 @@
                                                     @if ($fileHistory->user_id === $user->id)
                                                         <div class="px-5 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                                             <dt class="text-sm font-medium text-gray-500">
-                                                                <a href="{{ asset('/storage/' . $fileHistory->file_path) }}"
+                                                                <a href="{{ asset('storage/' . $fileHistory->file_path) }}"
                                                                    target="_blank"
                                                                    class="text-blue-700 hover:underline focus:outline-none">
                                                                     {{ $fileHistory->file_name }}
@@ -448,12 +455,16 @@
                                                                 {{ $fileHistory->updated_at->format('jS \of F') }}
                                                             </dt>
                                                             <dt class="mt-1 text-sm sm:mt-0">
-                                                                <button
-                                                                    class="font-bold text-red-500 font-medium rounded-lg text-sm sm:w-auto"
-                                                                    type="submit"
-                                                                    onclick="return confirm('Are you sure that you want to delete this?')">
-                                                                    Delete
-                                                                </button>
+                                                                <form method="POST"
+                                                                      action="{{ route('delete.file', $fileHistory) }}">
+                                                                    @csrf
+                                                                    <button
+                                                                        class="font-bold text-red-500 font-medium rounded-lg text-sm sm:w-auto"
+                                                                        type="submit"
+                                                                        onclick="return confirm('Are you sure that you want to delete this?')">
+                                                                        Delete
+                                                                    </button>
+                                                                </form>
                                                             </dt>
                                                         </div>
                                                     @endif
@@ -464,11 +475,6 @@
                                 </div>
                             @endif
                         </div>
-
-                        <button type="submit"
-                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-7 py-3 text-center">
-                            Update
-                        </button>
                     </div>
                 </div>
             </div>

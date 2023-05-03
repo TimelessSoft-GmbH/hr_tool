@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
+
 
 class UpdateUserController extends Controller
 {
@@ -34,9 +36,13 @@ class UpdateUserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        //Get Data without effective Dates, which get handled in separate function:
-        $data = $request->except(array_merge(["_token"], preg_grep('/^effective_date_/', array_keys($request->all()))));
+        // Process files separately
+        if ($request->hasFile('files')) {
+            $this->pdfFileUpload($request, $user);
+        }
 
+        // Process other fields
+        $data = $request->except(array_merge(["_token", "files"], preg_grep('/^effective_date_/', array_keys($request->all()))));
         foreach ($data as $index => $value) {
             if ($index === 'hasrole') {
                 $this->changeUserRole($id, $value);
@@ -44,12 +50,7 @@ class UpdateUserController extends Controller
             if ($index === 'salary' && $value !== $user->salary) {
                 $this->newPastSalary($id, $value);
             }
-            if ($index === 'file' && $request->hasFile('file')) {
-                continue;
-                //$this->pdfFileUpload($request, $user);
-            }
-
-            if ($value !== null && $index !== "file") {
+            if ($value !== null) {
                 DB::table('users')
                     ->where('id', $id)
                     ->update([$index => $value]);
@@ -82,13 +83,28 @@ class UpdateUserController extends Controller
 
     public function pdfFileUpload($request, $user)
     {
-        //TODO: PDF Upload
+        $files = $request->file('files');
+        foreach ($files as $file) {
+            $filename = $file->getClientOriginalName();
+            $path = $file->storeAs('pdfs', $filename);
+            Log::info("File path for $filename: $path");
+
+            $fileHistory = new FileHistory();
+            $fileHistory->user_id = $user->id;
+            $fileHistory->file_name = $filename;
+            $fileHistory->file_path = $path;
+            $fileHistory->save();
+        }
     }
 
 
-    public function deleteFile($id)
+    public function deleteFile(FileHistory $fileHistory)
     {
-        //TODO: PDF DELETE
+        Storage::delete($fileHistory->file_path);
+        // Delete the file history record from the database
+        $fileHistory->delete();
+
+        return redirect('/admin');
     }
 
 

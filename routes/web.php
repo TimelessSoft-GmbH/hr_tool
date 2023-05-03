@@ -40,7 +40,7 @@ Route::post('/admin/{id}/submitAnswer', [AdminController::class, 'answerUpdateVa
 Route::post('/admin/{id}/submitAnswer2', [AdminController::class, 'answerUpdateSickness'])->middleware('admin')->name('sickness.answerUpdate');
 Route::delete('/admin/user/vacation/{id}', [UpdateUserController::class, 'destroyVacationRequest'])->middleware('admin')->name('vacation.delete');
 Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->middleware('admin')->name('user.delete');
-//Route::delete('/delete-file/{id}', [UpdateUserController::class, 'deleteFile'])->name('delete.file');
+Route::post('/delete-file/{fileHistory}', [UpdateUserController::class, 'deleteFile'])->name('delete.file');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
