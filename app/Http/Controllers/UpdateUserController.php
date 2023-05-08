@@ -21,7 +21,8 @@ class UpdateUserController extends Controller
 {
     public function index($id)
     {
-        $fileHistories = FileHistory::where('user_id', Auth::id())->get();
+        $user = User::findOrFail($id);
+        $fileHistories = FileHistory::where('user_id', $user->id)->get();
 
         return view('update-user', [
             'user' => User::findOrFail($id),
