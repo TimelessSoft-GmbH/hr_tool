@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EnterHoursController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UpdateUserController;
 use App\Http\Controllers\UserController;
@@ -24,9 +25,13 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::post('/dashboard', [DashboardController::class, 'store'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/send-hours', [DashboardController::class, 'storeHours'])->middleware(['auth', 'verified'])->name('send-hours');
 Route::post('/dashboard/sickness', [DashboardController::class, 'storeSick'])->middleware(['auth', 'verified'])->name('dashboard-sickness');
 
 Route::get('/admin', [AdminController::class, 'index'])->middleware('admin')->name('admin');
+Route::get('/enterHours', [EnterHoursController::class, 'index'])->middleware('admin')->name('enterHours');
+Route::post('/update-hours', [EnterHoursController::class, 'addAdmin'])->middleware('admin')->name('update-hours-admin');
+Route::get('/update-table', [EnterHoursController::class, 'updateTable'])->middleware('admin')->name('update-table');
 Route::post('/admin', [AdminController::class, 'storePastVac'])->middleware(['admin'])->name('dashboard-vacation');
 Route::post('/admin/{id}', [AdminController::class, 'roleChange'])->middleware('admin')->name('role.update');
 Route::post('/admin/{id}/update', [AdminController::class, 'update'])->middleware('admin')->name('user.update');

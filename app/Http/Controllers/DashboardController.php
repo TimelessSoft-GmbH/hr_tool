@@ -6,6 +6,7 @@ use App\Mail\MyEmail;
 use App\Models\User;
 use App\Models\VacationRequest;
 use App\Models\SicknessRequest;
+use App\Models\WorkHour;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -64,7 +65,7 @@ class DashboardController extends Controller
         $holidays = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $holiday_dates = [];
         foreach ($holidays as $holiday) {
-            $holiday_dates[] = (string) $holiday['date'];
+            $holiday_dates[] = (string)$holiday['date'];
         }
 
         // Get user's workdays
@@ -92,7 +93,7 @@ class DashboardController extends Controller
         }
 
         //Add Total Days to attribute to save it in DB
-        $attributes['total_days'] = (string) $total_days;
+        $attributes['total_days'] = (string)$total_days;
 
         return $attributes;
     }
@@ -122,5 +123,36 @@ class DashboardController extends Controller
         foreach ($admins as $admin) {
             Mail::to($admin->email)->send($email);
         }
+    }
+
+    public function storeHours(Request $request)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'year' => 'required|numeric',
+            'month' => 'required|numeric|min:1|max:12',
+            'hours' => 'required',
+        ]);
+
+        $workHour = WorkHour::where('user_id', $validatedData['user_id'])
+            ->where('year', $validatedData['year'])
+            ->where('month', $validatedData['month'])
+            ->first();
+
+        if ($workHour) {
+            // Update the existing entry
+            $workHour->update(['hours' => $validatedData['hours']]);
+        } else {
+            // Create a new entry
+            WorkHour::create([
+                'user_id' => $validatedData['user_id'],
+                'year' => $validatedData['year'],
+                'month' => $validatedData['month'],
+                'hours' => $validatedData['hours'],
+            ]);
+        }
+
+        // Redirect the user back to the previous page or to a success page
+        return back();
     }
 }

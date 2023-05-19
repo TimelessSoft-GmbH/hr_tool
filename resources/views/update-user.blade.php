@@ -403,12 +403,15 @@
                                 @php
                                     $workingHours = app('App\Http\Controllers\UpdateUserController')->getWorkingHoursInMonth($user);
                                     $workingDays = app('App\Http\Controllers\UpdateUserController')->getWorkingDaysInMonth($user);
+                                    \Illuminate\Support\Carbon::setLocale('de');
+                                    $currentMonth = \Illuminate\Support\Carbon::now()->isoFormat('MMMM');
                                 @endphp
                                 <div class="pt-4 grid md:grid-cols-1 md:gap-6">
                                     <div class="bg-slate-100 rounded-lg shadow overflow-hidden">
                                         <div class="px-4 py-5 sm:px-6">
                                             <h3 class="text-lg leading-6 font-medium text-gray-900">
-                                                Statistik für aktuellen Monat {{ date('F') }}:
+                                                Statistik für aktuellen
+                                                Monat {{ $currentMonth }}:
                                             </h3>
                                         </div>
                                         <div class="border-t border-gray-200">
