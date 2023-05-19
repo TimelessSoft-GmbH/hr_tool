@@ -87,9 +87,9 @@ class UpdateUserController extends Controller
         $files = $request->file('files');
         foreach ($files as $file) {
             $filename = $file->getClientOriginalName();
-            $path = $file->storeAs('pdfs', $filename);
-            Log::info("File path for $filename: $path");
+            $filename = str_replace(array('-', ' '), '_', $filename);
 
+            $path = $file->storeAs('pdfs', $filename);
             $fileHistory = new FileHistory();
             $fileHistory->user_id = $user->id;
             $fileHistory->file_name = $filename;
@@ -98,14 +98,15 @@ class UpdateUserController extends Controller
         }
     }
 
-
     public function deleteFile(FileHistory $fileHistory)
     {
-        Storage::delete($fileHistory->file_path);
-        // Delete the file history record from the database
-        $fileHistory->delete();
+        if (Storage::exists($fileHistory->file_path)) {
+            Storage::delete($fileHistory->file_path);
+            // Delete the file history record from the database
+            $fileHistory->delete();
+        }
 
-        return redirect('/admin');
+        return redirect()->back();
     }
 
 
