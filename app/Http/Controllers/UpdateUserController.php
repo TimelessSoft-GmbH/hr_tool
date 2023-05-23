@@ -138,9 +138,8 @@ class UpdateUserController extends Controller
         }
     }
 
-    function getWorkingDaysInMonth(User $user)
+    function getWorkingDaysInMonth(User $user, $month)
     {
-        $month = Carbon::now()->month;
         $year = Carbon::now()->year;
 
         //Get Public Holidays from API
@@ -153,7 +152,7 @@ class UpdateUserController extends Controller
         }
 
         //Get the user's workdays
-        $workdays = json_decode($user->workdays, true, 512, JSON_THROW_ON_ERROR) ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        $workdays = $user->workdays ? json_decode($user->workdays, true) : ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
         //Calculate total workdays in the month
         $total_days = Carbon::createFromDate($year, $month)->daysInMonth;
@@ -168,10 +167,10 @@ class UpdateUserController extends Controller
         return $workdays_in_month;
     }
 
-    function getWorkingHoursInMonth(User $user)
+    function getWorkingHoursInMonth(User $user, $month)
     {
         $workdays = json_decode($user->workdays, true, 512, JSON_THROW_ON_ERROR) ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-        $workingDaysInMonth = $this->getWorkingDaysInMonth($user);
+        $workingDaysInMonth = $this->getWorkingDaysInMonth($user, $month);
         $averageHoursPerDay = $user->hours_per_week / count($workdays);
 
         return $workingDaysInMonth * $averageHoursPerDay;

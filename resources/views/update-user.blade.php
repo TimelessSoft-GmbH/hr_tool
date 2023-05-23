@@ -401,8 +401,10 @@
                         <div class="grid md:grid-cols-2 md:gap-6">
                             @if($user->hours_per_week !== null && $user->workdays !== null)
                                 @php
-                                    $workingHours = app('App\Http\Controllers\UpdateUserController')->getWorkingHoursInMonth($user);
-                                    $workingDays = app('App\Http\Controllers\UpdateUserController')->getWorkingDaysInMonth($user);
+                                    $month = Carbon\Carbon::now()->month;
+                                    $workingHours = app('App\Http\Controllers\UpdateUserController')->getWorkingHoursInMonth($user, $month);
+                                    $workingDays = app('App\Http\Controllers\UpdateUserController')->getWorkingDaysInMonth($user, $month);
+
                                     \Illuminate\Support\Carbon::setLocale('de');
                                     $currentMonth = \Illuminate\Support\Carbon::now()->isoFormat('MMMM');
                                 @endphp
