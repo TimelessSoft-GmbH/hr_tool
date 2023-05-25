@@ -1,7 +1,6 @@
 @php
     $updateUserController = app(\App\Http\Controllers\UpdateUserController::class);
 @endphp
-
 <table class="w-full text-sm text-left text-gray-500">
     <thead class="text-xs text-gray-700 uppercase bg-gray-200">
     <tr>
@@ -32,24 +31,19 @@
                         ->where('year', $year)
                         ->first();
                     $monthValue = $monthHours ? $monthHours->hours : null;
-                    $cellClass = ($monthValue === null) ? 'text-gray-300' : '';
                 @endphp
 
-                <td class="py-5 px-6 text-sm text-center {{ $cellClass }}">
-                    @if ($monthValue !== null)
-                        @php
-                            // Only display when its needed
-                            $workingHours = $updateUserController->getWorkingDaysInMonth($user, $month);
-                        @endphp
-                        {{ $monthValue }}
-                        <br>
-                        <span class="text-xs text-gray-300">
-                            {{ number_format($workingHours, 2) }}
-                        </span>
-                    @else
-                        N/A
-                    @endif
-
+                <td class="py-5 px-6 text-sm text-center{{ $monthValue === null ? ' text-gray-300' : '' }}">
+                    {{ $monthValue ?? 'N/A' }}
+                    @php
+                        if ($monthValue !== null) {
+                            $workingHours = $updateUserController->getWorkingHoursInMonth($user, $month);
+                            echo "<br>";
+                            echo "<span class=\"text-xs text-gray-300\">";
+                            echo number_format($workingHours, 2);
+                            echo "</span>";
+                        }
+                    @endphp
                 </td>
             @endfor
         </tr>
