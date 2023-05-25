@@ -169,10 +169,13 @@ class UpdateUserController extends Controller
 
     function getWorkingHoursInMonth(User $user, $month)
     {
-        $workdays = json_decode($user->workdays, true, 512, JSON_THROW_ON_ERROR) ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        $workdays = json_decode($user->workdays, true);
+        if ($workdays === null && json_last_error() !== JSON_ERROR_NONE) {
+            $workdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        }
         $workingDaysInMonth = $this->getWorkingDaysInMonth($user, $month);
         $averageHoursPerDay = $user->hours_per_week / count($workdays);
-        
+
         return $workingDaysInMonth * $averageHoursPerDay;
     }
 
