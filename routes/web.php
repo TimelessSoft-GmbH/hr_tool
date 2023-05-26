@@ -23,32 +23,36 @@ Route::get('/', function () {
     return view('auth/login');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::post('/dashboard', [DashboardController::class, 'store'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::post('/send-hours', [DashboardController::class, 'storeHours'])->middleware(['auth', 'verified'])->name('send-hours');
-Route::post('/dashboard/sickness', [DashboardController::class, 'storeSick'])->middleware(['auth', 'verified'])->name('dashboard-sickness');
 
+// Load Pages Routes
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/admin', [AdminController::class, 'index'])->middleware('admin')->name('admin');
 Route::get('/enterHours', [EnterHoursController::class, 'index'])->middleware('admin')->name('enterHours');
-Route::post('/update-hours', [EnterHoursController::class, 'addAdmin'])->middleware('admin')->name('update-hours-admin');
-Route::get('/update-table', [EnterHoursController::class, 'updateTable'])->middleware('admin')->name('update-table');
-Route::post('/admin/storeVacation', [AdminController::class, 'storePastVac'])->middleware(['admin'])->name('dashboard-vacation');
-Route::post('/admin/storeSickness', [AdminController::class, 'storePastSick'])->middleware(['admin'])->name('dashboard-sickness');
-Route::post('/admin/{id}', [AdminController::class, 'roleChange'])->middleware('admin')->name('role.update');
-Route::post('/admin/{id}/update', [AdminController::class, 'update'])->middleware('admin')->name('user.update');
 Route::get('/admin/user/update/{id}', [UpdateUserController::class, 'index'])->middleware('admin')->name('index.update.user');
 Route::get('/users/create', [UserController::class, 'index'])->middleware('admin')->name('users.load.create');
+
+// Safe in DB - Routes
+Route::post('/dashboard/vacation', [DashboardController::class, 'storeVac'])->middleware(['auth', 'verified'])->name('dashboard-vacation');
+Route::post('/dashboard/sickness', [DashboardController::class, 'storeSick'])->middleware(['auth', 'verified'])->name('dashboard-sickness');
+Route::post('/send-hours', [DashboardController::class, 'storeHours'])->middleware(['auth', 'verified'])->name('send-hours');
+Route::post('/admin/storeVacation', [AdminController::class, 'storePastVac'])->middleware(['admin'])->name('dashboard-vacation-admin');
+Route::post('/admin/storeSickness', [AdminController::class, 'storePastSick'])->middleware(['admin'])->name('dashboard-sickness-admin');
 Route::post('/users/created', [UserController::class, 'create'])->middleware('admin')->name('users.create');
 
-Route::post('/admin/user/updated/{id}', [UpdateUserController::class, 'update'])->middleware('admin')->name('index.updated.user');
-Route::delete('/admin/user/deleted/{id}', [UpdateUserController::class, 'destroy'])->middleware('admin')->name('index.delete.user');
-Route::post('/admin/{id}/submitAnswer', [AdminController::class, 'answerUpdateVacation'])->middleware('admin')->name('vacation.answerUpdate');
-Route::post('/admin/{id}/submitAnswer2', [AdminController::class, 'answerUpdateSickness'])->middleware('admin')->name('sickness.answerUpdate');
-Route::delete('/admin/user/vacation/{id}', [UpdateUserController::class, 'destroyVacationRequest'])->middleware('admin')->name('vacation.delete');
-Route::delete('/admin/user/sickness/{id}', [UpdateUserController::class, 'destroySicknessRequest'])->middleware('admin')->name('sickness.delete');
-Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->middleware('admin')->name('user.delete');
+// Update Routes
+Route::post('/update-hours', [EnterHoursController::class, 'updateHoursAsAdmin'])->middleware('admin')->name('update.hours');
+Route::post('/admin/{id}/submitAnswer', [AdminController::class, 'updateVacationAnswer'])->middleware('admin')->name('update.vacationAnswer');
+Route::post('/admin/{id}/submitAnswer2', [AdminController::class, 'updateSicknessAnswer'])->middleware('admin')->name('update.sicknessAnswer');
+Route::get('/update-table', [EnterHoursController::class, 'updateTable'])->middleware('admin')->name('update.table');
+Route::post('/admin/user/updated/{id}', [UpdateUserController::class, 'update'])->middleware('admin')->name('update.user');
+
+// Delete Routes
+Route::delete('/admin/user/deleted/{id}', [UpdateUserController::class, 'destroy'])->middleware('admin')->name('delete.user');
+Route::delete('/admin/user/vacation/{id}', [UpdateUserController::class, 'destroyVacationRequest'])->middleware('admin')->name('delete.vacationRequest');
+Route::delete('/admin/user/sickness/{id}', [UpdateUserController::class, 'destroySicknessRequest'])->middleware('admin')->name('delete.sicknessRequest');
 Route::post('/delete-file/{fileHistory}', [UpdateUserController::class, 'deleteFile'])->name('delete.file');
 
+// Profile Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

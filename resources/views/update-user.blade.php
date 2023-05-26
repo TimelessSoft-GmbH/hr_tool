@@ -11,7 +11,7 @@
                 <div class="p-6">
                     <!--Open Form-->
                     <form method="POST"
-                          action="{{ route('index.updated.user', ['id' => $user->id]) }}"
+                          action="{{ route('update.user', ['id' => $user->id]) }}"
                           enctype="multipart/form-data"
                     >
                         @csrf

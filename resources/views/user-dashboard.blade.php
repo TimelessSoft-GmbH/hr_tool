@@ -33,7 +33,7 @@
                 </div>
 
                 <div id="newVacReq" class="flex flex-row justify-center pb-5 hidden">
-                    <form method="POST" action="/dashboard">
+                    <form method="POST" action={{ route('dashboard-vacation') }}>
                         @csrf
                         <label
                             for="start_date"

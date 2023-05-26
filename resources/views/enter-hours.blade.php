@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <h2 class="mt-4 underline">Ändern oder Eintragen:</h2>
-                        <form action="{{ route('update-hours-admin') }}" method="POST" class="my-4">
+                        <form action="{{ route('update.hours') }}" method="POST" class="my-4">
                             @csrf
 
                             <div class="flex items-center">
@@ -105,7 +105,7 @@
 
             function updateTable(year) {
                 $.ajax({
-                    url: "{{ route('update-table') }}",
+                    url: "{{ route('update.table') }}",
                     method: 'GET',
                     data: {
                         year: year

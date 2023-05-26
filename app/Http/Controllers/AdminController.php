@@ -31,7 +31,7 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
-    public function answerUpdateVacation(Request $request, $id)
+    public function updateVacationAnswer(Request $request, $id)
     {
         DB::table('vacation_requests')
             ->where('id', $id)
@@ -47,7 +47,7 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
-    public function answerUpdateSickness(Request $request, $id)
+    public function updateSicknessAnswer(Request $request, $id)
     {
         DB::table('sickness_requests')
             ->where('id', $id)

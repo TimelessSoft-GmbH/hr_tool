@@ -87,7 +87,7 @@
                                                     <p class="py-4 px-2 text-sm text-gray-400 italic">-----</p>
                                                 @else
                                                     <form method="POST"
-                                                          action="{{ route('index.delete.user', $user->id) }}">
+                                                          action="{{ route('delete.user', $user->id) }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button
@@ -170,7 +170,7 @@
 
                                                 @if($vacationRequest->accepted === 'pending')
                                                     <form method="POST"
-                                                          action="{{ route('vacation.answerUpdate', ['id' => $vacationRequest->id]) }}">
+                                                          action="{{ route('update.vacationAnswer', ['id' => $vacationRequest->id]) }}">
                                                         @csrf
                                                         @method('POST')
                                                         <select
@@ -200,7 +200,7 @@
                                             </td>
                                             <td class="px-6 text-sm text-gray-700">
                                                 <form method="POST"
-                                                      action="{{ route('vacation.delete', $vacationRequest->id) }}">
+                                                      action="{{ route('delete.vacationRequest', $vacationRequest->id) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button
@@ -216,7 +216,7 @@
                                     @endforeach
                                     <tr class="bg-gray-100 hidden" id="addRowBtn">
                                         <form method="POST"
-                                              action="{{ route('dashboard-vacation') }}">
+                                              action="{{ route('dashboard-vacation-admin') }}">
                                             @csrf
                                             <td class=" px-3 text-sm text-gray-700">
                                                 <select
@@ -318,7 +318,7 @@
                                             <td class="py-4 px-6 text-sm text-gray-700">
                                                 @if($sicknessRequest->accepted === 'pending')
                                                     <form method="POST"
-                                                          action="{{ route('sickness.answerUpdate', ['id' => $sicknessRequest->id]) }}">
+                                                          action="{{ route('update.sicknessAnswer', ['id' => $sicknessRequest->id]) }}">
                                                         @csrf
                                                         @method('POST')
                                                         <select
@@ -348,7 +348,7 @@
                                             </td>
                                             <td class="px-6 text-sm text-gray-700">
                                                 <form method="POST"
-                                                      action="{{ route('sickness.delete', $sicknessRequest->id) }}">
+                                                      action="{{ route('delete.sicknessRequest', $sicknessRequest->id) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button
@@ -364,7 +364,7 @@
                                     @endforeach
                                     <tr class="bg-gray-100 hidden" id="addRowToSick">
                                         <form method="POST"
-                                              action="{{ route('dashboard-sickness') }}">
+                                              action="{{ route('dashboard-sickness-admin') }}">
                                             @csrf
                                             <td class=" px-3 text-sm text-gray-700">
                                                 <select

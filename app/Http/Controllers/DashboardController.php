@@ -23,7 +23,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function storeVac(Request $request)
     {
         //Get Attributes
         $attributes = $this->getAttributes();

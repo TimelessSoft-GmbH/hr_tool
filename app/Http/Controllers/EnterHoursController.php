@@ -20,7 +20,7 @@ class EnterHoursController extends Controller
         ]);
     }
 
-    public function addAdmin(Request $request)
+    public function updateHoursAsAdmin(Request $request)
     {
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',

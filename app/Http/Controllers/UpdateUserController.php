@@ -183,6 +183,7 @@ class UpdateUserController extends Controller
     {
         VacationRequest::where('user_id', $id)->delete();
         SicknessRequest::where('user_id', $id)->delete();
+        FileHistory::where('user_id', $id)->delete();
         User::find($id)->delete();
         return redirect('/admin');
     }
