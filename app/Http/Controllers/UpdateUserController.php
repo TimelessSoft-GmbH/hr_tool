@@ -198,4 +198,13 @@ class UpdateUserController extends Controller
         $user->save();
         return redirect('/admin');
     }
+
+    public function destroySicknessRequest($id)
+    {
+        $user = User::find(SicknessRequest::where('id', $id)->value('user_id'));
+        SicknessRequest::where('id', $id)->delete();
+
+        $user->save();
+        return redirect('/admin');
+    }
 }

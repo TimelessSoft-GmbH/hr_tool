@@ -1,17 +1,23 @@
 <script>
-function hideButton() {
-    var element = document.getElementById("buttonSub");
-    element.classList.toggle("hidden");
-}
+    function hideButton() {
+        var element = document.getElementById("buttonSub");
+        element.classList.toggle("hidden");
+    }
 
-function hideButtonSick() {
-    var element = document.getElementById("buttonSubSick");
-    element.classList.toggle("hidden");
-}
-function addRowBtn() {
-    var element = document.getElementById("addRowBtn");
-    element.classList.toggle("hidden");
-}
+    function hideButtonSick() {
+        var element = document.getElementById("buttonSubSick");
+        element.classList.toggle("hidden");
+    }
+
+    function addRowBtn() {
+        var element = document.getElementById("addRowBtn");
+        element.classList.toggle("hidden");
+    }
+
+    function addRowToSick() {
+        var element = document.getElementById("addRowToSick");
+        element.classList.toggle("hidden");
+    }
 </script>
 
 <x-app-layout>
@@ -71,7 +77,7 @@ function addRowBtn() {
                                                     <button
                                                         class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                                         type="button">
-                                                            Edit
+                                                        Edit
                                                     </button>
                                                 </a>
                                             </td>
@@ -80,15 +86,16 @@ function addRowBtn() {
                                                 @if($user->id === Auth::user()->id)
                                                     <p class="py-4 px-2 text-sm text-gray-400 italic">-----</p>
                                                 @else
-                                                    <form method="POST" action="{{ route('index.delete.user', $user->id) }}">
+                                                    <form method="POST"
+                                                          action="{{ route('index.delete.user', $user->id) }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button
                                                             class="font-bold text-red-500 font-medium rounded-lg text-sm w-full sm:w-auto py-3 text-center"
                                                             type="submit"
                                                             onclick="return confirm('Are you sure that you want to delete User {{ $user->name }}?')"
-                                                                >
-                                                                    Delete
+                                                        >
+                                                            Delete
                                                         </button>
                                                     </form>
                                                 @endif
@@ -192,67 +199,68 @@ function addRowBtn() {
                                                 @endif
                                             </td>
                                             <td class="px-6 text-sm text-gray-700">
-                                                <form method="POST" action="{{ route('vacation.delete', $vacationRequest->id) }}">
+                                                <form method="POST"
+                                                      action="{{ route('vacation.delete', $vacationRequest->id) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button
                                                         class="font-bold text-red-500 font-medium rounded-lg text-sm w-full sm:w-auto pt-3 text-center"
                                                         type="submit"
-                                                        onclick="return confirm('Are you sure that you want to delete this?')"
+                                                        onclick="return confirm('Bist du sicher, dass du das löschen wirst?')"
                                                     >
-                                                        Delete
+                                                        Löschen
                                                     </button>
                                                 </form>
                                             </td>
                                         </tr>
                                     @endforeach
-                                        <tr class="bg-gray-100 hidden" id="addRowBtn">
-                                            <form method="POST"
-                                                  action="{{ route('dashboard-vacation') }}">
-                                                @csrf
-                                                <td class=" px-3 text-sm text-gray-700">
-                                                    <select
-                                                        name="user_id"
-                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 text-center"
-                                                    >
-                                                        @foreach($users as $user)
-                                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td class="py-4 px-3 text-sm text-gray-700 justify-center">
-                                                    <input
-                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                                                        type="date"
-                                                        name="start_date"
-                                                    >
-                                                </td>
-                                                <td class="py-4 px-3 text-sm text-gray-700">
-                                                    <input
-                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                                                        type="date"
-                                                        name="end_date"
-                                                    >
-                                                </td>
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    <button
-                                                        class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                                        type="submit"
-                                                    >
-                                                        Eintragen
-                                                    </button>
-                                                </td>
-                                                <td class="py-4 px-6 text-sm text-gray-700">
+                                    <tr class="bg-gray-100 hidden" id="addRowBtn">
+                                        <form method="POST"
+                                              action="{{ route('dashboard-sickness') }}">
+                                            @csrf
+                                            <td class=" px-3 text-sm text-gray-700">
+                                                <select
+                                                    name="user_id"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 text-center"
+                                                >
+                                                    @foreach($users as $user)
+                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="py-4 px-3 text-sm text-gray-700 justify-center">
+                                                <input
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                                    type="date"
+                                                    name="start_date"
+                                                >
+                                            </td>
+                                            <td class="py-4 px-3 text-sm text-gray-700">
+                                                <input
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                                    type="date"
+                                                    name="end_date"
+                                                >
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                <button
+                                                    class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                    type="submit"
+                                                >
+                                                    Eintragen
+                                                </button>
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
 
-                                                </td>
-                                                <td class="py-4 px-6 text-sm text-gray-700">
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
 
-                                                </td>
-                                                <td class="py-4 px-6 text-sm text-gray-700">
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
 
-                                                </td>
-                                            </form>
-                                        </tr>
+                                            </td>
+                                        </form>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -288,6 +296,7 @@ function addRowBtn() {
                                         <th scope="col" class="px-6 py-3">Tage Insg</th>
                                         <th scope="col" class="px-6 py-3">Status</th>
                                         <th scope="col" class="px-6 py-3">Antwort</th>
+                                        <th scope="col" class="px-6 py-3">Löschen</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -337,11 +346,79 @@ function addRowBtn() {
                                                     <p class="text-gray-400 italic text-center">Bereits bearbeitet</p>
                                                 @endif
                                             </td>
+                                            <td class="px-6 text-sm text-gray-700">
+                                                <form method="POST"
+                                                      action="{{ route('sickness.delete', $sicknessRequest->id) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button
+                                                        class="font-bold text-red-500 font-medium rounded-lg text-sm w-full sm:w-auto pt-3 text-center"
+                                                        type="submit"
+                                                        onclick="return confirm('Bist du sicher, dass du das löschen wirst?')"
+                                                    >
+                                                        Löschen
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
+                                    <tr class="bg-gray-100 hidden" id="addRowToSick">
+                                        <form method="POST"
+                                              action="{{ route('dashboard-sickness') }}">
+                                            @csrf
+                                            <td class=" px-3 text-sm text-gray-700">
+                                                <select
+                                                    name="user_id"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 text-center"
+                                                >
+                                                    @foreach($users as $user)
+                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="py-4 px-3 text-sm text-gray-700 justify-center">
+                                                <input
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                                    type="date"
+                                                    name="start_date"
+                                                >
+                                            </td>
+                                            <td class="py-4 px-3 text-sm text-gray-700">
+                                                <input
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                                    type="date"
+                                                    name="end_date"
+                                                >
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                <button
+                                                    class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                    type="submit"
+                                                >
+                                                    Eintragen
+                                                </button>
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+
+                                            </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+
+                                            </td>
+                                        </form>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
+                            <button
+                                class="mt-5 ml-4 block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                type="button"
+                                onclick="addRowToSick()"
+                            >
+                                <span class="font-bold">+</span> Krankenstand nachtragen
+                            </button>
                         </div>
                     </div>
                 </div>

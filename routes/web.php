@@ -33,6 +33,7 @@ Route::get('/enterHours', [EnterHoursController::class, 'index'])->middleware('a
 Route::post('/update-hours', [EnterHoursController::class, 'addAdmin'])->middleware('admin')->name('update-hours-admin');
 Route::get('/update-table', [EnterHoursController::class, 'updateTable'])->middleware('admin')->name('update-table');
 Route::post('/admin', [AdminController::class, 'storePastVac'])->middleware(['admin'])->name('dashboard-vacation');
+Route::post('/admin', [AdminController::class, 'storePastSick'])->middleware(['admin'])->name('dashboard-sickness');
 Route::post('/admin/{id}', [AdminController::class, 'roleChange'])->middleware('admin')->name('role.update');
 Route::post('/admin/{id}/update', [AdminController::class, 'update'])->middleware('admin')->name('user.update');
 Route::get('/admin/user/update/{id}', [UpdateUserController::class, 'index'])->middleware('admin')->name('index.update.user');
@@ -44,6 +45,7 @@ Route::delete('/admin/user/deleted/{id}', [UpdateUserController::class, 'destroy
 Route::post('/admin/{id}/submitAnswer', [AdminController::class, 'answerUpdateVacation'])->middleware('admin')->name('vacation.answerUpdate');
 Route::post('/admin/{id}/submitAnswer2', [AdminController::class, 'answerUpdateSickness'])->middleware('admin')->name('sickness.answerUpdate');
 Route::delete('/admin/user/vacation/{id}', [UpdateUserController::class, 'destroyVacationRequest'])->middleware('admin')->name('vacation.delete');
+Route::delete('/admin/user/sickness/{id}', [UpdateUserController::class, 'destroySicknessRequest'])->middleware('admin')->name('sickness.delete');
 Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->middleware('admin')->name('user.delete');
 Route::post('/delete-file/{fileHistory}', [UpdateUserController::class, 'deleteFile'])->name('delete.file');
 

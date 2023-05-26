@@ -25,17 +25,19 @@ class AdminController extends Controller
         ]);
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         User::find($id)->delete();
         return redirect('/admin');
     }
 
-    public function answerUpdateVacation(Request $request, $id){
+    public function answerUpdateVacation(Request $request, $id)
+    {
         DB::table('vacation_requests')
             ->where('id', $id)
             ->update(['accepted' => $request->antwort]);
 
-        if($request->antwort === 'accepted'){
+        if ($request->antwort === 'accepted') {
             $this->updateVacationDays($id);
         }
 
@@ -45,12 +47,13 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
-    public function answerUpdateSickness(Request $request, $id){
+    public function answerUpdateSickness(Request $request, $id)
+    {
         DB::table('sickness_requests')
             ->where('id', $id)
             ->update(['accepted' => $request->antwortSicknessRequest]);
 
-        if($request->antwortSicknessRequest === 'accepted'){
+        if ($request->antwortSicknessRequest === 'accepted') {
             $this->updateSicknessLeave($id);
         }
 
@@ -60,7 +63,8 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
-    public function updateVacationDays($id){
+    public function updateVacationDays($id)
+    {
         $vacationreq = VacationRequest::findOrFail($id);
         $user = User::findOrFail($vacationreq->user_id);
         $vacationDays_left = $user->vacationDays_left - $vacationreq->total_days;
@@ -70,7 +74,8 @@ class AdminController extends Controller
             ->update(['vacationDays_left' => $vacationDays_left]);
     }
 
-    public function updateSicknessLeave($id){
+    public function updateSicknessLeave($id)
+    {
         $sicknessReq = SicknessRequest::findOrFail($id);
         $user = User::findOrFail($sicknessReq->user_id);
         $sicknessLeave = $user->sicknessLeave + $sicknessReq->total_days;
@@ -112,6 +117,21 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
+    public function storePastSick(Request $request)
+    {
+        //Get Attributes
+        $attributes = $this->getAttributes();
+        //Create Vacation Request
+        $newSick = SicknessRequest::create($attributes);
+
+        //Setting it directly to accepted
+        DB::table('sickness_requests')
+            ->where('id', $newSick->id)
+            ->update(['accepted' => 'accepted']);
+
+        return redirect('/admin');
+    }
+
     public function getAttributes(): array
     {
         $attributes = request()?->validate([
@@ -128,13 +148,15 @@ class AdminController extends Controller
         $holidays = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $holiday_dates = [];
         foreach ($holidays as $holiday) {
-            $holiday_dates[] = (string) $holiday['date'];
+            $holiday_dates[] = (string)$holiday['date'];
         }
 
         // Get user's workdays
         $user = User::findOrFail($attributes['user_id']);
-        $workdays = json_decode($user->workdays, true, 512, JSON_THROW_ON_ERROR) ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
+        $workdays = json_decode($user->workdays, true);
+        if ($workdays === null && json_last_error() !== JSON_ERROR_NONE) {
+            $workdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        }
         //Calculate total Days without public Holidays
         $start_date = Carbon::parse($attributes['start_date'])->startOfDay();
         $end_date = Carbon::parse($attributes['end_date'])->startOfDay();
@@ -156,7 +178,7 @@ class AdminController extends Controller
         }
 
         //Add Total Days to attribute to save it in DB
-        $attributes['total_days'] = (string) $total_days;
+        $attributes['total_days'] = (string)$total_days;
 
         return $attributes;
     }

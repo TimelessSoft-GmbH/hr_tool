@@ -70,8 +70,10 @@ class DashboardController extends Controller
 
         // Get user's workdays
         $user = User::findOrFail($attributes['user_id']);
-        $workdays = json_decode($user->workdays, true, 512, JSON_THROW_ON_ERROR) ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
+        $workdays = json_decode($user->workdays, true);
+        if ($workdays === null && json_last_error() !== JSON_ERROR_NONE) {
+            $workdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        }
         //Calculate total Days without public Holidays
         $start_date = Carbon::parse($attributes['start_date'])->startOfDay();
         $end_date = Carbon::parse($attributes['end_date'])->startOfDay();
