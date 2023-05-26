@@ -32,8 +32,8 @@ Route::get('/admin', [AdminController::class, 'index'])->middleware('admin')->na
 Route::get('/enterHours', [EnterHoursController::class, 'index'])->middleware('admin')->name('enterHours');
 Route::post('/update-hours', [EnterHoursController::class, 'addAdmin'])->middleware('admin')->name('update-hours-admin');
 Route::get('/update-table', [EnterHoursController::class, 'updateTable'])->middleware('admin')->name('update-table');
-Route::post('/admin', [AdminController::class, 'storePastVac'])->middleware(['admin'])->name('dashboard-vacation');
-Route::post('/admin', [AdminController::class, 'storePastSick'])->middleware(['admin'])->name('dashboard-sickness');
+Route::post('/admin/storeVacation', [AdminController::class, 'storePastVac'])->middleware(['admin'])->name('dashboard-vacation');
+Route::post('/admin/storeSickness', [AdminController::class, 'storePastSick'])->middleware(['admin'])->name('dashboard-sickness');
 Route::post('/admin/{id}', [AdminController::class, 'roleChange'])->middleware('admin')->name('role.update');
 Route::post('/admin/{id}/update', [AdminController::class, 'update'])->middleware('admin')->name('user.update');
 Route::get('/admin/user/update/{id}', [UpdateUserController::class, 'index'])->middleware('admin')->name('index.update.user');

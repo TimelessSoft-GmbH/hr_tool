@@ -216,7 +216,7 @@
                                     @endforeach
                                     <tr class="bg-gray-100 hidden" id="addRowBtn">
                                         <form method="POST"
-                                              action="{{ route('dashboard-sickness') }}">
+                                              action="{{ route('dashboard-vacation') }}">
                                             @csrf
                                             <td class=" px-3 text-sm text-gray-700">
                                                 <select
