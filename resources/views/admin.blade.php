@@ -33,7 +33,7 @@
                 <div class="p-6">
                     <h2 id="TEST">Angestellte</h2>
                     <!--Table for Users-->
-                    <div class="pb-4">
+                    <div class="pb-4 pt-4">
                         <div class="w-3/4 mx-auto">
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table class="w-full text-sm text-left text-gray-500">
@@ -135,16 +135,17 @@
                 <div class="p-6">
                     <h2>Urlaub-Requests</h2>
                     <!--Table for Vacation-Requests-->
-                    <div class="pb-4">
-                        <div class="w-3/4 mx-auto">
+                    <div class="pb-4 pt-4">
+                        <div class="mr-4 ml-4">
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table class="w-full text-sm text-left text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-200">
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-center">Name</th>
-                                        <th scope="col" class="px-6 py-3 text-center">Start Datum</th>
-                                        <th scope="col" class="px-6 py-3 text-center">End Datum</th>
-                                        <th scope="col" class="px-6 py-3 text-center">Tage Insg</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Jahr</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Start</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Ende</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Dauer</th>
                                         <th scope="col" class="px-6 py-3 text-center">Status</th>
                                         <th scope="col" class="px-6 py-3 text-center">Antwort</th>
                                         <th scope="col" class="px-6 py-3 text-center">Löschen</th>
@@ -154,6 +155,7 @@
                                     @foreach($vacationRequests as $vacationRequest)
                                         <tr class="bg-gray-100">
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ \App\Models\User::find($vacationRequest->user_id)->name }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ $vacationRequest->start_date->format('Y') }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ $vacationRequest->start_date->format('d M') }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ $vacationRequest->end_date->format('d M') }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center font-bold">{{ $vacationRequest->total_days }}</td>
@@ -198,7 +200,7 @@
                                                     <p class="text-gray-400 italic text-center">Bereits bearbeitet</p>
                                                 @endif
                                             </td>
-                                            <td class="px-6 text-sm text-gray-700">
+                                            <td class="px-6 text-sm text-gray-700  text-center">
                                                 <form method="POST"
                                                       action="{{ route('delete.vacationRequest', $vacationRequest->id) }}">
                                                     @csrf
@@ -284,29 +286,31 @@
                 <div class="p-6">
                     <h2>Sickness-Requests</h2>
                     <!--Table for Users-->
-                    <div class="pb-4">
-                        <div class="w-3/4 mx-auto">
+                    <div class="pb-4 pt-4">
+                        <div class="mr-4 ml-4">
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table class="w-full text-sm text-left text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-200">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3">Name</th>
-                                        <th scope="col" class="px-6 py-3">Start Datum</th>
-                                        <th scope="col" class="px-6 py-3">End Datum</th>
-                                        <th scope="col" class="px-6 py-3">Tage Insg</th>
-                                        <th scope="col" class="px-6 py-3">Status</th>
-                                        <th scope="col" class="px-6 py-3">Antwort</th>
-                                        <th scope="col" class="px-6 py-3">Löschen</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Name</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Jahr</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Start</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Ende</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Dauer</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Antwort</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Löschen</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($sicknessRequests as $sicknessRequest)
                                         <tr class="bg-gray-100">
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{ \App\Models\User::find($sicknessRequest->user_id)->name }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$sicknessRequest->start_date->format('d M') }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$sicknessRequest->end_date->format('d M') }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$sicknessRequest->total_days }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ \App\Models\User::find($sicknessRequest->user_id)->name }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->start_date->format('Y') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->start_date->format('d M') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->end_date->format('d M') }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->total_days }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">
                                                 <div @class([
                                                                 'text-green-500' =>  $sicknessRequest->accepted === 'accepted',
                                                                 'text-yellow-600' =>  $sicknessRequest->accepted === 'pending',
@@ -315,7 +319,7 @@
                                                     {{ $sicknessRequest->accepted }}
                                                 </div>
                                             </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">
                                                 @if($sicknessRequest->accepted === 'pending')
                                                     <form method="POST"
                                                           action="{{ route('update.sicknessAnswer', ['id' => $sicknessRequest->id]) }}">
@@ -346,7 +350,7 @@
                                                     <p class="text-gray-400 italic text-center">Bereits bearbeitet</p>
                                                 @endif
                                             </td>
-                                            <td class="px-6 text-sm text-gray-700">
+                                            <td class="px-6 text-sm text-gray-700  text-center">
                                                 <form method="POST"
                                                       action="{{ route('delete.sicknessRequest', $sicknessRequest->id) }}">
                                                     @csrf

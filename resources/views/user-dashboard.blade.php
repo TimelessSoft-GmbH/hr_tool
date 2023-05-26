@@ -88,7 +88,10 @@
                                         End Datum
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Total Days
+                                        Jahr
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Tage
                                     </th>
                                     <th scope="col" class="px-6 py-3">
                                         Stand
@@ -103,6 +106,9 @@
                                         <th class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("Noch kein Antrag ") }}
                                         </th>
+                                        <td class="py-4 px-6 text-sm text-gray-400 italic">
+                                            {{ __("---------") }}
+                                        </td>
                                         <td class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("---------") }}
                                         </td>
@@ -133,6 +139,10 @@
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
+                                                    {{ $vacationRequest->start_date->format('Y') }}
+                                                </td>
+
+                                                <td class="py-4 px-6 text-sm text-gray-700 font-bold">
                                                     {{ $vacationRequest->total_days }}
                                                 </td>
                                                 <td class="py-4 px-6 text-sm">
@@ -231,7 +241,10 @@
                                         End Datum
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Total Days
+                                        Jahr
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Tage
                                     </th>
                                     <th scope="col" class="px-6 py-3">
                                         Stand
@@ -246,6 +259,9 @@
                                         <th class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("Noch kein Antrag ") }}
                                         </th>
+                                        <td class="py-4 px-6 text-sm text-gray-400 italic">
+                                            {{ __("---------") }}
+                                        </td>
                                         <td class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("---------") }}
                                         </td>
@@ -276,6 +292,10 @@
                                                 </td>
 
                                                 <td class="py-4 px-6 text-sm text-gray-700">
+                                                    {{ $sicknessRequest->start_date->format('Y') }}
+                                                </td>
+
+                                                <td class="py-4 px-6 text-sm text-gray-700 font-bold">
                                                     {{ $sicknessRequest->total_days }}
                                                 </td>
                                                 <td class="py-4 px-6 text-sm">
