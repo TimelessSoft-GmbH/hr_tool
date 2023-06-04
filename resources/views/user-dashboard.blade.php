@@ -73,7 +73,7 @@
                 </div>
 
                 <div class="pb-4">
-                    <div class="w-2/3 mx-auto">
+                    <div class="mx-8 mb-4">
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table class="w-full text-sm text-left text-gray-500">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-200">
@@ -160,6 +160,9 @@
                                 @endif
                                 </tbody>
                             </table>
+                            <div class="pt-4 pl-5 pr-10 bg-gray-100">
+                                {{ $vacationRequests->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -226,7 +229,7 @@
                 </div>
 
                 <div class="pb-4">
-                    <div class="w-2/3 mx-auto">
+                    <div class="mx-8 mb-4">
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table class="w-full text-sm text-left text-gray-500">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-200">
@@ -313,6 +316,9 @@
                                 @endif
                                 </tbody>
                             </table>
+                            <div class="pt-4 pl-5 pr-10 bg-gray-100">
+                                {{ $sicknessRequests->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>

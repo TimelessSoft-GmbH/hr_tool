@@ -456,8 +456,14 @@
                                                             <dt class="text-sm font-medium text-gray-500">
                                                                 <a href="{{ Storage::url($fileHistory->file_path) }}"
                                                                    target="_blank"
-                                                                   class="text-blue-700 hover:underline focus:outline-none">
+                                                                   class="text-blue-700 hover:underline focus:outline-none"
+                                                                >
                                                                     {{ $fileHistory->file_name }}
+                                                                    @if (Storage::exists($fileHistory->file_path))
+                                                                        File is available
+                                                                    @else
+                                                                        File not available
+                                                                    @endif
                                                                 </a>
                                                             </dt>
                                                             <dt class="mt-1 text-sm text-gray-400 italic sm:mt-0">

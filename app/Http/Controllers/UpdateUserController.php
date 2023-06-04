@@ -89,7 +89,7 @@ class UpdateUserController extends Controller
             $filename = $file->getClientOriginalName();
             $filename = str_replace(array('-', ' '), '_', $filename);
 
-            $path = $file->storeAs('pdfs', $filename);
+            $path = $file->storeAs('pdfs', $filename, 'public');
             $fileHistory = new FileHistory();
             $fileHistory->user_id = $user->id;
             $fileHistory->file_name = $filename;

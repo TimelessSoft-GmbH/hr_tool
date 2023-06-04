@@ -18,8 +18,12 @@ class DashboardController extends Controller
     public function index()
     {
         return view('user-dashboard', [
-            'vacationRequests' => VacationRequest::all(),
-            'sicknessRequests' => SicknessRequest::all(),
+            'vacationRequests' => VacationRequest::orderBy('created_at', 'desc')
+                ->orderBy('id', 'desc')
+                ->paginate(10),
+            'sicknessRequests' => SicknessRequest::orderBy('created_at', 'desc')
+                ->orderBy('id', 'desc')
+                ->paginate(10),
         ]);
     }
 
