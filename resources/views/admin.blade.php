@@ -273,7 +273,7 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <div class="pt-4 pl-5 pr-10 bg-gray-100">
+                                <div class="pb-2 pt-4 pl-5 pr-10 bg-gray-100">
                                     {{ $vacationRequests->links() }}
                                 </div>
                             </div>
@@ -444,7 +444,7 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <div class="pt-4 pl-5 pr-10 bg-gray-100">
+                                <div class="pb-2 pt-4 pl-5 pr-10 bg-gray-100">
                                     {{ $sicknessRequests->links() }}
                                 </div>
                             </div>
