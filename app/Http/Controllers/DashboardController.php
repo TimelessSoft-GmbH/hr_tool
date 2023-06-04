@@ -11,17 +11,21 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
         return view('user-dashboard', [
-            'vacationRequests' => VacationRequest::orderBy('created_at', 'desc')
+            'vacationRequests' => VacationRequest::where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
                 ->orderBy('id', 'desc')
                 ->paginate(10),
-            'sicknessRequests' => SicknessRequest::orderBy('created_at', 'desc')
+            'sicknessRequests' => SicknessRequest::where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
                 ->orderBy('id', 'desc')
                 ->paginate(10),
         ]);

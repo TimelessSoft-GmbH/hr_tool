@@ -124,38 +124,36 @@
                                     </tr>
                                 @else
                                     @foreach ($vacationRequests as $vacationRequest)
-                                        @if($vacationRequest->user_id === Auth::id())
-                                            <tr class="bg-gray-100">
-                                                <th class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ \App\Models\User::find($vacationRequest->user_id)->name }}
-                                                </th>
+                                        <tr class="bg-gray-100">
+                                            <th class="py-4 px-6 text-sm text-gray-700">
+                                                {{ \App\Models\User::find($vacationRequest->user_id)->name }}
+                                            </th>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->start_date->format('d M') }}
-                                                </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $vacationRequest->start_date->format('d M') }}
+                                            </td>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->end_date->format('d M') }}
-                                                </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $vacationRequest->end_date->format('d M') }}
+                                            </td>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $vacationRequest->start_date->format('Y') }}
-                                                </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $vacationRequest->start_date->format('Y') }}
+                                            </td>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700 font-bold">
-                                                    {{ $vacationRequest->total_days }}
-                                                </td>
-                                                <td class="py-4 px-6 text-sm">
-                                                    <div @class([
+                                            <td class="py-4 px-6 text-sm text-gray-700 font-bold">
+                                                {{ $vacationRequest->total_days }}
+                                            </td>
+                                            <td class="py-4 px-6 text-sm">
+                                                <div @class([
                                                                     'text-green-500' =>  $vacationRequest->accepted === 'accepted',
                                                                     'text-yellow-600' =>  $vacationRequest->accepted === 'pending',
                                                                     'text-red-500' =>  $vacationRequest->accepted === 'declined',
                                                         ])>
-                                                        {{ $vacationRequest->accepted }}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endif
+                                                    {{ $vacationRequest->accepted }}
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 @endif
                                 </tbody>
@@ -280,38 +278,36 @@
                                     </tr>
                                 @else
                                     @foreach ($sicknessRequests as $sicknessRequest)
-                                        @if($sicknessRequest->user_id === Auth::id())
-                                            <tr class="bg-gray-100">
-                                                <th class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ \App\Models\User::find($sicknessRequest->user_id)->name }}
-                                                </th>
+                                        <tr class="bg-gray-100">
+                                            <th class="py-4 px-6 text-sm text-gray-700">
+                                                {{ \App\Models\User::find($sicknessRequest->user_id)->name }}
+                                            </th>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $sicknessRequest->start_date->format('d M') }}
-                                                </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $sicknessRequest->start_date->format('d M') }}
+                                            </td>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $sicknessRequest->end_date->format('d M') }}
-                                                </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $sicknessRequest->end_date->format('d M') }}
+                                            </td>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700">
-                                                    {{ $sicknessRequest->start_date->format('Y') }}
-                                                </td>
+                                            <td class="py-4 px-6 text-sm text-gray-700">
+                                                {{ $sicknessRequest->start_date->format('Y') }}
+                                            </td>
 
-                                                <td class="py-4 px-6 text-sm text-gray-700 font-bold">
-                                                    {{ $sicknessRequest->total_days }}
-                                                </td>
-                                                <td class="py-4 px-6 text-sm">
-                                                    <div @class([
+                                            <td class="py-4 px-6 text-sm text-gray-700 font-bold">
+                                                {{ $sicknessRequest->total_days }}
+                                            </td>
+                                            <td class="py-4 px-6 text-sm">
+                                                <div @class([
                                                                         'text-green-500' =>  $sicknessRequest->accepted === 'accepted',
                                                                         'text-yellow-600' =>  $sicknessRequest->accepted === 'pending',
                                                                         'text-red-500' =>  $sicknessRequest->accepted === 'declined',
                                                             ])>
-                                                        {{ $sicknessRequest->accepted }}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endif
+                                                    {{ $sicknessRequest->accepted }}
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 @endif
                                 </tbody>
