@@ -92,7 +92,8 @@ return [
     */
 
     'from' => [
-        'address' => env('FROM_ADRESS', 'noreply@sports4me.at'),
+        'address' => env('MAIL_FROM_ADDRESS', 'noreply@sports4me.at'),
+        //'address' => env('FROM_ADRESS', 'noreply@sports4me.at'),
         'name' => env('MAIL_FROM_NAME', 'TimelessSoft'),
     ],
 

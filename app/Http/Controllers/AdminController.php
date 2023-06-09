@@ -18,12 +18,8 @@ class AdminController extends Controller
     public function index()
     {
         return view('admin', [
-            'vacationRequests' => VacationRequest::orderBy('created_at', 'desc')
-                ->orderBy('id', 'desc')
-                ->paginate(10),
-            'sicknessRequests' => SicknessRequest::orderBy('created_at', 'desc')
-                ->orderBy('id', 'desc')
-                ->paginate(10),
+            'vacationRequests' => VacationRequest::all(),
+            'sicknessRequests' => SicknessRequest::all(),
             'users' => User::all(),
             'roles' => Role::all()
         ]);

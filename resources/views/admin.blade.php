@@ -127,24 +127,58 @@
                     <!--Table for Vacation-Requests-->
                     <div class="pb-4 pt-4">
                         <div class="mr-4 ml-4">
-                            <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
-                            <div class="relative mb-4 w-3/5">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none"
-                                         stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
+                            <div class="relative mb-4 w-3/5 flex">
+                                <div class="w-1/2 mr-2">
+                                    <div class="relative">
+                                        <select id="userFilterVacation"
+                                                class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Users</option>
+                                            @foreach($users as $user)
+                                                <option value="{{ $user->name }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none"
+                                                 stroke="currentColor"
+                                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
-                                <input type="search" id="filterInputVacation"
-                                       class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="Search" required>
-                                <button type="submit" onclick="applyFilter('vacationTable', 'filterInputVacation')"
-                                        class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    Suchen
+                                <div class="w-1/2 mr-2">
+                                    <div class="relative">
+                                        <select id="yearFilterVacation"
+                                                class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                                            @php
+                                                $currentYear = date('Y');
+                                                $startYear = $currentYear - 9;
+                                            @endphp
+                                            <option value="">Years</option>
+                                            @for ($year = $currentYear; $year >= $startYear; $year--)
+                                                <option value="{{ $year }}">{{ $year }}</option>
+                                            @endfor
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none"
+                                                 stroke="currentColor"
+                                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                        onclick="applyFilter('vacationTable', 'userFilterVacation', 'yearFilterVacation')"
+                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 ml-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    Search
                                 </button>
-
                             </div>
+
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table id="vacationTable" class="w-full text-sm text-left text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-200">
@@ -160,7 +194,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($vacationRequests->sortByDesc('created_at') as $vacationRequest)
+                                    @foreach($vacationRequests->sortByDesc('start_date') as $vacationRequest)
                                         <tr class="bg-gray-100">
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ \App\Models\User::find($vacationRequest->user_id)->name }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ $vacationRequest->start_date->format('Y') }}</td>
@@ -273,10 +307,14 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <div class="pb-2 pt-4 pl-5 pr-10 bg-gray-100">
-                                    {{ $vacationRequests->links() }}
-                                </div>
                             </div>
+                            <div class="flex justify-center mt-4">
+                                <button id="displayMoreButtonVacation"
+                                        class="text-blue-500 hover:text-blue-700 underline focus:outline-none">
+                                    Show More
+                                </button>
+                            </div>
+
                             <button
                                 class="mt-5 ml-4 block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                 type="button"
@@ -299,24 +337,59 @@
                     <!--Table for Users-->
                     <div class="pb-4 pt-4">
                         <div class="mr-4 ml-4">
-                            <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
-                            <div class="relative mb-4 w-3/5">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none"
-                                         stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
+                            <div class="relative mb-4 w-3/5 flex">
+                                <div class="w-1/2 mr-2">
+                                    <div class="relative">
+                                        <select id="userFilterSickness"
+                                                class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Users</option>
+                                            @foreach($users as $user)
+                                                <option value="{{ $user->name }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none"
+                                                 stroke="currentColor" viewBox="0 0 24 24"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
-                                <input type="search" id="filterInputSickness"
-                                       class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="Search" required>
+                                <div class="w-1/2 mr-2">
+                                    <div class="relative">
+                                        <select id="yearFilterSickness"
+                                                class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                                            @php
+                                                $currentYear = date('Y');
+                                                $startYear = $currentYear - 9;
+                                            @endphp
+                                            <option value="">Years</option>
+                                            @for ($year = $currentYear; $year >= $startYear; $year--)
+                                                <option value="{{ $year }}">{{ $year }}</option>
+                                            @endfor
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none"
+                                                 stroke="currentColor" viewBox="0 0 24 24"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button type="submit"
-                                        onclick="applyFilter('sicknessTable', 'filterInputSickness')"
-                                        class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    Suchen
+                                        onclick="applyFilter('sicknessTable', 'userFilterSickness', 'yearFilterSickness')"
+                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 ml-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    Search
                                 </button>
+
                             </div>
+
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table id="sicknessTable" class="w-full text-sm text-left text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-200">
@@ -332,7 +405,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($sicknessRequests as $sicknessRequest)
+                                    @foreach($sicknessRequests->sortByDesc('start_date') as $sicknessRequest)
                                         <tr class="bg-gray-100">
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{ \App\Models\User::find($sicknessRequest->user_id)->name }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->start_date->format('Y') }}</td>
@@ -444,9 +517,12 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <div class="pb-2 pt-4 pl-5 pr-10 bg-gray-100">
-                                    {{ $sicknessRequests->links() }}
-                                </div>
+                            </div>
+                            <div class="flex justify-center mt-4">
+                                <button id="displayMoreButtonSickness"
+                                        class="text-blue-500 hover:text-blue-700 underline focus:outline-none">
+                                    Display More
+                                </button>
                             </div>
                             <button
                                 class="mt-5 ml-4 block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
@@ -464,27 +540,122 @@
 </x-app-layout>
 
 <script>
-    function applyFilter(tableId, filterInputId) {
-        var filterInput = document.getElementById(filterInputId);
-        var filterValue = filterInput.value.toLowerCase();
+    function applyFilter(tableId, userFilterId, yearFilterId) {
+        var userFilter = document.getElementById(userFilterId);
+        var yearFilter = document.getElementById(yearFilterId);
+        var userValue = userFilter.value;
+        var yearValue = yearFilter.value;
+
+        console.log("Year filter: ", yearValue);
+        console.log("User filter: ", userValue);
 
         var table = document.getElementById(tableId);
         var rows = table.getElementsByTagName("tr");
 
         for (var i = 1; i < rows.length; i++) { // Start from 1 to skip table header
             var cells = rows[i].getElementsByTagName("td");
-            var rowMatch = false;
+            var userMatch = true;
+            var yearMatch = true;
 
-            for (var j = 0; j < cells.length; j++) {
-                var cellText = cells[j].innerText.toLowerCase();
-
-                if (cellText.includes(filterValue)) {
-                    rowMatch = true;
-                    break;
-                }
+            if (userValue !== "" && userValue !== "users") {
+                var userCell = cells[0].innerText;
+                userMatch = (userCell === userValue);
             }
 
-            rows[i].style.display = rowMatch ? "" : "none";
+            if (yearValue !== "" && yearValue !== "years") {
+                var yearCell = cells[1].innerText;
+                yearMatch = (yearCell === yearValue);
+            }
+
+            rows[i].style.display = (userMatch && yearMatch) ? "" : "none";
         }
     }
+
+    // Add event listeners to the filters
+    var userFilterVacation = document.getElementById("userFilterVacation");
+    var yearFilterVacation = document.getElementById("yearFilterVacation");
+    userFilterVacation.addEventListener("change", function () {
+        applyFilter("vacationTable", "userFilterVacation", "yearFilterVacation");
+    });
+    yearFilterVacation.addEventListener("change", function () {
+        applyFilter("vacationTable", "userFilterVacation", "yearFilterVacation");
+    });
+
+    var userFilterSickness = document.getElementById("userFilterSickness");
+    var yearFilterSickness = document.getElementById("yearFilterSickness");
+    userFilterSickness.addEventListener("change", function () {
+        applyFilter("sicknessTable", "userFilterSickness", "yearFilterSickness");
+    });
+    yearFilterSickness.addEventListener("change", function () {
+        applyFilter("sicknessTable", "userFilterSickness", "yearFilterSickness");
+    });
+
+    var numRowsToShow = 15; // Number of rows to show initially
+    var totalRows = document.getElementById("vacationTable").getElementsByTagName("tr").length - 1; // Subtract 1 for table header
+
+    function showRows(startIndex, endIndex) {
+        var tableRows = document.getElementById("vacationTable").getElementsByTagName("tr");
+
+        for (var i = 1; i <= totalRows; i++) {
+            if (i >= startIndex && i <= endIndex) {
+                tableRows[i].style.display = ""; // Show the row
+            } else {
+                tableRows[i].style.display = "none"; // Hide the row
+            }
+        }
+    }
+
+    // Function to display more rows for a given table
+    function displayMoreRows(tableId, displayButtonId) {
+        var table = document.getElementById(tableId);
+        var rows = table.getElementsByTagName("tr");
+        for (var i = 15; i < rows.length; i++) {
+            rows[i].style.display = ""; // Display the rows
+        }
+        var displayButton = document.getElementById(displayButtonId);
+        displayButton.innerText = "Show Less"; // Change the button text
+        displayButton.removeEventListener("click", displayMoreRows); // Remove the existing event listener
+        displayButton.addEventListener("click", function () {
+            showLessRows(tableId, displayButtonId); // Add a new event listener for showing fewer rows
+        });
+
+        // Scroll to the table
+        table.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+
+    // Function to show fewer rows for a given table
+    function showLessRows(tableId, displayButtonId) {
+        var table = document.getElementById(tableId);
+        var rows = table.getElementsByTagName("tr");
+        for (var i = 15; i < rows.length; i++) {
+            rows[i].style.display = "none"; // Hide the rows
+        }
+        var displayButton = document.getElementById(displayButtonId);
+        displayButton.innerText = "Display More"; // Change the button text
+        displayButton.removeEventListener("click", showLessRows); // Remove the existing event listener
+        displayButton.addEventListener("click", function () {
+            displayMoreRows(tableId, displayButtonId); // Add a new event listener for displaying more rows
+        });
+
+        // Scroll to the table
+        table.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+
+    // Function to initialize the table display
+    function initializeTableDisplay(tableId, displayButtonId) {
+        var table = document.getElementById(tableId);
+        var rows = table.getElementsByTagName("tr");
+        for (var i = 10; i < rows.length; i++) {
+            rows[i].style.display = "none"; // Hide the rows initially
+        }
+        var displayButton = document.getElementById(displayButtonId);
+        displayButton.style.display = "block"; // Show the display more button
+        displayButton.addEventListener("click", function () {
+            displayMoreRows(tableId, displayButtonId); // Add an event listener for displaying more rows
+        });
+    }
+
+    // Initialize the table display on page load
+    initializeTableDisplay("vacationTable", "displayMoreButtonVacation");
+    initializeTableDisplay("sicknessTable", "displayMoreButtonSickness");
 </script>
