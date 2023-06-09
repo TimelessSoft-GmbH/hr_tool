@@ -19,15 +19,25 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $currentYear = Carbon::now()->year;
+
+        $user = Auth::user();
+        $currentYear = Carbon::now()->year;
+        $nextYear = $currentYear + 1;
+
+        $vacationRequests = VacationRequest::where('user_id', $user->id)
+            ->whereYear('start_date', '>=', $currentYear)
+            ->whereYear('start_date', '<=', $nextYear)
+            ->get();
+
+        $sicknessRequests = SicknessRequest::where('user_id', $user->id)
+            ->whereYear('start_date', '>=', $currentYear)
+            ->whereYear('start_date', '<=', $nextYear)
+            ->get();
+
         return view('user-dashboard', [
-            'vacationRequests' => VacationRequest::where('user_id', $user->id)
-                ->orderBy('created_at', 'desc')
-                ->orderBy('id', 'desc')
-                ->paginate(10),
-            'sicknessRequests' => SicknessRequest::where('user_id', $user->id)
-                ->orderBy('created_at', 'desc')
-                ->orderBy('id', 'desc')
-                ->paginate(10),
+            'vacationRequests' => $vacationRequests,
+            'sicknessRequests' => $sicknessRequests,
         ]);
     }
 

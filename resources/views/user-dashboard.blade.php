@@ -123,7 +123,7 @@
                                         </td>
                                     </tr>
                                 @else
-                                    @foreach ($vacationRequests as $vacationRequest)
+                                    @foreach ($vacationRequests->sortByDesc('start_date') as $vacationRequest)
                                         <tr class="bg-gray-100">
                                             <th class="py-4 px-6 text-sm text-gray-700">
                                                 {{ \App\Models\User::find($vacationRequest->user_id)->name }}
@@ -158,9 +158,6 @@
                                 @endif
                                 </tbody>
                             </table>
-                            <div class="pt-4 pl-5 pr-10 bg-gray-100">
-                                {{ $vacationRequests->links() }}
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -277,7 +274,7 @@
                                         </td>
                                     </tr>
                                 @else
-                                    @foreach ($sicknessRequests as $sicknessRequest)
+                                    @foreach ($sicknessRequests->sortByDesc('start_date') as $sicknessRequest)
                                         <tr class="bg-gray-100">
                                             <th class="py-4 px-6 text-sm text-gray-700">
                                                 {{ \App\Models\User::find($sicknessRequest->user_id)->name }}
@@ -312,9 +309,6 @@
                                 @endif
                                 </tbody>
                             </table>
-                            <div class="pt-4 pl-5 pr-10 bg-gray-100">
-                                {{ $sicknessRequests->links() }}
-                            </div>
                         </div>
                     </div>
                 </div>

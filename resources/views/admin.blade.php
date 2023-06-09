@@ -123,6 +123,16 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
+                    <h2>Übersicht</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pb-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
                     <h2>Urlaub-Requests</h2>
                     <!--Table for Vacation-Requests-->
                     <div class="pb-4 pt-4">
