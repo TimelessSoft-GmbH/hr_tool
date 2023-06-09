@@ -411,7 +411,7 @@
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->start_date->format('Y') }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->start_date->format('d M') }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->end_date->format('d M') }}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700 text-center">{{$sicknessRequest->total_days }}</td>
+                                            <td class="py-4 px-6 text-sm text-gray-700 text-center font-bold">{{$sicknessRequest->total_days }}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700 text-center">
                                                 <div @class([
                                                                 'text-green-500' =>  $sicknessRequest->accepted === 'accepted',
