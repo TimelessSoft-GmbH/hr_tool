@@ -21,8 +21,31 @@ class AdminController extends Controller
             'vacationRequests' => VacationRequest::all(),
             'sicknessRequests' => SicknessRequest::all(),
             'users' => User::all(),
-            'roles' => Role::all()
+            'roles' => Role::all(),
+            'holiday_dates' => $this->getHolidayOfCurrentMonth()
         ]);
+    }
+
+    public function getHolidayOfCurrentMonth()
+    {
+        //Get Public Holidays from API
+        $currentMonth = Carbon::now()->format('m');
+        $year = date('Y');
+        $url = "https://date.nager.at/api/v3/PublicHolidays/{$year}/AT";
+
+        $client = new Client();
+        $response = $client->get($url);
+        $holidays = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        $currentMonth = Carbon::now()->format('m');
+        $holidayDates = [];
+        foreach ($holidays as $holiday) {
+            $holidayDate = Carbon::parse($holiday['date'])->format('m');
+            if ($holidayDate === $currentMonth) {
+                $holidayDates[] = $holiday['date'];
+            }
+        }
+        return $holidayDates;
     }
 
     public function destroy($id)
