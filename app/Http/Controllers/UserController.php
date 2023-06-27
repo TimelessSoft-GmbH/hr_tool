@@ -18,6 +18,7 @@ class UserController extends Controller
             'fileHistories' => $fileHistories,
         ]);
     }
+
     public function create(Request $request)
     {
         $request->validate([
@@ -51,18 +52,20 @@ class UserController extends Controller
         $user->workdays = $workdays;
         $user->save();
 
-        return redirect('/admin');
+        return redirect('/users');
     }
 
-    public function initials ($str) {
+    public function initials($str)
+    {
         $ret = '';
-        foreach(explode(' ', $str) as $word) {
+        foreach (explode(' ', $str) as $word) {
             $ret .= strtoupper($word[0]);
         }
         return $ret;
     }
 
-    public function destroyVacationRequest(){
+    public function destroyVacationRequest()
+    {
 
     }
 }

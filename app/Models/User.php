@@ -59,4 +59,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(PastSalary::class);
     }
+
+    public function vacationRequests()
+    {
+        return $this->hasMany(VacationRequest::class);
+    }
 }

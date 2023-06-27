@@ -8,118 +8,16 @@
         var element = document.getElementById("buttonSubSick");
         element.classList.toggle("hidden");
     }
-
-    function addRowBtn() {
-        var element = document.getElementById("addRowBtn");
-        element.classList.toggle("hidden");
-    }
-
-    function addRowToSick() {
-        var element = document.getElementById("addRowToSick");
-        element.classList.toggle("hidden");
-    }
 </script>
 
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Admin') }}
+            {{ __('Anfrageverwaltung') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h2 id="TEST">Angestellte</h2>
-                    <!--Table for Users-->
-                    <div class="pb-4 pt-4">
-                        <div class="w-3/4 mx-auto">
-                            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                                <table class="w-full text-sm text-left text-gray-500">
-                                    <thead class="text-xs text-gray-700 uppercase bg-gray-200">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3">Image</th>
-                                        <th scope="col" class="px-6 py-3">Username</th>
-                                        <th scope="col" class="px-6 py-3">Email</th>
-                                        <th scope="col" class="px-6 py-3">Role</th>
-                                        <th scope="col" class="px-4 py-3">Edit</th>
-                                        <th scope="col" class="pr-2 py-3">Delete</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($users as $user)
-                                        <tr class="bg-gray-100">
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-                                                @if($user->image !== '')
-                                                    <img class="image rounded-circle"
-                                                         src="{{asset('/images/'.$user->image)}}" alt="profile_image"
-                                                         style="width: 40px;height: 40px; margin-left: 4px;"></td>
-                                            @else
-                                                <div
-                                                    class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full mr-2">
-                                                <span
-                                                    class="font-medium text-gray-600 dark:text-gray-500">{{ $user->initials }}</span>
-                                                </div>
-                                            @endif
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$user->name}}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">{{$user->email}}</td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-                                                @if($user->hasRole('admin'))
-                                                    <b>{{Str::upper('admin')}}</b>
-                                                @else
-                                                    {{Str::upper('user')}}
-                                                @endif
-                                            </td>
-
-                                            <td class="py-4 text-sm text-gray-700">
-                                                <a href="{{ URL('/admin/user/update/'.$user->id)}}">
-                                                    <button
-                                                        class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                                        type="button">
-                                                        Edit
-                                                    </button>
-                                                </a>
-                                            </td>
-
-                                            <td class="pt-3 text-sm text-gray-700">
-                                                @if($user->id === Auth::user()->id)
-                                                    <p class="py-4 px-2 text-sm text-gray-400 italic">-----</p>
-                                                @else
-                                                    <form method="POST"
-                                                          action="{{ route('delete.user', $user->id) }}">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button
-                                                            class="font-bold text-red-500 font-medium rounded-lg text-sm w-full sm:w-auto py-3 text-center"
-                                                            type="submit"
-                                                            onclick="return confirm('Are you sure that you want to delete User {{ $user->name }}?')"
-                                                        >
-                                                            Delete
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <a href="{{ URL('/users/create') }}">
-                                <button
-                                    class="mt-5 ml-4 block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                    type="button">
-                                    <span class="font-bold">+</span> Neuer User
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="pb-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
@@ -132,11 +30,51 @@
         </div>
     </div>
 
+    <div class="pb-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h2 class="mb-4">Urlaub nachtragen</h2>
+                    <div id="newVacReq" class="flex flex-col sm:flex-row justify-between items-center pt-5 pl-8">
+                        <form method="POST" action="{{ route('dashboard-vacation-admin') }}">
+                            @csrf
+                            <div class="flex flex-col sm:flex-row items-center mb-2">
+                                <label for="user_id"
+                                       class="mr-2 text-sm font-medium text-gray-900">Angestellter:</label>
+                                <select name="user_id"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block py-2.5 px-4">
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
+                                <label for="start_date" class="ml-4 mr-2 text-sm font-medium text-gray-900">Start
+                                    Datum:</label>
+                                <input
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    type="date" name="start_date" id="start_date" required>
+                                <label for="end_date" class="ml-4 mr-2 text-sm font-medium text-gray-900">End
+                                    Datum:</label>
+                                <input
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    type="date" name="end_date" id="end_date" required>
+
+                                <button type="submit"
+                                        class="ml-10 mt-2 px-4 py-2.5 mb-1.5 bg-green-600 text-white rounded-lg text-sm font-medium">
+                                    Eintragen
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="pb-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <h2>Urlaub-Requests</h2>
+                    <h2>Urlaub-Anträge</h2>
                     <!--Table for Vacation-Requests-->
                     <div class="pb-4 pt-4">
                         <div class="mr-4 ml-4">
@@ -271,71 +209,56 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                    <tr class="bg-gray-100 hidden" id="addRowBtn">
-                                        <form method="POST"
-                                              action="{{ route('dashboard-vacation-admin') }}">
-                                            @csrf
-                                            <td class=" px-3 text-sm text-gray-700">
-                                                <select
-                                                    name="user_id"
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 text-center"
-                                                >
-                                                    @foreach($users as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td class="py-4 px-3 text-sm text-gray-700 justify-center">
-                                                <input
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                                                    type="date"
-                                                    name="start_date"
-                                                >
-                                            </td>
-                                            <td class="py-4 px-3 text-sm text-gray-700">
-                                                <input
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                                                    type="date"
-                                                    name="end_date"
-                                                >
-                                            </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-                                                <button
-                                                    class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                                    type="submit"
-                                                >
-                                                    Eintragen
-                                                </button>
-                                            </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-
-                                            </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-
-                                            </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-
-                                            </td>
-                                        </form>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="flex justify-center mt-4">
                                 <button id="displayMoreButtonVacation"
                                         class="text-blue-500 hover:text-blue-700 underline focus:outline-none">
-                                    Show More
+                                    Mehr anzeigen
                                 </button>
                             </div>
-
-                            <button
-                                class="mt-5 ml-4 block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                type="button"
-                                onclick="addRowBtn()"
-                            >
-                                <span class="font-bold">+</span> Urlaub nachtragen
-                            </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pb-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h2 class="mb-4">Krankenstand nachtragen</h2>
+                    <div id="newVacReq" class="flex flex-col sm:flex-row justify-between items-center pt-5 pl-8">
+                        <form method="POST" action="{{ route('dashboard-sickness-admin') }}">
+                            @csrf
+                            <div class="flex flex-col sm:flex-row items-center mb-2">
+                                <label for="user_id"
+                                       class="mr-2 text-sm font-medium text-gray-900">Angestellter:</label>
+                                <select name="user_id"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block py-2.5 px-4">
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
+                                <label for="start_date" class="ml-4 mr-2 text-sm font-medium text-gray-900">Start
+                                    Datum:</label>
+                                <input
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    type="date" name="start_date" id="start_date" required>
+                                <label for="end_date" class="ml-4 mr-2 text-sm font-medium text-gray-900">End
+                                    Datum:</label>
+                                <input
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    type="date" name="end_date" id="end_date" required>
+
+                                <button type="submit"
+                                        class="ml-10 mt-2 px-4 py-2.5 mb-1.5 bg-green-600 text-white rounded-lg text-sm font-medium">
+                                    Eintragen
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -346,8 +269,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <h2>Sickness-Requests</h2>
-                    <!--Table for Users-->
+                    <h2>Krankenstand-Anfragen</h2>
+                    <!--Table for Sickness-->
                     <div class="pb-4 pt-4">
                         <div class="mr-4 ml-4">
                             <div class="relative mb-4 w-3/5 flex">
@@ -481,69 +404,15 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                    <tr class="bg-gray-100 hidden" id="addRowToSick">
-                                        <form method="POST"
-                                              action="{{ route('dashboard-sickness-admin') }}">
-                                            @csrf
-                                            <td class=" px-3 text-sm text-gray-700">
-                                                <select
-                                                    name="user_id"
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 text-center"
-                                                >
-                                                    @foreach($users as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td class="py-4 px-3 text-sm text-gray-700 justify-center">
-                                                <input
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                                                    type="date"
-                                                    name="start_date"
-                                                >
-                                            </td>
-                                            <td class="py-4 px-3 text-sm text-gray-700">
-                                                <input
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                                                    type="date"
-                                                    name="end_date"
-                                                >
-                                            </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-                                                <button
-                                                    class="block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                                    type="submit"
-                                                >
-                                                    Eintragen
-                                                </button>
-                                            </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-
-                                            </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-
-                                            </td>
-                                            <td class="py-4 px-6 text-sm text-gray-700">
-
-                                            </td>
-                                        </form>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="flex justify-center mt-4">
                                 <button id="displayMoreButtonSickness"
                                         class="text-blue-500 hover:text-blue-700 underline focus:outline-none">
-                                    Display More
+                                    Mehr anzeigen
                                 </button>
                             </div>
-                            <button
-                                class="mt-5 ml-4 block w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                type="button"
-                                onclick="addRowToSick()"
-                            >
-                                <span class="font-bold">+</span> Krankenstand nachtragen
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -626,7 +495,7 @@
             rows[i].style.display = ""; // Display the rows
         }
         var displayButton = document.getElementById(displayButtonId);
-        displayButton.innerText = "Show Less"; // Change the button text
+        displayButton.innerText = "Weniger anzeigen"; // Change the button text
         displayButton.removeEventListener("click", displayMoreRows); // Remove the existing event listener
         displayButton.addEventListener("click", function () {
             showLessRows(tableId, displayButtonId); // Add a new event listener for showing fewer rows
@@ -644,7 +513,7 @@
             rows[i].style.display = "none"; // Hide the rows
         }
         var displayButton = document.getElementById(displayButtonId);
-        displayButton.innerText = "Display More"; // Change the button text
+        displayButton.innerText = "Mehr anzeigen"; // Change the button text
         displayButton.removeEventListener("click", showLessRows); // Remove the existing event listener
         displayButton.addEventListener("click", function () {
             displayMoreRows(tableId, displayButtonId); // Add a new event listener for displaying more rows

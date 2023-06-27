@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DisplayUserController;
 use App\Http\Controllers\EnterHoursController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UpdateUserController;
@@ -30,6 +31,7 @@ Route::get('/admin', [AdminController::class, 'index'])->middleware('admin')->na
 Route::get('/enterHours', [EnterHoursController::class, 'index'])->middleware('admin')->name('enterHours');
 Route::get('/admin/user/update/{id}', [UpdateUserController::class, 'index'])->middleware('admin')->name('index.update.user');
 Route::get('/users/create', [UserController::class, 'index'])->middleware('admin')->name('users.load.create');
+Route::get('/users', [DisplayUserController::class, 'index'])->middleware('admin')->name('users.load');
 
 // Safe in DB - Routes
 Route::post('/dashboard/vacation', [DashboardController::class, 'storeVac'])->middleware(['auth', 'verified'])->name('dashboard-vacation');

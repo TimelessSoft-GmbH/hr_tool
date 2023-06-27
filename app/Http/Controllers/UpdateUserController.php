@@ -60,7 +60,7 @@ class UpdateUserController extends Controller
 
         //Update the past salaries
         $this->updateOldPastSalariesDates($user, $request);
-        return redirect('/admin');
+        return redirect('/users');
     }
 
     function changeUserRole($userId, $newRoleName)
@@ -185,7 +185,7 @@ class UpdateUserController extends Controller
         SicknessRequest::where('user_id', $id)->delete();
         FileHistory::where('user_id', $id)->delete();
         User::find($id)->delete();
-        return redirect('/admin');
+        return redirect('/users');
     }
 
     public function destroyVacationRequest($id)
