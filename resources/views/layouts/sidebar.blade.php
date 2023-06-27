@@ -30,8 +30,8 @@
                     </svg>
                     <span class="text-md">Stunden</span>
                 </a>
-                <a href="{{ route('users.load') }}"
-                   class="flex items-center py-3 px-4 mt-2 text-white hover:bg-gray-200 hover:text-gray-800 {{ Request::is('users') ? 'bg-gray-200 text-black' : '' }}">
+                <a href="{{ route('loadUsers') }}"
+                   class="flex items-center py-3 px-4 mt-2 text-white hover:bg-gray-200 hover:text-gray-800 {{ Request::is('loadUsers') ? 'bg-gray-200 text-black' : '' }}">
                     <svg class="w-8 h-8 mr-3 text-red-500" fill="currentColor" viewBox="0 0 24 24"
                          xmlns="http://www.w3.org/2000/svg">
                         <path
