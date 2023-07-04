@@ -57,14 +57,14 @@
                     @php
                         $cellIndex = $i * 7 + $j + 1;
                         $isCurrentMonth = ($cellIndex >= $firstDayOfWeek && $cellIndex < $firstDayOfWeek + $daysInMonth);
-                        $currentDate = Carbon::parse("$year-$month-$date")->format('d');
+                        $currentDate = Carbon::create($year, $month, $date)->format('d');
                         $isPublicHoliday = in_array($currentDate, $currentMonthHolidays);
                         $isWeekend = ($j === 5 || $j === 6); // Saturday or Sunday
                         $isVacation = isset($currentMonthVacationDays[$currentDate]);
                         $usersOnVacation = $isVacation ? array_column($currentMonthVacationDays[$currentDate], 'initials') : [];
                         $isSick = false; // Set to true if the user is sick
                     @endphp
-                    <td class="w-20 h-20 border border-gray-200 {{ $isCurrentMonth ? 'relative' : 'bg-gray-100' }}">
+                    <td class="w-20 h-20 border border-gray-200 {{ $isCurrentMonth ? 'relative' : 'bg-gray-100' }} {{ $isCurrentMonth && $date == now()->day ? 'bg-gray-300' : '' }}">
                         @if ($isCurrentMonth)
                             <div
                                 class="absolute top-0 left-0 w-full h-1 @if ($isPublicHoliday || $isWeekend) bg-red-600 @endif"></div>
