@@ -60,7 +60,7 @@ class UpdateUserController extends Controller
 
         //Update the past salaries
         $this->updateOldPastSalariesDates($user, $request);
-        return redirect('/users');
+        return redirect()->back();
     }
 
     function changeUserRole($userId, $newRoleName)

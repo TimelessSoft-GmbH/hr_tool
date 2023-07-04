@@ -455,8 +455,8 @@
         // Set the minimum allowed value for the end date
         endDateInput.min = startDate;
 
-        // Clear the end date value if it's before the start date
-        if (endDateInput.value < startDate) {
+        // Clear the end date value if it's before the start date or if it's the same day
+        if (endDateInput.value < startDate || endDateInput.value === startDate) {
             endDateInput.value = '';
         }
     }

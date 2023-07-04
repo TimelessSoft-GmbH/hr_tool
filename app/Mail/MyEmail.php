@@ -11,6 +11,7 @@ use Aws\Ses\SesClient;
 class MyEmail extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $data;
 
     /**
@@ -20,8 +21,11 @@ class MyEmail extends Mailable
      */
     public function build()
     {
+        $subject = $this->data['type_of_notification'] . ' von ' . \App\Models\User::findOrFail($this->data['user_id'])->name;
+
         return $this->view('components.emails.notify-new-vacation-request')
-                    ->with(['data' => $this->data]);
+            ->subject($subject)
+            ->with(['data' => $this->data]);
     }
 
 }
