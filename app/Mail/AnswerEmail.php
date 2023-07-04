@@ -11,6 +11,7 @@ use Aws\Ses\SesClient;
 class AnswerEmail extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $data;
 
     /**
@@ -20,7 +21,17 @@ class AnswerEmail extends Mailable
      */
     public function build()
     {
+        if ($this->data['answer'] === 'accepted') {
+            $antwort = 'akzeptiert';
+        } elseif ($this->data['answer'] === 'declined') {
+            $antwort = 'abgelehnt';
+        } else {
+            $antwort = 'undefiniert';
+        }
+        $subject = $this->data['type_of_notification'] . ' wurde ' . $antwort;
+
         return $this->view('components.emails.notify-updated-request')
+            ->subject($subject)
             ->with(['data' => $this->data]);
     }
 
