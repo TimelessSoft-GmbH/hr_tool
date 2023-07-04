@@ -43,7 +43,7 @@
                                             <td class="py-4 px-6 text-sm text-gray-700">{{$user->email}}</td>
                                             <td class="py-4 px-6 text-sm text-gray-700">
                                                 @if($user->hasRole('admin'))
-                                                    <b>{{Str::upper('admin')}}</b>
+                                                    <span class="text-red-600"><b>{{Str::upper('admin')}}</b></span>
                                                 @else
                                                     {{Str::upper('user')}}
                                                 @endif

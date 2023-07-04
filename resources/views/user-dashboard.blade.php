@@ -383,7 +383,7 @@
 
     @if(!$userHasEntries)
         <div>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 pb-10">
                 <div class="bg-amber-300 overflow-hidden shadow-sm sm:rounded-lg">
                     <h2 class="pt-6 pl-6 pr-6 text-gray-900 font-bold">
                         Bitte trage deine Stunden vom {{$previousMonth}} ein:
