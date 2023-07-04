@@ -71,7 +71,7 @@ class DashboardController extends Controller
     {
         $attributes = request()?->validate([
             'start_date' => ['required', 'date:Y-m-d'],
-            'end_date' => ['required', 'date:Y-m-d'],
+            'end_date' => ['required', 'date:Y-m-d', 'after:start_date'],
             'total_days' => [],
             'user_id' => ['required'],
         ]);
