@@ -50,12 +50,12 @@
                                 <label for="start_date" class="ml-4 mr-2 text-sm font-medium text-gray-900">Start
                                     Datum:</label>
                                 <input
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 start_date"
                                     type="date" name="start_date" id="start_date" required>
                                 <label for="end_date" class="ml-4 mr-2 text-sm font-medium text-gray-900">End
                                     Datum:</label>
                                 <input
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 end_date"
                                     type="date" name="end_date" id="end_date" required>
 
                                 <button type="submit"
@@ -245,12 +245,12 @@
                                 <label for="start_date" class="ml-4 mr-2 text-sm font-medium text-gray-900">Start
                                     Datum:</label>
                                 <input
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 start_date"
                                     type="date" name="start_date" id="start_date" required>
                                 <label for="end_date" class="ml-4 mr-2 text-sm font-medium text-gray-900">End
                                     Datum:</label>
                                 <input
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 end_date"
                                     type="date" name="end_date" id="end_date" required>
 
                                 <button type="submit"
@@ -540,4 +540,26 @@
     // Initialize the table display on page load
     initializeTableDisplay("vacationTable", "displayMoreButtonVacation");
     initializeTableDisplay("sicknessTable", "displayMoreButtonSickness");
+
+    function validateEndDate(event) {
+        const form = event.target.form;
+        const startDateInput = form.querySelector('.start_date');
+        const endDateInput = form.querySelector('.end_date');
+
+        const startDate = startDateInput.value;
+
+        // Set the minimum allowed value for the end date
+        endDateInput.min = startDate;
+
+        // Clear the end date value if it's before the start date
+        if (endDateInput.value < startDate) {
+            endDateInput.value = '';
+        }
+    }
+
+    // Attach the event listeners to all start_date inputs
+    const startDateInputs = document.querySelectorAll('.start_date');
+    startDateInputs.forEach((input) => {
+        input.addEventListener('input', validateEndDate);
+    });
 </script>
