@@ -143,19 +143,14 @@ class DashboardController extends Controller
             'type_of_notification' => $typeOfNotification,
         ];
 
-        // Get all admins
+        // Send Email to all Admins
         $admins = User::whereHas('roles', function ($query) {
             $query->where('name', 'admin');
         })->get();
 
-        // Remove the user you don't want to send the email to
-        //$excludedUser = User::find(e.g.1); // Replace $userIdToExclude with the actual user ID
-        //$admins = $admins->except($excludedUser);
+        $emailRecipients = $admins->pluck('email')->toArray();
 
-        // Send email to the remaining admins
-        foreach ($admins as $admin) {
-            Mail::to($admin->email)->send($email);
-        }
+        Mail::to($emailRecipients)->send($email);
     }
 
     public function storeHours(Request $request)
