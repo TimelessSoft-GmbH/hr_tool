@@ -64,7 +64,7 @@
                         $usersOnVacation = $isVacation ? array_column($currentMonthVacationDays[$currentDate], 'initials') : [];
                         $isSick = false; // Set to true if the user is sick
                     @endphp
-                    <td class="w-20 h-20 border border-gray-200 {{ $isCurrentMonth ? 'relative' : 'bg-gray-100' }} {{ $isCurrentMonth && $date == now()->day ? 'bg-gray-300' : '' }}">
+                    <td class="w-20 h-20 border border-gray-200 {{ $isCurrentMonth ? 'relative' : 'bg-gray-100' }} {{ $isCurrentMonth && $date == now()->day ? 'bg-red-200' : '' }}">
                         @if ($isCurrentMonth)
                             <div
                                 class="absolute top-0 left-0 w-full h-1 @if ($isPublicHoliday || $isWeekend) bg-red-600 @endif"></div>
