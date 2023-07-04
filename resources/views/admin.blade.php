@@ -396,7 +396,7 @@
                                                     <button
                                                         class="font-bold text-red-500 font-medium rounded-lg text-sm w-full sm:w-auto pt-3 text-center"
                                                         type="submit"
-                                                        onclick="return confirm('Bist du sicher, dass du das löschen wirst?')"
+                                                        onclick="return confirm('Bist du sicher, dass du das löschen willst?')"
                                                     >
                                                         Löschen
                                                     </button>

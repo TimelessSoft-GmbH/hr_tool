@@ -96,6 +96,9 @@
                                     <th scope="col" class="px-6 py-3">
                                         Stand
                                     </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Löschen
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -106,6 +109,9 @@
                                         <th class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("Noch kein Antrag ") }}
                                         </th>
+                                        <td class="py-4 px-6 text-sm text-gray-400 italic">
+                                            {{ __("---------") }}
+                                        </td>
                                         <td class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("---------") }}
                                         </td>
@@ -153,6 +159,26 @@
                                                     {{ $vacationRequest->accepted }}
                                                 </div>
                                             </td>
+                                            @if($vacationRequest->accepted === 'pending')
+                                                <td class="py-4 px-6 text-sm">
+                                                    <form method="POST"
+                                                          action="{{ route('delete.vacationRequest.user', $vacationRequest->id) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button
+                                                            class="font-bold text-red-500 font-medium rounded-lg text-sm w-full sm:w-auto pt-3 text-center"
+                                                            type="submit"
+                                                            onclick="return confirm('Bist du sicher, dass du den Antrag löschen willst?')"
+                                                        >
+                                                            Löschen
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            @else
+                                                <td class="py-4 px-6 text-sm">
+                                                    ----------
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 @endif
@@ -247,6 +273,9 @@
                                     <th scope="col" class="px-6 py-3">
                                         Stand
                                     </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Löschen
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -257,6 +286,9 @@
                                         <th class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("Noch kein Antrag ") }}
                                         </th>
+                                        <td class="py-4 px-6 text-sm text-gray-400 italic">
+                                            {{ __("---------") }}
+                                        </td>
                                         <td class="py-4 px-6 text-sm text-gray-400 italic">
                                             {{ __("---------") }}
                                         </td>
@@ -304,6 +336,26 @@
                                                     {{ $sicknessRequest->accepted }}
                                                 </div>
                                             </td>
+                                            @if($sicknessRequest->accepted === 'pending')
+                                                <td class="py-4 px-6 text-sm">
+                                                    <form method="POST"
+                                                          action="{{ route('delete.sicknessRequest.user', $sicknessRequest->id) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button
+                                                            class="font-bold text-red-500 font-medium rounded-lg text-sm w-full sm:w-auto pt-3 text-center"
+                                                            type="submit"
+                                                            onclick="return confirm('Bist du sicher, dass du den Antrag löschen willst?')"
+                                                        >
+                                                            Löschen
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            @else
+                                                <td class="py-4 px-6 text-sm">
+                                                    ----------
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 @endif

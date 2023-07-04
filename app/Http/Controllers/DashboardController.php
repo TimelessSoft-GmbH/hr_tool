@@ -175,4 +175,18 @@ class DashboardController extends Controller
         // Redirect the user back to the previous page or to a success page
         return back();
     }
+
+    public function destroyVacationRequest($id)
+    {
+        $user = User::find(VacationRequest::where('id', $id)->value('user_id'));
+        VacationRequest::where('id', $id)->delete();
+        return redirect('/dashboard');
+    }
+
+    public function destroySicknessRequest($id)
+    {
+        $user = User::find(SicknessRequest::where('id', $id)->value('user_id'));
+        SicknessRequest::where('id', $id)->delete();
+        return redirect('/dashboard');
+    }
 }
