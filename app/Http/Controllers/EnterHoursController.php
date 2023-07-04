@@ -22,12 +22,16 @@ class EnterHoursController extends Controller
 
     public function updateHoursAsAdmin(Request $request)
     {
+        $hours = str_replace(',', '.', $request->input('hours'));
+
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'year' => 'required|numeric',
             'month' => 'required|numeric|min:1|max:12',
-            'hours' => 'required',
+            'hours' => ['required', 'regex:/^\d{1,3}(?:[.,]\d{1,2})?$/'],
         ]);
+
+        $validatedData['hours'] = (float)$hours;
 
         $workHour = WorkHour::where('user_id', $validatedData['user_id'])
             ->where('year', $validatedData['year'])

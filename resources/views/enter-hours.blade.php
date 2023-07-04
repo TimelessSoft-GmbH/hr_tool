@@ -80,7 +80,7 @@
 
                                 <div class="mr-2">
                                     <label for="hours">Stunden:</label>
-                                    <input type="number" name="hours" id="hours"
+                                    <input type="text" name="hours" id="hours"
                                            class="py-1 px-2 w-16 border border-gray-300 rounded" required>
                                 </div>
 
