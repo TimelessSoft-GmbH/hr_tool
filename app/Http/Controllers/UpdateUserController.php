@@ -185,7 +185,7 @@ class UpdateUserController extends Controller
         SicknessRequest::where('user_id', $id)->delete();
         FileHistory::where('user_id', $id)->delete();
         User::find($id)->delete();
-        return redirect('/users');
+        return redirect('/loadUsers');
     }
 
     public function destroyVacationRequest($id)

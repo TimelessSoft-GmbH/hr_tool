@@ -21,18 +21,6 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|unique:users,email',
-            'name' => 'required',
-            'adress' => 'nullable',
-            'password' => 'required',
-            'hours_per_week' => 'nullable',
-            'vacationDays' => 'nullable',
-            'hasrole' => 'required',
-            'start_of_work' => 'required',
-            'phoneNumber' => 'required',
-            'salary' => 'nullable'
-        ]);
 
         $user = new User;
         $user->email = $request->email;
@@ -52,7 +40,7 @@ class UserController extends Controller
         $user->workdays = $workdays;
         $user->save();
 
-        return redirect('/users');
+        return redirect('/loadUsers');
     }
 
     public function initials($str)
@@ -62,10 +50,5 @@ class UserController extends Controller
             $ret .= strtoupper($word[0]);
         }
         return $ret;
-    }
-
-    public function destroyVacationRequest()
-    {
-
     }
 }
