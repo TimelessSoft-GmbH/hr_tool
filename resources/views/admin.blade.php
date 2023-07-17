@@ -23,7 +23,14 @@
                 <div class="p-6">
                     <h2 class="pb-4">Übersicht</h2>
                     <div>
-                        @include('components.Calendar', ['users' => $users, '$vacationRequests' => $vacationRequests, '$sicknessRequests' => $sicknessRequests, '$holiday_dates' => $holiday_dates ])
+                        @include('components.Calendar', [
+                                                'users' => $users,
+                                                'vacationRequests' => $vacationRequests,
+                                                'sicknessRequests' => $sicknessRequests,
+                                                'holiday_dates' => $holiday_dates,
+                                                'selectedYear' => request()->query('selectedYear'),
+                                                'selectedMonth' => request()->query('selectedMonth'),
+                                            ])
                     </div>
                 </div>
             </div>

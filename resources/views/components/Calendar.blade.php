@@ -7,6 +7,14 @@
     $firstDayOfWeek = $now->startOfMonth()->dayOfWeek;
     $date = 1;
 
+    // Check if the user has provided a specific year and month
+    if (isset($selectedYear) && isset($selectedMonth)) {
+        $year = $selectedYear;
+        $month = $selectedMonth;
+        $daysInMonth = Carbon::create($year, $month)->daysInMonth;
+        $firstDayOfWeek = Carbon::create($year, $month)->startOfMonth()->dayOfWeek;
+    }
+
     $currentMonthHolidays = collect($holiday_dates)->map(fn($holiday) => Carbon::parse($holiday)->format('d'))->toArray();
 
     // Check for all VacationRequests
@@ -32,11 +40,24 @@
         ->groupBy('date')
         ->toArray();
 
+    // Calculate the previous and next month
+    $previousMonth = Carbon::create($year, $month)->subMonth();
+    $nextMonth = Carbon::create($year, $month)->addMonth();
+
+    $currentMonthTitle = Carbon::create($year, $month)->format('F Y');
 @endphp
 
 <div class="border border-gray-300 rounded-lg overflow-hidden">
     <div class="flex justify-between bg-gray-200 px-3 py-2">
-        <span class="text-gray-800 font-bold">{{ $now->format('F Y') }}</span>
+        <div>
+            <a href="{{ url()->current() }}?selectedYear={{ $previousMonth->year }}&selectedMonth={{ $previousMonth->month }}"
+               class="text-gray-600 hover:text-red-800 text-lg font-bold">&lt;</a>
+        </div>
+        <span class="text-gray-800 font-bold">{{ $currentMonthTitle }}</span>
+        <div>
+            <a href="{{ url()->current() }}?selectedYear={{ $nextMonth->year }}&selectedMonth={{ $nextMonth->month }}"
+               class="text-gray-600 hover:text-red-800 text-lg font-bold">&gt;</a>
+        </div>
     </div>
     <table class="w-full">
         <thead>
@@ -64,7 +85,8 @@
                         $usersOnVacation = $isVacation ? array_column($currentMonthVacationDays[$currentDate], 'initials') : [];
                         $isSick = false; // Set to true if the user is sick
                     @endphp
-                    <td class="w-20 h-20 border border-gray-200 {{ $isCurrentMonth ? 'relative' : 'bg-gray-100' }} {{ $isCurrentMonth && $date == now()->day ? 'bg-red-200' : '' }}">
+
+                    <td class="w-20 h-20 border border-gray-200 {{ $isCurrentMonth ? 'relative' : 'bg-gray-100' }} {{ $isCurrentMonth && $date == Carbon::now()->day && $year == $now->year && $month == $now->month? 'bg-red-200' : '' }}">
                         @if ($isCurrentMonth)
                             <div
                                 class="absolute top-0 left-0 w-full h-1 @if ($isPublicHoliday || $isWeekend) bg-red-600 @endif"></div>
@@ -96,4 +118,11 @@
         @endfor
         </tbody>
     </table>
+</div>
+<div class="flex justify-center mt-4">
+    <form action="{{ url()->current() }}" method="GET">
+        <button type="submit" class="bg-gray-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+            Jump to Current Month
+        </button>
+    </form>
 </div>
