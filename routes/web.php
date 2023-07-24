@@ -47,6 +47,7 @@ Route::post('/admin/{id}/submitAnswer', [AdminController::class, 'updateVacation
 Route::post('/admin/{id}/submitAnswer2', [AdminController::class, 'updateSicknessAnswer'])->middleware('admin')->name('update.sicknessAnswer');
 Route::get('/update-table', [EnterHoursController::class, 'updateTable'])->middleware('admin')->name('update.table');
 Route::post('/admin/user/updated/{id}', [UpdateUserController::class, 'update'])->middleware('admin')->name('update.user');
+Route::post('/update-vacation-request/{id}', [AdminController::class, 'updateVacationRequestFromTable'])->middleware('admin')->name('update.vacation.from.table');
 
 // Delete Routes
 Route::delete('/admin/user/deleted/{id}', [UpdateUserController::class, 'destroy'])->middleware('admin')->name('delete.user');

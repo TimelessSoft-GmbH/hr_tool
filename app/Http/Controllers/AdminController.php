@@ -213,4 +213,82 @@ class AdminController extends Controller
 
         return $attributes;
     }
+
+    public function updateVacationRequestFromTable(Request $request, $id)
+    {
+        // Find the vacation request by ID
+        $vacationRequest = VacationRequest::findOrFail($id);
+        $user_id = $vacationRequest->user_id;
+
+        // Get the user based on user_id
+        $user = User::findOrFail($user_id);
+
+        // Get the original start and end dates before updating
+        $originalStartDate = $vacationRequest->start_date;
+        $originalEndDate = $vacationRequest->end_date;
+
+        // Update the start and end dates
+        $vacationRequest->start_date = $request->input('start_date');
+        $vacationRequest->end_date = $request->input('end_date');
+
+        // Calculate the new total days
+        $totalDays = $this->calculateTotalDays($request->input('start_date'), $request->input('end_date'), $user);
+
+        // Update the total days
+        $vacationRequest->total_days = $totalDays;
+
+        // Save the changes
+        $vacationRequest->save();
+
+        // Return a JSON response indicating success
+        return response()->json(['message' => 'Vacation request updated successfully', 'total_days' => $totalDays]);
+    }
+
+    private function calculateTotalDays($startDate, $endDate, $user)
+    {
+        // Get Public Holidays from API
+        $client = new Client();
+        $year = date('Y');
+        $response = $client->get("https://date.nager.at/api/v3/PublicHolidays/{$year}/AT");
+        $holidays = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $holiday_dates = [];
+        foreach ($holidays as $holiday) {
+            $holiday_dates[] = (string)$holiday['date'];
+        }
+
+        // Get user's workdays
+        $workdays = json_decode($user->workdays, true);
+        if ($workdays === null || json_last_error() !== JSON_ERROR_NONE) {
+            $workdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        }
+
+        // Calculate total Days without public Holidays
+        $start_date = Carbon::parse($startDate)->startOfDay();
+        $end_date = Carbon::parse($endDate)->startOfDay();
+        $total_days = 0;
+
+        // Check if the start date is a workday and not a holiday
+        if (in_array($start_date->format('l'), $workdays, true) && !in_array($start_date->format('Y-m-d'), $holiday_dates, true)) {
+            $total_days++;
+        }
+
+        // Check if it's a one-day vacation request that is a workday and not a holiday
+        if ($start_date->eq($end_date) && in_array($start_date->format('l'), $workdays, true) && !in_array($start_date->format('Y-m-d'), $holiday_dates, true)) {
+            $total_days = 1;
+        } elseif ($start_date->lt($end_date)) {
+            // Loop for adding total days
+            for ($date = $start_date->copy()->addDay(); $date->lt($end_date); $date->addDay()) {
+                if (in_array($date->format('l'), $workdays, true) && !in_array($date->format('Y-m-d'), $holiday_dates, true)) {
+                    $total_days++;
+                }
+            }
+
+            // Add one if End-day is a workday
+            if (in_array($end_date->format('l'), $workdays, true) && !in_array($end_date->format('Y-m-d'), $holiday_dates, true)) {
+                $total_days++;
+            }
+        }
+
+        return $total_days;
+    }
 }
