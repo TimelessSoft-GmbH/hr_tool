@@ -454,7 +454,11 @@
                                                         <div
                                                             class="px-5 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                                             <dt class="text-sm font-medium text-gray-500">
-                                                                <a href="{{ Storage::url($fileHistory->file_path) }}"
+                                                                <!--<a href="{{ Storage::url($fileHistory->file_path) }}"
+                                                                   target="_blank"
+                                                                   class="text-blue-700 hover:underline focus:outline-none"
+                                                                >-->
+                                                                <a href="{{ asset('storage/' . urlencode($fileHistory->file_path)) }}"
                                                                    target="_blank"
                                                                    class="text-blue-700 hover:underline focus:outline-none"
                                                                 >
