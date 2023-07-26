@@ -92,16 +92,12 @@ class UpdateUserController extends Controller
             // Remove invalid characters
             $filename = preg_replace("/[^a-zA-Z0-9_.]/", "", $filename);
 
-            $path = $file->storeAs('public/pdfs', $filename);
+            $path = $file->storeAs('pdfs', $filename, 'public');
             $fileHistory = new FileHistory();
             $fileHistory->user_id = $user->id;
             $fileHistory->file_name = $filename;
             $fileHistory->file_path = $path;
             $fileHistory->save();
-
-            $filesInPdfs = Storage::files('public/pdfs');
-            Log::info('Files in public/pdfs: ' . implode(', ', $filesInPdfs));
-
         }
     }
 
