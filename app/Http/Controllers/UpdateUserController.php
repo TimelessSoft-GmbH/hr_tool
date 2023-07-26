@@ -89,6 +89,12 @@ class UpdateUserController extends Controller
             $filename = $file->getClientOriginalName();
             $filename = str_replace(array('-', ' '), '_', $filename);
 
+            // Remove invalid characters
+            $filename = preg_replace("/[^a-zA-Z0-9_.]/", "", $filename);
+
+            // Encode the filename
+            $encodedFilename = urlencode($filename);
+
             $path = $file->storeAs('pdfs', $filename, 'public');
             $fileHistory = new FileHistory();
             $fileHistory->user_id = $user->id;
