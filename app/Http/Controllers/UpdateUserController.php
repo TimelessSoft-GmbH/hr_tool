@@ -95,7 +95,7 @@ class UpdateUserController extends Controller
             // Encode the filename
             $encodedFilename = urlencode($filename);
 
-            $path = $file->storeAs('pdfs', $filename, 'public');
+            $path = $file->storeAs('public/pdfs', $encodedFilename);
             $fileHistory = new FileHistory();
             $fileHistory->user_id = $user->id;
             $fileHistory->file_name = $filename;
