@@ -98,6 +98,8 @@ class UpdateUserController extends Controller
             $fileHistory->file_name = $filename;
             $fileHistory->file_path = $path;
             $fileHistory->save();
+
+            ddd('File Name: ' . $filename, 'File Path: ' . $path);
         }
     }
 
