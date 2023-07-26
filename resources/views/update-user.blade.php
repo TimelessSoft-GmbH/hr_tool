@@ -458,7 +458,7 @@
                                                                    target="_blank"
                                                                    class="text-blue-700 hover:underline focus:outline-none"
                                                                 >-->
-                                                                <a href="{{ asset('storage/' . urlencode($fileHistory->file_path)) }}"
+                                                                <a href="{{ asset('storage/' . $fileHistory->file_path) }}"
                                                                    target="_blank"
                                                                    class="text-blue-700 hover:underline focus:outline-none"
                                                                 >
