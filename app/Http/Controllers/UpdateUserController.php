@@ -99,7 +99,9 @@ class UpdateUserController extends Controller
             $fileHistory->file_path = $path;
             $fileHistory->save();
 
-            ddd('File Name: ' . $filename, 'File Path: ' . $path);
+            $filesInPdfs = Storage::files('public/pdfs');
+            Log::info('Files in public/pdfs: ' . implode(', ', $filesInPdfs));
+
         }
     }
 
