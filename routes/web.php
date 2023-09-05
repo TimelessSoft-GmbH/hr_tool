@@ -52,8 +52,8 @@ Route::post('/update-vacation-request/{id}', [AdminController::class, 'updateVac
 // Delete Routes
 Route::delete('/admin/user/deleted/{id}', [UpdateUserController::class, 'destroy'])->middleware('admin')->name('delete.user');
 Route::delete('/admin/user/vacation/{id}', [UpdateUserController::class, 'destroyVacationRequest'])->middleware('admin')->name('delete.vacationRequest');
-Route::delete('/dashboard/vacation/{id}', [DashboardController::class, 'destroyVacationRequest'])->middleware('admin')->name('delete.vacationRequest.user');
-Route::delete('/dashboard/sickness/{id}', [DashboardController::class, 'destroySicknessRequest'])->middleware('admin')->name('delete.sicknessRequest.user');
+Route::delete('/dashboard/vacation/{id}', [DashboardController::class, 'destroyVacationRequest'])->middleware(['auth', 'verified'])->name('delete.vacationRequest.user');
+Route::delete('/dashboard/sickness/{id}', [DashboardController::class, 'destroySicknessRequest'])->middleware(['auth', 'verified'])->name('delete.sicknessRequest.user');
 Route::delete('/admin/user/sickness/{id}', [UpdateUserController::class, 'destroySicknessRequest'])->middleware('admin')->name('delete.sicknessRequest');
 Route::post('/delete-file/{fileHistory}', [UpdateUserController::class, 'deleteFile'])->name('delete.file');
 
