@@ -427,8 +427,8 @@
 
                                 <div class="mr-2">
                                     <label for="hours" class="font-bold">Stunden:</label>
-                                    <input type="number" name="hours" id="hours"
-                                           class="py-1 px-2 w-16 border border-gray-300 rounded" required>
+                                    <input type="number" name="hours" id="hours" placeholder="HH:MM?"
+                                           class="py-1 px-2 w-24 border border-gray-300 rounded" min="0" required>
                                 </div>
 
                                 <button type="submit"

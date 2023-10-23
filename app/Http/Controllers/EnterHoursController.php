@@ -22,16 +22,21 @@ class EnterHoursController extends Controller
 
     public function updateHoursAsAdmin(Request $request)
     {
-        $hours = str_replace(',', '.', $request->input('hours'));
-
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'year' => 'required|numeric',
             'month' => 'required|numeric|min:1|max:12',
-            'hours' => ['required', 'regex:/^\d{1,3}(?:[.,]\d{1,2})?$/'],
+            'hours' => ['required', 'regex:/^\d{1,3}(?::\d{1,2})?$/'],
         ]);
 
-        $validatedData['hours'] = (float)$hours;
+        $time = explode(':', $validatedData['hours']);
+        $hours = $time[0];
+
+        // if there are minutes as well
+        if (isset($time[1])) {
+            $percentage = $time[1] / 60;
+            $hours += $percentage;
+        }
 
         $workHour = WorkHour::where('user_id', $validatedData['user_id'])
             ->where('year', $validatedData['year'])
@@ -40,14 +45,14 @@ class EnterHoursController extends Controller
 
         if ($workHour) {
             // Update the existing entry
-            $workHour->update(['hours' => $validatedData['hours']]);
+            $workHour->update(['hours' => $hours]);
         } else {
             // Create a new entry
             WorkHour::create([
                 'user_id' => $validatedData['user_id'],
                 'year' => $validatedData['year'],
                 'month' => $validatedData['month'],
-                'hours' => $validatedData['hours'],
+                'hours' => $hours
             ]);
         }
 
