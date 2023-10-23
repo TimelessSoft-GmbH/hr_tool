@@ -31,11 +31,11 @@
 
                 <!-- Store Profile Image -->
                 <form method="POST" action="{{ route('profile.store') }}" enctype="multipart/form-data">
-                    @csrf
+                        @csrf
 
                         <input type="file" name="image" id="image">
                         @if(Auth::user()->image !== "basicUser.png")
-                            <img src="/images/{{ Auth::user()->image }}" style="width:80px;margin-top: 10px;" alt="profile-img">
+                            <img src="{{ route('profile.image', ['filename' => Auth::user()->image]) }}" style="width:80px;margin-top: 10px;" alt="profile-img">
                         @endif
 
                         @error('image')

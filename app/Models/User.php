@@ -64,4 +64,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(VacationRequest::class);
     }
+
+    public function getProfileImageAttribute()
+    {
+        if ($this->image) {
+            return asset('storage/uploads/' . $this->image);
+        }
+
+        return null;
+    }
 }
