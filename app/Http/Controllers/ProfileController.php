@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
+use App\Models\User;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
-use App\Models\User;
+use App\Http\Requests\ProfileUpdateRequest;
 
 class ProfileController extends Controller
 {
@@ -66,10 +67,21 @@ class ProfileController extends Controller
         ]);
 
         $imageName = time().'.'.$request->image->getClientOriginalExtension();
-        $request->image->move(public_path('images'), $imageName);
+        $request->image->storeAs('uploads', $imageName);
 
         Auth()->user()?->update(['image'=>$imageName]);
 
         return back()->with('success', 'Profile image updated successfully.');
+    }
+
+    public function showProfileImage($filename)
+    {
+        $path = Storage::path('uploads/' . $filename);
+
+        if (file_exists($path)) {
+            return response()->file($path);
+        }
+
+        return NULL;
     }
 }
