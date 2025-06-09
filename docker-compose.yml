@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
-      - ./:/var/www
+      - ./:/var/www:z
       - ./.docker:/data
     networks:
       - tlsoft_hr_network
@@ -55,6 +55,15 @@ services:
       - PMA_PORT=3306
     ports:
       - "${DOCKER_PHPMYADMIN_PORT:-8009}:80"
+    networks:
+      - tlsoft_hr_network
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    platform: linux/amd64
+    ports:
+      - "8025:8025"
+      - "1025:1025"
     networks:
       - tlsoft_hr_network
 networks:
