@@ -1,19 +1,24 @@
 import {
     Controller, Get, Post, Body, Req, Delete, Param,
+    Patch,
+    UseGuards,
 } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { Request } from 'express';
 import { WorkHoursDto } from './dto/work-hours.dto';
 import { CreateVacationDto } from './dto/create-vacation.dto';
 import { CreateSicknessDto } from './dto/create-sickness.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('dashboard')
 export class DashboardController {
     constructor(private readonly dashboardService: DashboardService) { }
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     async getDashboard(@Req() req: Request) {
-        return this.dashboardService.getDashboardData(req.user['id']);
+        const user = req.user as any;
+        return this.dashboardService.getDashboardData(user);
     }
 
     @Post('vacation')
@@ -41,14 +46,26 @@ export class DashboardController {
         return this.dashboardService.deleteSickness(id);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('vacations')
-    async getVacations(@Req() req: Request) {
+    getVacations(@Req() req: any) {
         return this.dashboardService.getVacations(req.user);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('sicknesses')
-    async getSicknesses(@Req() req: Request) {
+    getSicknesses(@Req() req: any) {
         return this.dashboardService.getSicknesses(req.user);
     }
 
+
+    @Patch('vacation/:id/approve')
+    async approveVacation(@Param('id') id: string) {
+        return this.dashboardService.approveVacation(id);
+    }
+
+    @Patch('sickness/:id/approve')
+    async approveSickness(@Param('id') id: string) {
+        return this.dashboardService.approveSickness(id);
+    }
 }

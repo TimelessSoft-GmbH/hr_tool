@@ -1,174 +1,286 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import api from "../utils/api";
 import AppLayout from "../components/AppLayout";
+import VacationCalendar from "../components/VacationCalendar";
+import Card from "../components/Card";
+import ConfirmModal from "../components/ConfirmModal";
 
 const VacationDashboard = () => {
-  const [users, setUsers] = useState([]);
-  const [requests, setRequests] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-  const [showSubmit, setShowSubmit] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [dates, setDates] = useState({ start: "", end: "" });
+    const [users, setUsers] = useState([]);
+    const [vacationRequests, setVacationRequests] = useState([]);
+    const [sicknessRequests, setSicknessRequests] = useState([]);
+    const [selectedUser, setSelectedUser] = useState("");
+    const [selectedYear, setSelectedYear] = useState("");
+    const [selectedSickUser, setSelectedSickUser] = useState("");
+    const [selectedSickYear, setSelectedSickYear] = useState("");
+    const [newVacation, setNewVacation] = useState({ user_id: "", start_date: "", end_date: "" });
+    const [newSickness, setNewSickness] = useState({ user_id: "", start_date: "", end_date: "" });
+    const [showAllVacation, setShowAllVacation] = useState(false);
+    const [showAllSickness, setShowAllSickness] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+    useEffect(() => {
+        loadData();
+    }, []);
 
-  const loadData = async () => {
-    const usersRes = await api.get("/users");
-    const reqRes = await api.get("/vacation-requests");
-    setUsers(usersRes.data);
-    setRequests(reqRes.data);
-  };
+    const loadData = async () => {
+        const dashboard = await api.get("/dashboard");
+        setUsers(dashboard.data.users);
+        setVacationRequests(dashboard.data.vacationRequests);
+        setSicknessRequests(dashboard.data.sicknessRequests);
+    };
 
-  const handleEdit = (req) => {
-    setEditingId(req.id);
-    setDates({ start: req.start_date, end: req.end_date });
-  };
+    const handleSubmitVacation = async (e) => {
+        e.preventDefault();
+        await api.post("/dashboard/vacation", { ...newVacation, status: "approved" });
+        setNewVacation({ user_id: "", start_date: "", end_date: "" });
+        loadData();
+    };
 
-  const handleCancel = () => setEditingId(null);
+    const handleSubmitSickness = async (e) => {
+        e.preventDefault();
+        await api.post("/dashboard/sickness", { ...newSickness, status: "approved" });
+        setNewSickness({ user_id: "", start_date: "", end_date: "" });
+        loadData();
+    };
 
-  const saveChanges = async (id) => {
-    await api.post(`/vacation-requests/${id}/update`, dates);
-    setEditingId(null);
-    loadData();
-  };
+    const approveRequest = async (id, type) => {
+        await api.patch(`/dashboard/${type}/${id}/approve`);
+        loadData();
+    };
 
-  const handleAnswer = async (id, answer) => {
-    await api.post(`/vacation-requests/${id}/answer`, { answer });
-    loadData();
-  };
+    const confirmDeleteRequest = (id, type) => {
+        setConfirmDelete({ id, type });
+    };
 
-  const filtered = requests.filter((req) => {
+    const handleDeleteConfirmed = async () => {
+        if (confirmDelete) {
+            await api.delete(`/dashboard/${confirmDelete.type}/${confirmDelete.id}`);
+            setConfirmDelete(null);
+            loadData();
+        }
+    };
+
+    const getUserName = (userId) => {
+        const user = users.find((u) => u._id === userId);
+        return user ? user.name : "Unbekannt";
+    };
+
+    const filterData = (list, userId, year) =>
+        list.filter(
+            (req) =>
+                (!userId || req.userId === userId) &&
+                (!year || new Date(req.startDate).getFullYear().toString() === year)
+        );
+
+    const renderTable = (requests, type) => {
+        const isVacation = type === "vacation";
+        const filtered = filterData(
+            requests,
+            isVacation ? selectedUser : selectedSickUser,
+            isVacation ? selectedYear : selectedSickYear
+        );
+        const rowsToShow = isVacation
+            ? showAllVacation
+                ? filtered
+                : filtered.slice(0, 10)
+            : showAllSickness
+                ? filtered
+                : filtered.slice(0, 10);
+
+        return (
+            <table className="w-full text-sm text-left text-gray-500">
+                <thead className="bg-gray-200">
+                    <tr>
+                        <th className="px-6 py-3 text-center">Name</th>
+                        <th className="px-6 py-3 text-center">Start</th>
+                        <th className="px-6 py-3 text-center">Ende</th>
+                        <th className="px-6 py-3 text-center">Status</th>
+                        <th className="px-6 py-3 text-center">Aktion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rowsToShow.map((req) => (
+                        <tr key={req._id} className="bg-gray-100">
+                            <td className="py-4 px-6 text-center">{getUserName(req.userId)}</td>
+                            <td className="py-4 px-6 text-center">{new Date(req.startDate).toLocaleDateString()}</td>
+                            <td className="py-4 px-6 text-center">{new Date(req.endDate).toLocaleDateString()}</td>
+                            <td className="py-4 px-6 text-center text-sm font-semibold">
+                                <span
+                                    className={
+                                        req.status === "approved"
+                                            ? "text-green-500"
+                                            : req.status === "pending"
+                                            ? "text-yellow-600"
+                                            : "text-red-500"
+                                    }
+                                >
+                                    {req.status}
+                                </span>
+                            </td>
+                            <td className="py-4 px-6 text-center">
+                                <button
+                                    onClick={() => confirmDeleteRequest(req._id, type)}
+                                    className="bg-red-500 text-white px-2 py-1 rounded mr-2"
+                                >
+                                    Löschen
+                                </button>
+                                {req.status === "pending" && (
+                                    <button
+                                        onClick={() => approveRequest(req._id, type)}
+                                        className="bg-green-600 text-white px-2 py-1 rounded"
+                                    >
+                                        Genehmigen
+                                    </button>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        );
+    };
+
     return (
-      (!selectedUser || req.user_name === selectedUser) &&
-      (!selectedYear || new Date(req.start_date).getFullYear().toString() === selectedYear)
+        <AppLayout>
+            <h2 className="text-2xl font-bold mb-6">Anfrageverwaltung Übersicht</h2>
+            <VacationCalendar
+                initialYear={2025}
+                initialMonth={6}
+                holidays={["2025-06-03", "2025-06-17"]}
+                vacations={vacationRequests}
+                sickness={sicknessRequests}
+                users={users}
+            />
+
+            <Card>
+                <section className="mb-12">
+                    <h3 className="text-lg font-semibold mb-4">Urlaub nachtragen</h3>
+                    <form onSubmit={handleSubmitVacation} className="flex gap-4 items-center flex-wrap">
+                        <select
+                            required
+                            className="border p-2 rounded"
+                            value={newVacation.user_id}
+                            onChange={(e) =>
+                                setNewVacation({ ...newVacation, user_id: e.target.value })
+                            }
+                        >
+                            <option value="">Benutzer wählen</option>
+                            {users.map((u) => (
+                                <option key={u._id} value={u._id}>
+                                    {u.name}
+                                </option>
+                            ))}
+                        </select>
+                        <input
+                            type="date"
+                            required
+                            className="border p-2 rounded"
+                            value={newVacation.start_date}
+                            onChange={(e) =>
+                                setNewVacation({ ...newVacation, start_date: e.target.value })
+                            }
+                        />
+                        <input
+                            type="date"
+                            required
+                            className="border p-2 rounded"
+                            value={newVacation.end_date}
+                            onChange={(e) =>
+                                setNewVacation({ ...newVacation, end_date: e.target.value })
+                            }
+                        />
+                        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                            Eintragen
+                        </button>
+                    </form>
+                </section>
+            </Card>
+
+            <Card>
+                <section className="mb-12">
+                    <h3 className="text-lg font-semibold mb-4">Urlaub-Anträge</h3>
+                    {renderTable(vacationRequests, "vacation")}
+                    <div className="flex justify-center mt-4">
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            onClick={() => setShowAllVacation((prev) => !prev)}
+                        >
+                            {showAllVacation ? "Weniger anzeigen" : "Mehr anzeigen"}
+                        </button>
+                    </div>
+                </section>
+            </Card>
+
+            <Card>
+                <section className="mb-12">
+                    <h3 className="text-lg font-semibold mb-4">Krankenstand nachtragen</h3>
+                    <form onSubmit={handleSubmitSickness} className="flex gap-4 items-center flex-wrap">
+                        <select
+                            required
+                            className="border p-2 rounded"
+                            value={newSickness.user_id}
+                            onChange={(e) =>
+                                setNewSickness({ ...newSickness, user_id: e.target.value })
+                            }
+                        >
+                            <option value="">Benutzer wählen</option>
+                            {users.map((u) => (
+                                <option key={u._id} value={u._id}>
+                                    {u.name}
+                                </option>
+                            ))}
+                        </select>
+                        <input
+                            type="date"
+                            required
+                            className="border p-2 rounded"
+                            value={newSickness.start_date}
+                            onChange={(e) =>
+                                setNewSickness({ ...newSickness, start_date: e.target.value })
+                            }
+                        />
+                        <input
+                            type="date"
+                            required
+                            className="border p-2 rounded"
+                            value={newSickness.end_date}
+                            onChange={(e) =>
+                                setNewSickness({ ...newSickness, end_date: e.target.value })
+                            }
+                        />
+                        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                            Eintragen
+                        </button>
+                    </form>
+                </section>
+            </Card>
+
+            <Card>
+                <section>
+                    <h3 className="text-lg font-semibold mb-4">Krankenstand-Anfragen</h3>
+                    {renderTable(sicknessRequests, "sickness")}
+                    <div className="flex justify-center mt-4">
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            onClick={() => setShowAllSickness((prev) => !prev)}
+                        >
+                            {showAllSickness ? "Weniger anzeigen" : "Mehr anzeigen"}
+                        </button>
+                    </div>
+                </section>
+            </Card>
+             {confirmDelete && (
+                <ConfirmModal
+                    title="Löschen bestätigen"
+                    message="Möchten Sie diesen Eintrag wirklich löschen?"
+                    onCancel={() => setConfirmDelete(null)}
+                    onConfirm={handleDeleteConfirmed}
+                />
+            )}
+
+        </AppLayout>
     );
-  });
-
-  return (
-    <AppLayout>
-      <h2 className="text-2xl font-bold mb-6">Urlaub-Anträge</h2>
-
-      <div className="flex gap-4 mb-4">
-        <select
-          className="border p-2 rounded"
-          onChange={(e) => setSelectedUser(e.target.value)}
-        >
-          <option value="">Alle Benutzer</option>
-          {users.map((u) => (
-            <option key={u.id} value={u.name}>{u.name}</option>
-          ))}
-        </select>
-        <select
-          className="border p-2 rounded"
-          onChange={(e) => setSelectedYear(e.target.value)}
-        >
-          <option value="">Alle Jahre</option>
-          {[...Array(10).keys()].map((i) => {
-            const y = new Date().getFullYear() - i;
-            return <option key={y} value={y}>{y}</option>;
-          })}
-        </select>
-      </div>
-
-      <table className="w-full text-sm text-left text-gray-500">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="px-6 py-3 text-center">Name</th>
-            <th className="px-6 py-3 text-center">Start</th>
-            <th className="px-6 py-3 text-center">Ende</th>
-            <th className="px-6 py-3 text-center">Status</th>
-            <th className="px-6 py-3 text-center">Antwort</th>
-            <th className="px-6 py-3 text-center">Aktion</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtered.map((req) => (
-            <tr key={req.id} className="bg-gray-100">
-              <td className="py-4 px-6 text-center">{req.user_name}</td>
-              <td className="py-4 px-6 text-center">
-                {editingId === req.id ? (
-                  <input
-                    type="date"
-                    value={dates.start}
-                    onChange={(e) => setDates((d) => ({ ...d, start: e.target.value }))}
-                    className="border rounded px-2"
-                  />
-                ) : (
-                  new Date(req.start_date).toLocaleDateString()
-                )}
-              </td>
-              <td className="py-4 px-6 text-center">
-                {editingId === req.id ? (
-                  <input
-                    type="date"
-                    value={dates.end}
-                    onChange={(e) => setDates((d) => ({ ...d, end: e.target.value }))}
-                    className="border rounded px-2"
-                  />
-                ) : (
-                  new Date(req.end_date).toLocaleDateString()
-                )}
-              </td>
-              <td className="py-4 px-6 text-center text-sm font-semibold">
-                <span className={
-                  req.status === "accepted"
-                    ? "text-green-500"
-                    : req.status === "pending"
-                    ? "text-yellow-600"
-                    : "text-red-500"
-                }>
-                  {req.status}
-                </span>
-              </td>
-              <td className="py-4 px-6 text-center">
-                {req.status === "pending" ? (
-                  <select
-                    onChange={(e) => handleAnswer(req.id, e.target.value)}
-                    className="border px-2 py-1 rounded"
-                  >
-                    <option value="">Antwort...</option>
-                    <option value="accepted">accepted</option>
-                    <option value="declined">declined</option>
-                  </select>
-                ) : (
-                  <span className="text-gray-400 italic">Bearbeitet</span>
-                )}
-              </td>
-              <td className="py-4 px-6 text-center">
-                {editingId === req.id ? (
-                  <>
-                    <button
-                      onClick={() => saveChanges(req.id)}
-                      className="mr-2 bg-green-500 text-white px-2 py-1 rounded"
-                    >
-                      ✓
-                    </button>
-                    <button
-                      onClick={handleCancel}
-                      className="bg-red-500 text-white px-2 py-1 rounded"
-                    >
-                      ×
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => handleEdit(req)}
-                    className="text-blue-500 hover:underline"
-                  >
-                    Bearbeiten
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </AppLayout>
-  );
 };
 
 export default VacationDashboard;

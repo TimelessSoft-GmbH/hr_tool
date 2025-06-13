@@ -8,6 +8,7 @@ import { VacationRequest, VacationRequestSchema } from '../models/vacation-reque
 import { SicknessRequest, SicknessRequestSchema } from '../models/sickness-request.schema';
 import { WorkHour, WorkHourSchema } from '../models/work-hour.schema';
 import { User, UserSchema } from 'src/users/user.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { User, UserSchema } from 'src/users/user.schema';
     ]),
   ],
   controllers: [DashboardController],
-  providers: [DashboardService],
+  providers: [DashboardService, UsersService],
   exports: [DashboardService],
 })
 export class DashboardModule {}

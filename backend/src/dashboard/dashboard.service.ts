@@ -6,6 +6,7 @@ import { WorkHour } from '../models/work-hour.schema';
 import { Model } from 'mongoose';
 import axios from 'axios';
 import { User } from 'src/users/user.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class DashboardService {
@@ -14,35 +15,56 @@ export class DashboardService {
     @InjectModel(SicknessRequest.name) private sickModel: Model<SicknessRequest>,
     @InjectModel(WorkHour.name) private hourModel: Model<WorkHour>,
     @InjectModel(User.name) private userModel: Model<User>,
+    private usersService: UsersService,
   ) { }
 
-  async getDashboardData(userId: string) {
+  async getDashboardData(user: any) {
     const currentYear = new Date().getFullYear();
     const nextYear = currentYear + 1;
 
-    const vacationRequests = await this.vacModel.find({
-      userId,
-      startDate: { $gte: `${currentYear}-01-01`, $lte: `${nextYear}-12-31` },
-    });
+    const users = await this.usersService.findAll();
 
-    const sicknessRequests = await this.sickModel.find({
-      userId,
+    const filter = {
       startDate: { $gte: `${currentYear}-01-01`, $lte: `${nextYear}-12-31` },
-    });
+    };
 
-    return { vacationRequests, sicknessRequests };
+    const isAdmin = user?.roles?.includes('admin');
+
+    const vacationRequests = await this.vacModel
+      .find(isAdmin ? filter : { ...filter, userId: user._id })
+      .lean();
+
+    const sicknessRequests = await this.sickModel
+      .find(isAdmin ? filter : { ...filter, userId: user._id })
+      .lean();
+
+    return { users, vacationRequests, sicknessRequests };
   }
+
 
   async storeVacation(userId: string, body: any) {
     const attributes = await this.getAttributes(userId, body);
+    attributes.status = body.status ?? 'pending';
     await this.vacModel.create(attributes);
-    await this.sendNotification(attributes, 'Urlaubsantrag');
+    if (attributes.status === 'pending') {
+      await this.sendNotification(attributes, 'Urlaubsantrag');
+    }
   }
 
   async storeSickness(userId: string, body: any) {
     const attributes = await this.getAttributes(userId, body);
+    attributes.status = body.status ?? 'pending';
     await this.sickModel.create(attributes);
-    await this.sendNotification(attributes, 'Krankheitsurlaub');
+    if (attributes.status === 'pending') {
+      await this.sendNotification(attributes, 'Krankheitsurlaub');
+    }
+  }
+  async approveVacation(id: string) {
+    return this.vacModel.findByIdAndUpdate(id, { status: 'approved' }, { new: true });
+  }
+
+  async approveSickness(id: string) {
+    return this.sickModel.findByIdAndUpdate(id, { status: 'approved' }, { new: true });
   }
 
   async getAttributes(userId: string, body: any) {
@@ -105,12 +127,17 @@ export class DashboardService {
     return this.sickModel.findByIdAndDelete(id);
   }
 
-  async getVacations(userId: string) {
-    return this.vacModel.find({ user_id: userId }).lean();
+  async getVacations(user: any) {
+    const isAdmin = user.roles?.includes('admin');
+    if (isAdmin) return this.vacModel.find().lean();
+
+    return this.vacModel.find({ user_id: user.id }).lean();
   }
 
-  async getSicknesses(userId: string) {
-    return this.sickModel.find({ user_id: userId }).lean();
-  }
+  async getSicknesses(user: any) {
+    const isAdmin = user.roles?.includes('admin');
+    if (isAdmin) return this.sickModel.find().lean();
 
+    return this.sickModel.find({ user_id: user.id }).lean();
+  }
 }
