@@ -1,40 +1,31 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import api from "utils/api";
 import logo from "../assets/tlsoftLogo.png";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [remember, setRemember] = useState(false);
-    const [errors, setErrors] = useState({});
-    const [status, setStatus] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-    axios.defaults.withCredentials = true;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            await axios.get("/api/sanctum/csrf-cookie");
-
-            const response = await axios.post("/api/login", {
-                email,
-                password,
-                remember,
-            });
-
-            setStatus("Login successful");
-            setErrors({});
-
-            if (response.data?.redirect) {
-                window.location.href = response.data.redirect;
-            }
-        } catch (err) {
-            setStatus("");
-            setErrors(err.response?.data?.errors || {});
-        }
-    };
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      const token = response.data.access_token;
+      await login(token);
+      navigate("/dashboard");
+    } catch (err) {
+      setErrors(err.response?.data?.errors || {});
+      setStatus("");
+    }
+  };
     return (
         <div className="mx-auto px-4 xl:px-0 lg:mt-24 lg:mb-10 max-w-7xl w-full mt-24 md:mt-10">
             <div className=" flex flex-col items-center justify-center px-4">

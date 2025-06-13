@@ -1,7 +1,10 @@
 import React from "react";
 import Sidebar from "./Sidebar";
+import { useAuth } from "../context/AuthContext";
 
-const AppLayout = ({ children, isAdmin }) => {
+const AppLayout = ({ children }) => {
+    const { isAdmin } = useAuth();
+  
   return (
     <div className="flex">
       <Sidebar isAdmin={isAdmin} />

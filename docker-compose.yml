@@ -1,4 +1,11 @@
-version: "3"
+version: "3.8"
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "50m"
+    max-file: "5"
+
 services:
   app:
     build:
@@ -17,6 +24,8 @@ services:
       - tlsoft_hr_network
     depends_on:
       - db
+    logging: *default-logging
+
   nginx:
     image: nginx:alpine
     container_name: ${DOCKER_CONTAINER_NGINX:-tlsoft_hr_nginx}
@@ -30,8 +39,10 @@ services:
       - tlsoft_hr_network
     depends_on:
       - app
+    logging: *default-logging
+
   db:
-    image: "mariadb"
+    image: mariadb
     restart: unless-stopped
     container_name: ${DOCKER_CONTAINER_MARIADB:-tlsoft_hr_mariadb}
     environment:
@@ -44,11 +55,13 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
     volumes:
-      - "tlsoft-hr-mariadb:/var/lib/mysql"
+      - tlsoft-hr-mariadb:/var/lib/mysql
     networks:
       - tlsoft_hr_network
+    logging: *default-logging
+
   phpmyadmin:
-    image: "phpmyadmin"
+    image: phpmyadmin
     container_name: ${DOCKER_CONTAINER_PHPMYADMIN:-tlsoft_hr_phpmyadmin}
     environment:
       - PMA_HOST=${DOCKER_CONTAINER_MARIADB:-tlsoft_hr_mariadb}
@@ -57,18 +70,72 @@ services:
       - "${DOCKER_PHPMYADMIN_PORT:-8009}:80"
     networks:
       - tlsoft_hr_network
+    logging: *default-logging
+
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
-    platform: linux/amd64
     ports:
       - "8025:8025"
       - "1025:1025"
     networks:
       - tlsoft_hr_network
+    logging: *default-logging
+
+  mongodb:
+    image: mongo
+    container_name: nest_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./backup:/backup
+    networks:
+      - tlsoft_hr_network
+    logging: *default-logging
+
+  mongo_gui:
+    image: ugleiton/mongo-gui
+    container_name: mongo_gui
+    ports:
+      - "4321:4321"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+    depends_on:
+      - mongodb
+    healthcheck:
+      disable: true
+    networks:
+      - tlsoft_hr_network
+    logging: *default-logging
+
+  nestjs:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nestjs_backend
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./backend:/app
+    environment:
+      - PORT=5005
+      - DB_CONNECTION_STRING=mongodb://mongodb:27017/your_db_name
+    depends_on:
+      - mongodb
+    command: npm run start:dev
+    networks:
+      - tlsoft_hr_network
+    logging: *default-logging
+
 networks:
   tlsoft_hr_network:
     driver: bridge
+
 volumes:
   tlsoft-hr-mariadb:
+    driver: local
+  mongo-data:
     driver: local

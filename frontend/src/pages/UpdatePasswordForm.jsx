@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 const UpdatePasswordForm = () => {
   const [form, setForm] = useState({
@@ -24,7 +24,7 @@ const UpdatePasswordForm = () => {
     setErrors({});
 
     try {
-      await axios.put("/api/password", form);
+      await api.put("/users/password", form,{ withCredentials: true });
       setStatus("password-updated");
     } catch (error) {
       setErrors(error.response?.data?.errors || {});

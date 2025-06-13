@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "utils/api";
+import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
+    name: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [status, setStatus] = useState('');
-
-  axios.defaults.withCredentials = true;
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,9 +24,10 @@ const Register = () => {
     e.preventDefault();
     setErrors({});
     try {
-      await axios.get('/api/sanctum/csrf-cookie');
-      await axios.post('/api/register', form);
-      setStatus('Registration successful. You can now log in.');
+      const response = await api.post("/auth/register", form);
+      const token = response.data.token;
+      await login(token);
+      navigate("/dashboard");
     } catch (err) {
       setErrors(err.response?.data?.errors || {});
     }

@@ -10,7 +10,6 @@ const UpdateProfileImage = () => {
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
-    // Load user's current image
     axios
       .get("/api/user", { withCredentials: true })
       .then((res) => {
@@ -56,7 +55,7 @@ const UpdateProfileImage = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded shadow">
+    <div>
       <h2 className="text-lg font-medium text-gray-900 pb-1">
         Update Profile Image
       </h2>

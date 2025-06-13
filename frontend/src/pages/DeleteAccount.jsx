@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 const DeleteAccount = () => {
   const [showModal, setShowModal] = useState(false);
@@ -13,12 +13,11 @@ const DeleteAccount = () => {
     setStatus("");
 
     try {
-      await axios.delete("/api/profile", {
+      await api.delete("/users", {
         data: { password },
         withCredentials: true,
       });
-      // Redirect or show confirmation
-      window.location.href = "/goodbye"; // or logout
+      window.location.href = "/login"; 
     } catch (err) {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);

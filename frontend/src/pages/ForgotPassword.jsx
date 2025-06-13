@@ -14,8 +14,7 @@ const ForgotPassword = () => {
         setErrors({});
 
         try {
-            await axios.get("/api/sanctum/csrf-cookie");
-            const response = await axios.post("/api/forgot-password", {
+            const response = await axios.post("/api/auth/forgot-password", {
                 email,
             });
             setStatus("We have emailed your password reset link!");
