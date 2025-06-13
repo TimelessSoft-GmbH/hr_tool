@@ -42,7 +42,6 @@ const UserListScreen = () => {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6">
                             <div className="pb-4 pt-4">
-                                <div className="w-4/5 mx-auto">
                                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                                         <table className="w-full text-sm text-left text-gray-500">
                                             <thead className="text-xs text-gray-700 uppercase bg-gray-200">
@@ -152,7 +151,6 @@ const UserListScreen = () => {
                                             Neuer User
                                         </button>
                                     </Link>
-                                </div>
                             </div>
                         </div>
                     </div>

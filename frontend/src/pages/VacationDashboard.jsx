@@ -18,6 +18,8 @@ const VacationDashboard = () => {
     const [showAllVacation, setShowAllVacation] = useState(false);
     const [showAllSickness, setShowAllSickness] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(null);
+    const [editingId, setEditingId] = useState(null);
+    const [editDates, setEditDates] = useState({});
 
     useEffect(() => {
         loadData();
@@ -59,6 +61,20 @@ const VacationDashboard = () => {
             setConfirmDelete(null);
             loadData();
         }
+    };
+
+    const saveEdit = async (id, type) => {
+        await api.patch(`/dashboard/${type}/${id}`, {
+            startDate: editDates[id].startDate,
+            endDate: editDates[id].endDate
+        });
+        setEditingId(null);
+        setEditDates((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+        });
+        loadData();
     };
 
     const getUserName = (userId) => {
@@ -103,8 +119,42 @@ const VacationDashboard = () => {
                     {rowsToShow.map((req) => (
                         <tr key={req._id} className="bg-gray-100">
                             <td className="py-4 px-6 text-center">{getUserName(req.userId)}</td>
-                            <td className="py-4 px-6 text-center">{new Date(req.startDate).toLocaleDateString()}</td>
-                            <td className="py-4 px-6 text-center">{new Date(req.endDate).toLocaleDateString()}</td>
+                            <td className="py-4 px-6 text-center">
+                                {editingId === req._id ? (
+                                    <input
+                                        type="date"
+                                        value={editDates[req._id]?.startDate || ""}
+                                        onChange={(e) => setEditDates((prev) => ({
+                                            ...prev,
+                                            [req._id]: {
+                                                ...prev[req._id],
+                                                startDate: e.target.value
+                                            }
+                                        }))}
+                                        className="border p-1 rounded"
+                                    />
+                                ) : (
+                                    new Date(req.startDate).toLocaleDateString()
+                                )}
+                            </td>
+                            <td className="py-4 px-6 text-center">
+                                {editingId === req._id ? (
+                                    <input
+                                        type="date"
+                                        value={editDates[req._id]?.endDate || ""}
+                                        onChange={(e) => setEditDates((prev) => ({
+                                            ...prev,
+                                            [req._id]: {
+                                                ...prev[req._id],
+                                                endDate: e.target.value
+                                            }
+                                        }))}
+                                        className="border p-1 rounded"
+                                    />
+                                ) : (
+                                    new Date(req.endDate).toLocaleDateString()
+                                )}
+                            </td>
                             <td className="py-4 px-6 text-center text-sm font-semibold">
                                 <span
                                     className={
@@ -118,20 +168,54 @@ const VacationDashboard = () => {
                                     {req.status}
                                 </span>
                             </td>
-                            <td className="py-4 px-6 text-center">
-                                <button
-                                    onClick={() => confirmDeleteRequest(req._id, type)}
-                                    className="bg-red-500 text-white px-2 py-1 rounded mr-2"
-                                >
-                                    Löschen
-                                </button>
-                                {req.status === "pending" && (
-                                    <button
-                                        onClick={() => approveRequest(req._id, type)}
-                                        className="bg-green-600 text-white px-2 py-1 rounded"
-                                    >
-                                        Genehmigen
-                                    </button>
+                            <td className="py-4 px-6 text-center space-x-2">
+                                {editingId === req._id ? (
+                                    <>
+                                        <button
+                                            onClick={() => saveEdit(req._id, type)}
+                                            className="bg-blue-600 text-white px-2 py-1 rounded"
+                                        >
+                                            Speichern
+                                        </button>
+                                        <button
+                                            onClick={() => setEditingId(null)}
+                                            className="bg-gray-400 text-white px-2 py-1 rounded"
+                                        >
+                                            Abbrechen
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={() => {
+                                                setEditingId(req._id);
+                                                setEditDates((prev) => ({
+                                                    ...prev,
+                                                    [req._id]: {
+                                                        startDate: req.startDate.slice(0, 10),
+                                                        endDate: req.endDate.slice(0, 10)
+                                                    }
+                                                }));
+                                            }}
+                                            className="bg-yellow-500 text-white px-2 py-1 rounded"
+                                        >
+                                            Bearbeiten
+                                        </button>
+                                        <button
+                                            onClick={() => confirmDeleteRequest(req._id, type)}
+                                            className="bg-red-500 text-white px-2 py-1 rounded"
+                                        >
+                                            Löschen
+                                        </button>
+                                        {req.status === "pending" && (
+                                            <button
+                                                onClick={() => approveRequest(req._id, type)}
+                                                className="bg-green-600 text-white px-2 py-1 rounded"
+                                            >
+                                                Genehmigen
+                                            </button>
+                                        )}
+                                    </>
                                 )}
                             </td>
                         </tr>

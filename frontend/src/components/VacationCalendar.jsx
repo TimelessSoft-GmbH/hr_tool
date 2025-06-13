@@ -48,7 +48,7 @@ const VacationCalendar = ({
         while (date.isSameOrBefore(end)) {
           if (date.year() === year && date.month() === month) {
             days.push({
-              date: date.date().toString(),
+              date: date.date().toString().padStart(2, "0"),
               initials,
               type,
             });

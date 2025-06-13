@@ -68,4 +68,20 @@ export class DashboardController {
     async approveSickness(@Param('id') id: string) {
         return this.dashboardService.approveSickness(id);
     }
+    @Patch('vacation/:id')
+    async updateVacation(
+        @Param('id') id: string,
+        @Body() dto: { startDate: string; endDate: string }
+    ) {
+        return this.dashboardService.updateVacation(id, dto);
+    }
+
+    @Patch('sickness/:id')
+    async updateSickness(
+        @Param('id') id: string,
+        @Body() dto: { startDate: string; endDate: string }
+    ) {
+        return this.dashboardService.updateSickness(id, dto);
+    }
+
 }

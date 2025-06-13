@@ -140,4 +140,26 @@ export class DashboardService {
 
     return this.sickModel.find({ user_id: user.id }).lean();
   }
+  async updateVacation(id: string, dto: { startDate: string; endDate: string }) {
+    return this.vacModel.findByIdAndUpdate(
+      id,
+      {
+        startDate: dto.startDate,
+        endDate: dto.endDate,
+      },
+      { new: true }
+    );
+  }
+
+  async updateSickness(id: string, dto: { startDate: string; endDate: string }) {
+    return this.sickModel.findByIdAndUpdate(
+      id,
+      {
+        startDate: dto.startDate,
+        endDate: dto.endDate,
+      },
+      { new: true }
+    );
+  }
+
 }
