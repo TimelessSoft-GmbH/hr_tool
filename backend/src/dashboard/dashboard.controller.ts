@@ -9,10 +9,14 @@ import { WorkHoursDto } from './dto/work-hours.dto';
 import { CreateVacationDto } from './dto/create-vacation.dto';
 import { CreateSicknessDto } from './dto/create-sickness.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { MailerService } from 'src/mailer/mailer.service';
 
 @Controller('dashboard')
 export class DashboardController {
-    constructor(private readonly dashboardService: DashboardService) { }
+    constructor(
+        private readonly dashboardService: DashboardService,
+        private readonly mailerService: MailerService,
+    ) { }
 
     @Get()
     @UseGuards(JwtAuthGuard)
@@ -22,13 +26,42 @@ export class DashboardController {
     }
 
     @Post('vacation')
-    async storeVacation(@Body() dto: CreateVacationDto) {
-        return this.dashboardService.storeVacation(dto.user_id, dto);
+    @UseGuards(JwtAuthGuard)
+    async storeVacation(@Req() req: any, @Body() dto: CreateVacationDto) {
+        const result = await this.dashboardService.storeVacation(req.user.id, dto);
+        const { admins, requester, totalDays } = await this.dashboardService.getRequestNotificationData(req.user.id, dto.start_date, dto.end_date);
+        if (admins && requester) {
+            await this.mailerService.sendRequestNotification(
+                admins,
+                requester,
+                dto.start_date,
+                dto.end_date,
+                totalDays,
+                'Urlaub'
+            );
+        }
+
+        return result;
     }
 
     @Post('sickness')
-    async storeSickness(@Body() dto: CreateSicknessDto) {
-        return this.dashboardService.storeSickness(dto.user_id, dto);
+    @UseGuards(JwtAuthGuard)
+    async storeSickness(@Req() req: any, @Body() dto: CreateSicknessDto) {
+        const result = await this.dashboardService.storeSickness(req.user.id, dto);
+        const { admins, requester, totalDays } = await this.dashboardService.getRequestNotificationData(req.user.id, dto.start_date, dto.end_date);
+        
+        if (admins && requester) {
+            await this.mailerService.sendRequestNotification(
+                admins,
+                requester,
+                dto.start_date,
+                dto.end_date,
+                totalDays,
+                'Krankheit'
+            );
+        }
+
+        return result;
     }
 
     @Post('hours')
@@ -58,16 +91,36 @@ export class DashboardController {
         return this.dashboardService.getSicknesses(req.user);
     }
 
-
     @Patch('vacation/:id/approve')
     async approveVacation(@Param('id') id: string) {
-        return this.dashboardService.approveVacation(id);
+        const result = await this.dashboardService.approveVacation(id);
+        const { userEmail, userName } = await this.dashboardService.getApprovalNotificationData(id);
+        if (userEmail && userName) {
+            await this.mailerService.sendApprovalNotification(
+                userEmail,
+                userName,
+                'Urlaub'
+            );
+        }
+
+        return result;
     }
 
     @Patch('sickness/:id/approve')
     async approveSickness(@Param('id') id: string) {
-        return this.dashboardService.approveSickness(id);
+        const result = await this.dashboardService.approveSickness(id);
+        const { userEmail, userName } = await this.dashboardService.getApprovalNotificationData(id);
+        if (userEmail && userName) {
+            await this.mailerService.sendApprovalNotification(
+                userEmail,
+                userName,
+                'Krankheit'
+            );
+        }
+
+        return result;
     }
+
     @Patch('vacation/:id')
     async updateVacation(
         @Param('id') id: string,
@@ -83,5 +136,4 @@ export class DashboardController {
     ) {
         return this.dashboardService.updateSickness(id, dto);
     }
-
 }

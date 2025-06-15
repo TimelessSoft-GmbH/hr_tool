@@ -9,9 +9,11 @@ import { SicknessRequest, SicknessRequestSchema } from '../models/sickness-reque
 import { WorkHour, WorkHourSchema } from '../models/work-hour.schema';
 import { User, UserSchema } from 'src/users/user.schema';
 import { UsersService } from 'src/users/users.service';
+import { MailerModule } from 'src/mailer/mailer.module';
 
 @Module({
   imports: [
+    MailerModule,
     MongooseModule.forFeature([
       { name: VacationRequest.name, schema: VacationRequestSchema },
       { name: SicknessRequest.name, schema: SicknessRequestSchema },

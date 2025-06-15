@@ -162,4 +162,21 @@ export class DashboardService {
     );
   }
 
+
+  async getRequestNotificationData(userId: string, startDate: string, endDate: string) {
+    const admins = await this.userModel.find({ roles: 'admin' }).exec();
+    const requester = await this.usersService.findById(userId); 
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const totalDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24)) + 1;
+
+    return { admins, requester, totalDays };
+  }
+
+  async getApprovalNotificationData(requestId: string) {
+    const request = await this.vacModel.findById(requestId); 
+    const user = await this.usersService.findById(request!.userId);
+
+    return { userEmail: user!.email, userName: user!.name };
+  }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService as BaseMailerService } from '@nestjs-modules/mailer';
+import { User } from 'src/users/user.schema';
 
 @Injectable()
 export class MailerService {
@@ -45,30 +46,49 @@ export class MailerService {
     });
   }
 
-  async sendVacationNotification(userId: string, startDate: string, endDate: string, totalDays: number, type: string) {
-  //   const admins = await db.user.findMany({
-  //     where: { roles: { some: { name: 'admin' } } },
-  //   });
+ async sendRequestNotification(admins: User[], requester: User, startDate: string, endDate: string, totalDays: number, type: 'Urlaub' | 'Krankheit') {
+    const requestsUrl = `${process.env.WEB_APP_BASE_URL ?? 'http://localhost:3000'}/requests`;
 
-  //   const user = await db.user.findUnique({ where: { id: userId } });
+    const html = `
+      <div style="font-family: sans-serif; padding: 20px;">
+        <h2>Neue ${type}-Anfrage</h2>
+        <p>Mitarbeiter: ${requester.name}</p>
+        <p>Von: ${startDate}</p>
+        <p>Bis: ${endDate}</p>
+        <p>Arbeitstage: ${totalDays}</p>
+        <p>Bitte überprüfen Sie die Anfrage:</p>
+        <p><a href="${requestsUrl}">Zu den Anfragen</a></p>
+        <p>Viele Grüße,<br/>Ihr MXR Team</p>
+      </div>
+    `;
 
-  //   const html = `
-  //   <div style="font-family: sans-serif; padding: 20px;">
-  //     <h2>${type}</h2>
-  //     <p>User: ${user.name}</p>
-  //     <p>Von: ${startDate}</p>
-  //     <p>Bis: ${endDate}</p>
-  //     <p>Arbeitstage: ${totalDays}</p>
-  //   </div>
-  // `;
-
-  //   for (const admin of admins) {
-  //     await this.mailer.sendMail({
-  //       to: admin.email,
-  //       subject: type,
-  //       html,
-  //     });
-  //   }
+    for (const admin of admins) {
+      await this.mailer.sendMail({
+        to: admin.email,
+        subject: `Neue ${type}-Anfrage von ${requester.name}`,
+        html,
+      });
+    }
   }
 
+  async sendApprovalNotification(email: string, name: string, type: 'Urlaub' | 'Krankheit') {
+    const dashboardUrl = `${process.env.WEB_APP_BASE_URL ?? 'http://localhost:3000'}/dashboard`;
+
+    const html = `
+      <div style="font-family: sans-serif; padding: 20px;">
+        <h2>Ihre ${type}-Anfrage wurde genehmigt</h2>
+        <p>Hallo ${name},</p>
+        <p>Ihre ${type}-Anfrage wurde genehmigt.</p>
+        <p>Sie können die Details in Ihrem Dashboard einsehen:</p>
+        <p><a href="${dashboardUrl}">Zum Dashboard</a></p>
+        <p>Viele Grüße,<br/>Ihr MXR Team</p>
+      </div>
+    `;
+
+    await this.mailer.sendMail({
+      to: email,
+      subject: `${type}-Genehmigung`,
+      html,
+    });
+  }
 }
