@@ -51,7 +51,11 @@ export class AuthService {
 
         rateLimit.delete(`${dto.email.toLowerCase()}|${ip}`);
 
-        const token = this.jwtService.sign({ sub: user._id, email: user.email });
+        const expiresIn = dto.remember ? '30d' : '1d';
+        const token = this.jwtService.sign(
+            { sub: user._id, email: user.email },
+            { expiresIn }
+        );
         return { access_token: token, user: { id: user._id, email: user.email } };
     }
 
@@ -84,10 +88,10 @@ export class AuthService {
 
         const token = crypto.randomBytes(32).toString('hex');
         user.resetToken = token;
-        user.resetTokenExpires = new Date(Date.now() + 1000 * 60 * 60); 
+        user.resetTokenExpires = new Date(Date.now() + 1000 * 60 * 60);
         await user.save();
 
-        await this.mailer.sendEmailConfirmation(user.email, token);
+        await this.mailer.sendResetPassword(user.email, token, user.name);
         console.log(`Password reset token: ${token}`);
 
         return { message: 'Reset link sent to your email if it exists.' };
@@ -100,15 +104,22 @@ export class AuthService {
 
         user.isEmailConfirmed = true;
         await user.save();
-        return { message: 'Email confirmed.' };
+
+        const jwt = this.jwtService.sign({ sub: user._id, email: user.email });
+
+        return {
+            message: 'Email confirmed.',
+            access_token: jwt,
+            user: { id: user._id, email: user.email },
+        };
     }
+
 
     async logout(user: any) {
         return { message: 'Logged out successfully' };
     }
 
     async resetPassword(token: string, newPassword: string) {
-
         const user = await this.usersService.findOne({
             resetToken: token,
             resetTokenExpires: { $gt: Date.now() }
@@ -126,7 +137,14 @@ export class AuthService {
 
         await user.save();
 
-        return { message: 'Password reset successful' };
+        const jwt = this.jwtService.sign({ sub: user._id, email: user.email });
+
+        return {
+            message: 'Password reset successful',
+            access_token: jwt,
+            user: { id: user._id, email: user.email }
+        };
     }
+
 
 }

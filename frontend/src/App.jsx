@@ -14,6 +14,7 @@ import ResetPassword from "./pages/ResetPassword";
 import UserListScreen from "./pages/UserListScreen";
 import WorkHoursDashboard from "./pages/WorkHoursDashboard";
 import VacationDashboard from "./pages/VacationDashboard";
+import ConfirmEmailSuccess from "./pages/ConfirmEmailSuccess";
 
 function App() {
     return (
@@ -23,8 +24,12 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route
-                    path="/confirm-email/:token"
+                    path="/reset-password/:token"
                     element={<ResetPassword />}
+                />
+                 <Route
+                    path="/confirm-email/:token"
+                    element={<ConfirmEmailSuccess />}
                 />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />

@@ -17,9 +17,9 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", { email, password, remember });
       const token = response.data.access_token;
-      await login(token);
+      await login(token, remember);
       navigate("/dashboard");
     } catch (err) {
       setErrors(err.response?.data?.errors || {});

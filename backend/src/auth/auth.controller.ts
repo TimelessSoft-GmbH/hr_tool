@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, Query, UseGuards, Patch, Param } from '@nestjs/common';
+import { Controller, Post, Body, Req, Query, UseGuards, Patch, Param, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -25,8 +25,8 @@ export class AuthController {
         return this.authService.forgotPassword(dto);
     }
 
-    @Post('confirm-email')
-    async confirmEmail(@Query('token') token: string) {
+    @Get('confirm-email/:token')
+    async confirmEmail(@Param('token') token: string) {
         return this.authService.confirmEmail(token);
     }
 

@@ -49,7 +49,7 @@ export class DashboardController {
     async storeSickness(@Req() req: any, @Body() dto: CreateSicknessDto) {
         const result = await this.dashboardService.storeSickness(req.user.id, dto);
         const { admins, requester, totalDays } = await this.dashboardService.getRequestNotificationData(req.user.id, dto.start_date, dto.end_date);
-        
+
         if (admins && requester) {
             await this.mailerService.sendRequestNotification(
                 admins,
@@ -94,7 +94,7 @@ export class DashboardController {
     @Patch('vacation/:id/approve')
     async approveVacation(@Param('id') id: string) {
         const result = await this.dashboardService.approveVacation(id);
-        const { userEmail, userName } = await this.dashboardService.getApprovalNotificationData(id);
+        const { userEmail, userName } = await this.dashboardService.getApprovalNotificationData(id, 'vacation');
         if (userEmail && userName) {
             await this.mailerService.sendApprovalNotification(
                 userEmail,
@@ -102,14 +102,13 @@ export class DashboardController {
                 'Urlaub'
             );
         }
-
         return result;
     }
 
     @Patch('sickness/:id/approve')
     async approveSickness(@Param('id') id: string) {
         const result = await this.dashboardService.approveSickness(id);
-        const { userEmail, userName } = await this.dashboardService.getApprovalNotificationData(id);
+        const { userEmail, userName } = await this.dashboardService.getApprovalNotificationData(id, 'sickness');
         if (userEmail && userName) {
             await this.mailerService.sendApprovalNotification(
                 userEmail,
@@ -117,7 +116,6 @@ export class DashboardController {
                 'Krankheit'
             );
         }
-
         return result;
     }
 

@@ -64,7 +64,11 @@ const Dashboard = () => {
     };
 
     const columns = [
-        { key: "userId", label: "User", format: () => user?.name || "—" },
+        {
+            key: "userId",
+            label: "User",
+            format: (val) => val?.name || "—",
+        },
         {
             key: "startDate",
             label: "Start Datum",

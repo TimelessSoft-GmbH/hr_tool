@@ -129,17 +129,22 @@ export class DashboardService {
 
   async getVacations(user: any) {
     const isAdmin = user.roles?.includes('admin');
-    if (isAdmin) return this.vacModel.find().lean();
 
-    return this.vacModel.find({ user_id: user.id }).lean();
+    return this.vacModel
+      .find(isAdmin ? {} : { userId: user._id })
+      .populate('userId', 'name email')
+      .lean();
   }
 
   async getSicknesses(user: any) {
     const isAdmin = user.roles?.includes('admin');
-    if (isAdmin) return this.sickModel.find().lean();
 
-    return this.sickModel.find({ user_id: user.id }).lean();
+    return this.sickModel
+      .find(isAdmin ? {} : { userId: user._id })
+      .populate('userId', 'name email')
+      .lean();
   }
+
   async updateVacation(id: string, dto: { startDate: string; endDate: string }) {
     return this.vacModel.findByIdAndUpdate(
       id,
@@ -165,7 +170,7 @@ export class DashboardService {
 
   async getRequestNotificationData(userId: string, startDate: string, endDate: string) {
     const admins = await this.userModel.find({ roles: 'admin' }).exec();
-    const requester = await this.usersService.findById(userId); 
+    const requester = await this.usersService.findById(userId);
     const start = new Date(startDate);
     const end = new Date(endDate);
     const totalDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24)) + 1;
@@ -173,10 +178,21 @@ export class DashboardService {
     return { admins, requester, totalDays };
   }
 
-  async getApprovalNotificationData(requestId: string) {
-    const request = await this.vacModel.findById(requestId); 
-    const user = await this.usersService.findById(request!.userId);
+  async getApprovalNotificationData(requestId: string, type: 'vacation' | 'sickness') {
+    const request =
+      type === 'vacation'
+        ? await this.vacModel.findById(requestId)
+        : await this.sickModel.findById(requestId);
 
-    return { userEmail: user!.email, userName: user!.name };
+    if (!request) throw new Error(`${type} request not found`);
+
+    const user = await this.usersService.findById(request.userId);
+    if (!user) throw new Error('User not found');
+
+    return {
+      userEmail: user.email,
+      userName: user.name,
+    };
   }
+
 }
