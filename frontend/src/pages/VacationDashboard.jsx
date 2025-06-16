@@ -35,19 +35,25 @@ const VacationDashboard = () => {
         new Date().getFullYear().toString()
     );
 
-      useEffect(() => {
+    useEffect(() => {
         loadHolidays(holidayYear, selectedRegion);
     }, [holidayYear, selectedRegion]);
 
     const loadHolidays = async (year, region = "AT") => {
         try {
-            const response = await api.get(`/dashboard/holidays/${region}/${year}`);
+            const response = await api.get(
+                `/dashboard/holidays/${region}/${year}`
+            );
             setHolidays(response.data);
         } catch (error) {
             console.error("Error loading holidays:", error);
             setHolidays([]);
         }
     };
+
+    useEffect(() => {
+        loadData();
+    }, []);
 
     const loadData = async () => {
         const dashboard = await api.get("/dashboard");
@@ -305,7 +311,7 @@ const VacationDashboard = () => {
                             <option value="AT">Österreich</option>
                             <option value="DE">Deutschland</option>
                             <option value="CH">Schweiz</option>
-                             <option value="AL">Albania</option>
+                            <option value="AL">Albania</option>
                         </select>
                         <input
                             type="number"
@@ -325,8 +331,8 @@ const VacationDashboard = () => {
                 </section>
             </Card>
             <VacationCalendar
-                initialYear={2025}
-                initialMonth={6}
+               initialYear={parseInt(holidayYear)}
+    initialMonth={new Date().getMonth() + 1}
                 holidays={holidays}
                 vacations={vacationRequests}
                 sickness={sicknessRequests}

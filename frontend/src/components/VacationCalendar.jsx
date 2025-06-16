@@ -19,9 +19,7 @@ const VacationCalendar = ({
     users = [],
 }) => {
     const now = dayjs();
-    const [selectedDate, setSelectedDate] = useState(
-        dayjs(`${initialYear}-${initialMonth}-01`)
-    );
+    const [selectedDate, setSelectedDate] = useState(dayjs());
 
     const year = selectedDate.year();
     const month = selectedDate.month();
@@ -37,6 +35,10 @@ const VacationCalendar = ({
             .map((d) => d.date().toString().padStart(2, "0"));
         setCurrentMonthHolidays(filtered);
     }, [holidays, year, month]);
+
+    useEffect(() => {
+        setSelectedDate(dayjs(`${initialYear}-${initialMonth}-01`));
+    }, [initialYear, initialMonth]);
 
     const mergeRequests = (requests, type) =>
         requests
