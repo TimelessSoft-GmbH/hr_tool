@@ -29,8 +29,8 @@ async function bootstrap() {
 
   if (config.nodeEnv === 'development') {
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('HotWheels API')
-      .setDescription('API for the HotWheels-App backend')
+      .setTitle('TLSoft HR Platform API')
+      .setDescription('API for the TLSoft HR Platform-App backend')
       .setVersion('1.0')
       .addBearerAuth() 
       .build();

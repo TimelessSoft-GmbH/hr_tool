@@ -15,7 +15,7 @@ export class MailerService {
         <p>Hallo ${name ?? 'Sportsfreund'},</p>
         <p>Du kannst dein Passwort mit folgendem Link zurücksetzen:</p>
         <p><a href="${resetUrl}">Passwort ändern</a></p>
-        <p>Viele Grüße,<br/>Dein MXR Team</p>
+        <p>Viele Grüße,<br/>Dein TLSoft HR Platform</p>
       </div>
     `;
 
@@ -35,7 +35,7 @@ export class MailerService {
         <p>Hallo ${name ?? 'Sportsfreund'},</p>
         <p>Bitte bestätige deine E-Mail-Adresse mit folgendem Link:</p>
         <p><a href="${confirmUrl}">E-Mail bestätigen</a></p>
-        <p>Viele Grüße,<br/>Dein MXR Team</p>
+        <p>Viele Grüße,<br/>Dein TLSoft HR Platform</p>
       </div>
     `;
 
@@ -58,7 +58,7 @@ export class MailerService {
         <p>Arbeitstage: ${totalDays}</p>
         <p>Bitte überprüfen Sie die Anfrage:</p>
         <p><a href="${requestsUrl}">Zu den Anfragen</a></p>
-        <p>Viele Grüße,<br/>Ihr MXR Team</p>
+        <p>Viele Grüße,<br/>Ihr TLSoft HR Platform</p>
       </div>
     `;
 
@@ -81,7 +81,7 @@ export class MailerService {
         <p>Ihre ${type}-Anfrage wurde genehmigt.</p>
         <p>Sie können die Details in Ihrem Dashboard einsehen:</p>
         <p><a href="${dashboardUrl}">Zum Dashboard</a></p>
-        <p>Viele Grüße,<br/>Ihr MXR Team</p>
+        <p>Viele Grüße,<br/>Ihr TLSoft HR Platform</p>
       </div>
     `;
 
@@ -96,19 +96,19 @@ export class MailerService {
     const confirmUrl = `${process.env.WEB_APP_BASE_URL ?? 'http://localhost:3000'}/confirm-email/${token}`;
     const html = `
     <div style="font-family: sans-serif; padding: 20px;">
-      <h2>Willkommen bei MXR</h2>
+      <h2>Willkommen bei TLSoft HR Platform</h2>
       <p>Hallo ${name},</p>
       <p>Ein Benutzerkonto wurde für dich erstellt.</p>
       <p><strong>Passwort:</strong> ${password}</p>
       <p>Bitte bestätige deine E-Mail-Adresse:</p>
       <p><a href="${confirmUrl}">E-Mail bestätigen</a></p>
-      <p>Viele Grüße,<br/>Dein MXR Team</p>
+      <p>Viele Grüße,<br/>Dein TLSoft HR Platform</p>
     </div>
   `;
 
     await this.mailer.sendMail({
       to: email,
-      subject: 'MXR Benutzerkonto erstellt',
+      subject: 'TLSoft HR Platform Benutzerkonto erstellt',
       html,
     });
   }
