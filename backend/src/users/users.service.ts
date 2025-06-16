@@ -5,6 +5,7 @@ import { FilterQuery, Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import * as bcrypt from 'bcrypt';
+import axios from 'axios';
 
 @Injectable()
 export class UsersService {
@@ -39,7 +40,9 @@ export class UsersService {
   }
 
   async updateProfile(userId: string, dto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(userId, dto, { new: true }).select('-password');
+    return this.userModel
+      .findByIdAndUpdate(userId, { $set: dto }, { new: true })
+      .select('-password');
   }
 
   async changePassword(userId: string, dto: UpdatePasswordDto) {
@@ -75,5 +78,38 @@ export class UsersService {
 
     await this.userModel.findByIdAndDelete(userId);
     return { message: 'Account deleted' };
+  }
+
+  async getWorkingDays(user: User, month: number) {
+    const year = new Date().getFullYear();
+    const response = await axios.get(`https://date.nager.at/api/v3/PublicHolidays/${year}/AT`);
+    const holidays = response.data.map(h => h.date);
+    let workingDays = 0;
+    const totalDays = new Date(year, month, 0).getDate();
+    for (let day = 1; day <= totalDays; day++) {
+      const date = new Date(year, month - 1, day);
+      const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+      const dateStr = date.toISOString().split('T')[0];
+      if (user.workdays.includes(dayName) && !holidays.includes(dateStr)) {
+        workingDays++;
+      }
+    }
+    return workingDays;
+  }
+
+  async getWorkingHours(user: User, month: number) {
+    const workingDays = await this.getWorkingDays(user, month);
+    const averagePerDay = user.hours_per_week / user.workdays.length;
+    return workingDays * averagePerDay;
+  }
+
+  async applyApprovedVacationDay(userId: string, daysUsed: number = 1) {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.vacationDays_left = (user.vacationDays_left ?? user.vacationDays ?? 0) - daysUsed;
+    await user.save();
+    return user;
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { VacationRequest, VacationRequestDocument } from '../models/vacation-request.schema';
 import { SicknessRequest } from '../models/sickness-request.schema';
@@ -16,96 +16,62 @@ export class DashboardService {
     @InjectModel(WorkHour.name) private hourModel: Model<WorkHour>,
     @InjectModel(User.name) private userModel: Model<User>,
     private usersService: UsersService,
-  ) { }
+  ) {}
 
   async getDashboardData(user: any) {
-    const currentYear = new Date().getFullYear();
-    const nextYear = currentYear + 1;
-
-    const users = await this.usersService.findAll();
-
-    const filter = {
-      startDate: { $gte: `${currentYear}-01-01`, $lte: `${nextYear}-12-31` },
+    const yearRange = {
+      startDate: { $gte: `${new Date().getFullYear()}-01-01`, $lte: `${new Date().getFullYear() + 1}-12-31` },
     };
-
     const isAdmin = user?.roles?.includes('admin');
+    const filter = isAdmin ? yearRange : { ...yearRange, userId: user._id };
 
-    const vacationRequests = await this.vacModel
-      .find(isAdmin ? filter : { ...filter, userId: user._id })
-      .lean();
-
-    const sicknessRequests = await this.sickModel
-      .find(isAdmin ? filter : { ...filter, userId: user._id })
-      .lean();
+    const [users, vacationRequests, sicknessRequests] = await Promise.all([
+      this.usersService.findAll(),
+      this.vacModel.find(filter).lean(),
+      this.sickModel.find(filter).lean(),
+    ]);
 
     return { users, vacationRequests, sicknessRequests };
   }
 
-
   async storeVacation(userId: string, body: any) {
-    const attributes = await this.getAttributes(userId, body);
-    attributes.status = body.status ?? 'pending';
-    await this.vacModel.create(attributes);
+    const attributes = await this.buildRequestAttributes(userId, body);
+    const result = await this.vacModel.create(attributes);
     if (attributes.status === 'pending') {
       await this.sendNotification(attributes, 'Urlaubsantrag');
     }
+    return result;
   }
 
   async storeSickness(userId: string, body: any) {
-    const attributes = await this.getAttributes(userId, body);
-    attributes.status = body.status ?? 'pending';
-    await this.sickModel.create(attributes);
+    const attributes = await this.buildRequestAttributes(userId, body);
+    const result = await this.sickModel.create(attributes);
     if (attributes.status === 'pending') {
       await this.sendNotification(attributes, 'Krankheitsurlaub');
     }
+    return result;
   }
+
   async approveVacation(id: string) {
-    return this.vacModel.findByIdAndUpdate(id, { status: 'approved' }, { new: true });
+    const request = await this.vacModel.findById(id);
+    if (!request) throw new NotFoundException('Vacation request not found');
+    if (request.status === 'approved') return request;
+
+    const user = await this.usersService.findById(request.userId);
+    const holidays = await this.getPublicHolidayDates(request.startDate);
+    const workdaysUsed = this.calculateWorkingDays(request.startDate, request.endDate, user!.workdays, holidays);
+
+    request.status = 'approved';
+    await request.save();
+    await this.usersService.applyApprovedVacationDay(user!._id!.toString(), workdaysUsed);
+
+    return request;
   }
 
   async approveSickness(id: string) {
-    return this.sickModel.findByIdAndUpdate(id, { status: 'approved' }, { new: true });
-  }
-
-  async getAttributes(userId: string, body: any) {
-    const { start_date, end_date } = body;
-    const start = new Date(start_date);
-    const end = new Date(end_date);
-
-    const year = new Date().getFullYear();
-    const holidaysResp = await axios.get(`https://date.nager.at/api/v3/PublicHolidays/${year}/AT`);
-    const holidayDates = holidaysResp.data.map((h) => h.date);
-
-    const user = await this.userModel.findById(userId);
-    const workdays = user?.workdays ?? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
-    let totalDays = 0;
-    for (
-      let d = new Date(start);
-      d <= end;
-      d.setDate(d.getDate() + 1)
-    ) {
-      const dayName = d.toLocaleDateString('en-US', { weekday: 'long' });
-      const isoDate = d.toISOString().slice(0, 10);
-      if (workdays.includes(dayName) && !holidayDates.includes(isoDate)) {
-        totalDays++;
-      }
-    }
-
-    return {
-      userId,
-      startDate: start,
-      endDate: end,
-      totalDays,
-      status: 'pending',
-    };
-  }
-
-  async sendNotification(attributes: any, type: string) {
-    const admins = await this.userModel.find({ roles: { $in: ['admin'] } });
-    const emails = admins.map((a) => a.email);
-    // Use a mailer service here
-    // await this.mailerService.sendMail(...)
+    const result = await this.sickModel.findByIdAndUpdate(id, { status: 'approved' }, { new: true });
+    if (!result) throw new NotFoundException('Sickness request not found');
+    return result;
   }
 
   async storeHours(dto: any) {
@@ -113,9 +79,9 @@ export class DashboardService {
     const existing = await this.hourModel.findOne({ userId: user_id, year, month });
     if (existing) {
       existing.hours = hours;
-      await existing.save();
+      return existing.save();
     } else {
-      await this.hourModel.create({ userId: user_id, year, month, hours });
+      return this.hourModel.create({ userId: user_id, year, month, hours });
     }
   }
 
@@ -128,61 +94,37 @@ export class DashboardService {
   }
 
   async getVacations(user: any) {
-    const isAdmin = user.roles?.includes('admin');
-
-    return this.vacModel
-      .find(isAdmin ? {} : { userId: user._id })
-      .populate('userId', 'name email')
-      .lean();
+    const filter = user.roles?.includes('admin') ? {} : { userId: user._id };
+    return this.vacModel.find(filter).populate('userId', 'name email').lean();
   }
 
   async getSicknesses(user: any) {
-    const isAdmin = user.roles?.includes('admin');
-
-    return this.sickModel
-      .find(isAdmin ? {} : { userId: user._id })
-      .populate('userId', 'name email')
-      .lean();
+    const filter = user.roles?.includes('admin') ? {} : { userId: user._id };
+    return this.sickModel.find(filter).populate('userId', 'name email').lean();
   }
 
   async updateVacation(id: string, dto: { startDate: string; endDate: string }) {
-    return this.vacModel.findByIdAndUpdate(
-      id,
-      {
-        startDate: dto.startDate,
-        endDate: dto.endDate,
-      },
-      { new: true }
-    );
+    return this.vacModel.findByIdAndUpdate(id, dto, { new: true });
   }
 
   async updateSickness(id: string, dto: { startDate: string; endDate: string }) {
-    return this.sickModel.findByIdAndUpdate(
-      id,
-      {
-        startDate: dto.startDate,
-        endDate: dto.endDate,
-      },
-      { new: true }
-    );
+    return this.sickModel.findByIdAndUpdate(id, dto, { new: true });
   }
 
-
   async getRequestNotificationData(userId: string, startDate: string, endDate: string) {
-    const admins = await this.userModel.find({ roles: 'admin' }).exec();
-    const requester = await this.usersService.findById(userId);
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const totalDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24)) + 1;
+    const [admins, requester] = await Promise.all([
+      this.userModel.find({ roles: 'admin' }).exec(),
+      this.usersService.findById(userId),
+    ]);
 
+    const totalDays = this.calculateCalendarDays(new Date(startDate), new Date(endDate));
     return { admins, requester, totalDays };
   }
 
   async getApprovalNotificationData(requestId: string, type: 'vacation' | 'sickness') {
-    const request =
-      type === 'vacation'
-        ? await this.vacModel.findById(requestId)
-        : await this.sickModel.findById(requestId);
+    const request = type === 'vacation'
+      ? await this.vacModel.findById(requestId)
+      : await this.sickModel.findById(requestId);
 
     if (!request) throw new Error(`${type} request not found`);
 
@@ -195,4 +137,51 @@ export class DashboardService {
     };
   }
 
+  private async buildRequestAttributes(userId: string, body: any) {
+    const { start_date, end_date, status } = body;
+    const start = new Date(start_date);
+    const end = new Date(end_date);
+
+    const holidays = await this.getPublicHolidayDates(start);
+    const user = await this.userModel.findById(userId);
+    const workdays = user?.workdays ?? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+    const totalDays = this.calculateWorkingDays(start, end, workdays, holidays);
+
+    return {
+      userId,
+      startDate: start,
+      endDate: end,
+      totalDays,
+      status: status ?? 'pending',
+    };
+  }
+
+  private async getPublicHolidayDates(date: Date) {
+    const year = date.getFullYear();
+    const response = await axios.get(`https://date.nager.at/api/v3/PublicHolidays/${year}/AT`);
+    return response.data.map((h: any) => h.date);
+  }
+
+  private calculateWorkingDays(start: Date, end: Date, workdays: string[], holidays: string[]): number {
+    let count = 0;
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const day = d.toLocaleDateString('en-US', { weekday: 'long' });
+      const iso = d.toISOString().split('T')[0];
+      if (workdays.includes(day) && !holidays.includes(iso)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  private calculateCalendarDays(start: Date, end: Date) {
+    return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  }
+
+  private async sendNotification(attributes: any, type: string) {
+    const admins = await this.userModel.find({ roles: { $in: ['admin'] } });
+    const emails = admins.map((a) => a.email);
+    // this.mailerService.sendMail(...)
+  }
 }

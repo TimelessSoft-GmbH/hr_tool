@@ -27,31 +27,31 @@ export class User extends Document {
   @Prop({ type: [String], default: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] })
   workdays: string[];
 
-  @Prop()
+  @Prop({ type: String, default: null })
   address: string;
 
-  @Prop()
+  @Prop({ type: String, default: null })
   phoneNumber: string;
 
-  @Prop()
+  @Prop({ type: String, default: null })
   initials: string;
 
-  @Prop()
+  @Prop({ type: String, default: null })
   image: string;
 
-  @Prop()
+  @Prop({ type: Number, default: null })
   salary: number;
 
   @Prop({ type: Date })
   email_verified_at: Date;
 
-  @Prop()
+  @Prop({ type: Number, default: 25 })
   vacationDays: number;
 
-  @Prop()
+  @Prop({ type: Number, default: null })
   vacationDays_left: number;
 
-  @Prop()
+  @Prop({ type: Number, default: null })
   sicknessLeave: number;
 
   @Prop({ type: Date })
@@ -63,7 +63,7 @@ export class User extends Document {
   @Prop()
   contract: string;
 
-  @Prop()
+  @Prop({ type: Number, default: null })
   hours_per_week: number;
 }
 

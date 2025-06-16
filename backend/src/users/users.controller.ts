@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Param, Patch, Post, Put, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, Param, Patch, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Request } from 'express';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -39,10 +40,46 @@ export class UsersController {
     return this.usersService.updateProfile(req.user, dto);
   }
 
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async updateUserById(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Body() dto: UpdateUserDto,
+  ) {
+    const requestingUser = req.user as any;
+    if (!requestingUser?.roles?.includes('admin')) {
+      throw new ForbiddenException('Only admins can update other users');
+    }
+    return this.usersService.updateProfile(id, dto);
+  }
+
+  @Post(':id/upload')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadUserFile(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return { success: true, filename: file.filename };
+  }
+
+
   @Put('password')
   @UseGuards(JwtAuthGuard)
   async updatePassword(@Req() req: Request, @Body() dto: UpdatePasswordDto) {
     return this.usersService.changePassword(req.user, dto);
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async getUserById(@Param('id') id: string, @Req() req: Request) {
+    const requestingUser = req.user as any;
+    if (!requestingUser?.roles?.includes('admin')) {
+      throw new ForbiddenException('Only admins can fetch other users');
+    }
+
+    return this.usersService.findById(id);
   }
 
   // @Post('image')
