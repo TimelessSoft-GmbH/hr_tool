@@ -134,4 +134,12 @@ export class DashboardController {
     ) {
         return this.dashboardService.updateSickness(id, dto);
     }
+
+    @Get('holidays/:region/:year')
+    async getHolidays(
+        @Param('region') region: string,
+        @Param('year') year: string
+    ) {
+        return this.dashboardService.getHolidays(region, parseInt(year));
+    }
 }

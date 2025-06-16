@@ -16,7 +16,7 @@ export class DashboardService {
     @InjectModel(WorkHour.name) private hourModel: Model<WorkHour>,
     @InjectModel(User.name) private userModel: Model<User>,
     private usersService: UsersService,
-  ) {}
+  ) { }
 
   async getDashboardData(user: any) {
     const yearRange = {
@@ -155,6 +155,16 @@ export class DashboardService {
       totalDays,
       status: status ?? 'pending',
     };
+  }
+
+  async getHolidays(region: string = "AT", year: number = new Date().getFullYear()) {
+    try {
+      const response = await axios.get(`https://date.nager.at/api/v3/PublicHolidays/${year}/${region}`);
+      return response.data.map((holiday: any) => holiday.date);
+    } catch (error) {
+      console.error('Error fetching holidays:', error);
+      return [];
+    }
   }
 
   private async getPublicHolidayDates(date: Date) {
