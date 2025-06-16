@@ -15,6 +15,7 @@ import UserListScreen from "./pages/UserListScreen";
 import WorkHoursDashboard from "./pages/WorkHoursDashboard";
 import VacationDashboard from "./pages/VacationDashboard";
 import ConfirmEmailSuccess from "./pages/ConfirmEmailSuccess";
+import UserUpdateScreen from "./pages/UserUpdateScreen";
 
 function App() {
     return (
@@ -27,18 +28,26 @@ function App() {
                     path="/reset-password/:token"
                     element={<ResetPassword />}
                 />
-                 <Route
+                <Route
                     path="/confirm-email/:token"
                     element={<ConfirmEmailSuccess />}
                 />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/profile" element={<ProfileForm />} />
-                     <Route path="/users" element={<UserListScreen />} />
-                     <Route path="/enter-hours" element={<WorkHoursDashboard />} />
+                    <Route path="/users" element={<UserListScreen />} />
+                    <Route
+                        path="/enter-hours"
+                        element={<WorkHoursDashboard />}
+                    />
                     <Route path="/requests" element={<VacationDashboard />} />
+                    {/* <Route path="/users/create" element={<UserCreateScreen />} /> New user */}
+                    <Route
+                        path="/admin/user/update/:id"
+                        element={<UserUpdateScreen />}
+                    />
                 </Route>
-                 <Route
+                <Route
                     path="*"
                     element={<Navigate to="/dashboard" replace />}
                 />
