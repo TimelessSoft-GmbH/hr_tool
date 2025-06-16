@@ -59,6 +59,16 @@ export class AuthService {
         return { access_token: token, user: { id: user._id, email: user.email } };
     }
 
+    async createEmailToken(userId: string): Promise<string> {
+        return this.jwtService.sign(
+            { sub: userId },
+            {
+                secret: process.env.JWT_EMAIL_SECRET ?? 'email-secret',
+                expiresIn: '1d',
+            },
+        );
+    }
+
     async register(dto: RegisterDto) {
         if (dto.password !== dto.password_confirmation) {
             throw new Error('Passwords do not match');
@@ -98,7 +108,9 @@ export class AuthService {
     }
 
     async confirmEmail(token: string) {
-        const payload = this.jwtService.verify(token);
+        const payload = this.jwtService.verify(token, {
+            secret: process.env.JWT_EMAIL_SECRET ?? 'email-secret',
+        });
         const user = await this.userModel.findById(payload.sub);
         if (!user) throw new Error('Invalid token');
 

@@ -46,7 +46,7 @@ export class MailerService {
     });
   }
 
- async sendRequestNotification(admins: User[], requester: User, startDate: string, endDate: string, totalDays: number, type: 'Urlaub' | 'Krankheit') {
+  async sendRequestNotification(admins: User[], requester: User, startDate: string, endDate: string, totalDays: number, type: 'Urlaub' | 'Krankheit') {
     const requestsUrl = `${process.env.WEB_APP_BASE_URL ?? 'http://localhost:3000'}/requests`;
 
     const html = `
@@ -88,6 +88,27 @@ export class MailerService {
     await this.mailer.sendMail({
       to: email,
       subject: `${type}-Genehmigung`,
+      html,
+    });
+  }
+
+  async sendAccountCreated(email: string, name: string, password: string, token: string) {
+    const confirmUrl = `${process.env.WEB_APP_BASE_URL ?? 'http://localhost:3000'}/confirm-email/${token}`;
+    const html = `
+    <div style="font-family: sans-serif; padding: 20px;">
+      <h2>Willkommen bei MXR</h2>
+      <p>Hallo ${name},</p>
+      <p>Ein Benutzerkonto wurde für dich erstellt.</p>
+      <p><strong>Passwort:</strong> ${password}</p>
+      <p>Bitte bestätige deine E-Mail-Adresse:</p>
+      <p><a href="${confirmUrl}">E-Mail bestätigen</a></p>
+      <p>Viele Grüße,<br/>Dein MXR Team</p>
+    </div>
+  `;
+
+    await this.mailer.sendMail({
+      to: email,
+      subject: 'MXR Benutzerkonto erstellt',
       html,
     });
   }

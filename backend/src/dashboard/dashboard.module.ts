@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { DashboardController } from './dashboard.controller';
@@ -10,10 +10,12 @@ import { WorkHour, WorkHourSchema } from '../models/work-hour.schema';
 import { User, UserSchema } from 'src/users/user.schema';
 import { UsersService } from 'src/users/users.service';
 import { MailerModule } from 'src/mailer/mailer.module';
+import { AuthModule } from 'src/auth/auth.module'; 
 
 @Module({
   imports: [
     MailerModule,
+    forwardRef(() => AuthModule), 
     MongooseModule.forFeature([
       { name: VacationRequest.name, schema: VacationRequestSchema },
       { name: SicknessRequest.name, schema: SicknessRequestSchema },

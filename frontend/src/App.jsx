@@ -41,7 +41,7 @@ function App() {
                         element={<WorkHoursDashboard />}
                     />
                     <Route path="/requests" element={<VacationDashboard />} />
-                    {/* <Route path="/users/create" element={<UserCreateScreen />} /> New user */}
+                    <Route path="/admin/user/update" element={<UserUpdateScreen />} />
                     <Route
                         path="/admin/user/update/:id"
                         element={<UserUpdateScreen />}

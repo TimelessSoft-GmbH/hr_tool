@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
 import { FilterQuery, Model } from 'mongoose';
@@ -6,10 +6,17 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import * as bcrypt from 'bcrypt';
 import axios from 'axios';
+import { MailerService } from 'src/mailer/mailer.service';
+import { AuthService } from 'src/auth/auth.service';
+
+function generateRandomPassword(length = 12): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
+  return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+}
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, private readonly mailerService: MailerService, @Inject(forwardRef(() => AuthService)) private readonly authService: AuthService,) { }
 
   async findOne(filter: FilterQuery<User>): Promise<User | null> {
     return this.userModel.findOne(filter).exec();
@@ -112,4 +119,33 @@ export class UsersService {
     await user.save();
     return user;
   }
+
+  async createUser(dto: Partial<User>): Promise<Record<string, any>> {
+    const existing = await this.userModel.findOne({ email: dto.email });
+    if (existing) {
+      throw new BadRequestException('User with this email already exists');
+    }
+
+    const randomPassword = generateRandomPassword();
+    const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+    const createdUser = new this.userModel({
+      ...dto,
+      password: hashedPassword,
+    });
+
+    await createdUser.save();
+    const token = await this.authService.createEmailToken(createdUser._id as any);
+    await this.mailerService.sendAccountCreated(
+      createdUser.email,
+      createdUser.name,
+      randomPassword,
+      token,
+    );
+    const userObj = createdUser.toObject() as any;
+    delete userObj.password;
+    return userObj;
+  }
+
+
 }

@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
+import { User } from './user.schema';
 
 @Controller('users')
 export class UsersController {
@@ -80,6 +81,17 @@ export class UsersController {
     }
 
     return this.usersService.findById(id);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  async createUser(@Req() req: Request, @Body() dto: Partial<User>) {
+    const requestingUser = req.user as any;
+    if (!requestingUser?.roles?.includes('admin')) {
+      throw new ForbiddenException('Only admins can create users');
+    }
+
+    return this.usersService.createUser(dto);
   }
 
   // @Post('image')
