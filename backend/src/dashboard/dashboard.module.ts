@@ -11,16 +11,18 @@ import { User, UserSchema } from 'src/users/user.schema';
 import { UsersService } from 'src/users/users.service';
 import { MailerModule } from 'src/mailer/mailer.module';
 import { AuthModule } from 'src/auth/auth.module'; 
+import { BlobStorageModule } from 'src/blob-storage/blob-storage.module';
 
 @Module({
   imports: [
     MailerModule,
+    BlobStorageModule,
     forwardRef(() => AuthModule), 
     MongooseModule.forFeature([
       { name: VacationRequest.name, schema: VacationRequestSchema },
       { name: SicknessRequest.name, schema: SicknessRequestSchema },
       { name: WorkHour.name, schema: WorkHourSchema },
-      { name: User.name, schema: UserSchema },
+      { name: User.name, schema: UserSchema }
     ]),
   ],
   controllers: [DashboardController],

@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import AppLayout from "../components/AppLayout";
+import ProfileImage from "../components/ProfileImage";
 
 const UserUpdateScreen = () => {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const navigate = useNavigate();
     const isEditMode = !!id;
+    const [uploadedPdf, setUploadedPdf] = useState(null);
+    const [existingPdfUrl, setExistingPdfUrl] = useState(null);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -43,6 +46,22 @@ const UserUpdateScreen = () => {
         }
     }, [id]);
 
+    useEffect(() => {
+        if (!isEditMode) return;
+
+        api.get(`/users/${id}`)
+            .then((res) => setFormData({ ...res.data }))
+            .catch((err) => console.error("User fetch error", err));
+        api.get(`/users/${id}/contract`, { responseType: "blob" })
+            .then((res) => {
+                const url = URL.createObjectURL(res.data);
+                setExistingPdfUrl(url);
+            })
+            .catch(() => {
+                setExistingPdfUrl(null);
+            });
+    }, [id]);
+
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
 
@@ -77,6 +96,17 @@ const UserUpdateScreen = () => {
                 await api.post(`/users`, payload);
             }
 
+            if (uploadedPdf) {
+                const formData = new FormData();
+                formData.append("file", uploadedPdf);
+
+                await api.post(`/users/${id}/contract`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+            }
+
             navigate("/users");
         } catch (err) {
             setErrors(err.response?.data?.errors || {});
@@ -90,6 +120,16 @@ const UserUpdateScreen = () => {
                     {isEditMode ? "Update User" : "Create User"}
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {isEditMode && (
+                        <div className="flex justify-center mb-6">
+                            <ProfileImage
+                                userId={id}
+                                name={formData.name}
+                                size={80}
+                            />
+                        </div>
+                    )}
+
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Email
@@ -103,7 +143,9 @@ const UserUpdateScreen = () => {
                             required
                         />
                         {errors.email && (
-                            <p className="text-sm text-red-500 mt-1">{errors.email[0]}</p>
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.email[0]}
+                            </p>
                         )}
                     </div>
 
@@ -123,7 +165,9 @@ const UserUpdateScreen = () => {
 
                     <div className="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm">Phone Number</label>
+                            <label className="block text-sm">
+                                Phone Number
+                            </label>
                             <input
                                 type="tel"
                                 name="phoneNumber"
@@ -146,7 +190,9 @@ const UserUpdateScreen = () => {
 
                     <div className="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm">Weekly Hours</label>
+                            <label className="block text-sm">
+                                Weekly Hours
+                            </label>
                             <input
                                 type="number"
                                 name="hours_per_week"
@@ -156,7 +202,9 @@ const UserUpdateScreen = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm">Vacation Days</label>
+                            <label className="block text-sm">
+                                Vacation Days
+                            </label>
                             <input
                                 type="number"
                                 name="vacationDays"
@@ -179,11 +227,15 @@ const UserUpdateScreen = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm">Start of Work</label>
+                            <label className="block text-sm">
+                                Start of Work
+                            </label>
                             <input
                                 type="date"
                                 name="start_of_work"
-                                value={formData.start_of_work?.slice(0, 10) || ""}
+                                value={
+                                    formData.start_of_work?.slice(0, 10) || ""
+                                }
                                 onChange={handleChange}
                                 className="w-full border px-3 py-2 rounded-md"
                             />
@@ -207,19 +259,54 @@ const UserUpdateScreen = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm">Upload PDF Files</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Upload Contract (PDF)
+                        </label>
                         <input
                             type="file"
-                            name="files"
-                            accept=".pdf"
-                            multiple
-                            onChange={handleChange}
+                            accept="application/pdf"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file && file.type === "application/pdf") {
+                                    setUploadedPdf(file);
+                                    setExistingPdfUrl(null); // Hide old preview
+                                }
+                            }}
                             className="w-full border px-3 py-2 rounded-md"
                         />
+                        {uploadedPdf && (
+                            <div className="mt-2 border rounded p-2 bg-gray-50">
+                                <p className="text-sm font-medium text-gray-700">
+                                    Preview:
+                                </p>
+                                <embed
+                                    src={URL.createObjectURL(uploadedPdf)}
+                                    type="application/pdf"
+                                    width="100%"
+                                    height="300px"
+                                    className="mt-2 border"
+                                />
+                            </div>
+                        )}
+                        {!uploadedPdf && existingPdfUrl && (
+                            <div className="mt-2 border rounded p-2 bg-gray-50">
+                                <p className="text-sm font-medium text-gray-700">
+                                    Existing Contract:
+                                </p>
+                                <embed
+                                    src={existingPdfUrl}
+                                    type="application/pdf"
+                                    width="100%"
+                                    height="300px"
+                                    className="mt-2 border"
+                                />
+                            </div>
+                        )}
                     </div>
-
                     <div>
-                        <label className="block text-sm font-medium mb-2">Workdays</label>
+                        <label className="block text-sm font-medium mb-2">
+                            Workdays
+                        </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                             {weekdays.map((day) => (
                                 <label
@@ -230,7 +317,10 @@ const UserUpdateScreen = () => {
                                         type="checkbox"
                                         name={`workdays-${day}`}
                                         value={day}
-                                        checked={formData.workdays?.includes(day) || false}
+                                        checked={
+                                            formData.workdays?.includes(day) ||
+                                            false
+                                        }
                                         onChange={handleChange}
                                         className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
                                     />

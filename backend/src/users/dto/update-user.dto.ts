@@ -41,10 +41,6 @@ export class UpdateUserDto {
   hours_per_week?: number;
 
   @IsOptional()
-  @IsString()
-  image?: string;
-
-  @IsOptional()
   @IsDateString()
   start_of_work?: string;
 

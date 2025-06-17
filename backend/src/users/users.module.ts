@@ -5,10 +5,11 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { MailerModule } from 'src/mailer/mailer.module';
+import { BlobStorageModule } from '../blob-storage/blob-storage.module';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), forwardRef(() => AuthModule), 
-    MailerModule,],
+    MailerModule, BlobStorageModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService, MongooseModule],

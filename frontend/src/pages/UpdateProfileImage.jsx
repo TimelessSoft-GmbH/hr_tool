@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 const UpdateProfileImage = () => {
   const [image, setImage] = useState(null);
@@ -7,14 +7,16 @@ const UpdateProfileImage = () => {
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
 
-  axios.defaults.withCredentials = true;
-
   useEffect(() => {
-    axios
-      .get("/api/user", { withCredentials: true })
+    api
+      .get("/users/me/image", {
+        responseType: "blob",
+        validateStatus: (status) => status === 200 || status === 204,
+      })
       .then((res) => {
-        if (res.data.image && res.data.image !== "basicUser.png") {
-          setPreviewUrl(`/images/${res.data.image}`);
+        if (res.status === 200) {
+          const url = URL.createObjectURL(res.data);
+          setPreviewUrl(url);
         }
       });
   }, []);
@@ -37,17 +39,18 @@ const UpdateProfileImage = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("image", image);
-
     try {
-      await axios.post("/api/profile", formData, {
+      const arrayBuffer = await image.arrayBuffer();
+
+      await api.put("/users/me/image", arrayBuffer, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": image.type,
         },
       });
+
       setStatus("Profile image updated successfully.");
     } catch (err) {
+      console.error(err);
       setError(
         err.response?.data?.message || "An error occurred while uploading."
       );
@@ -63,7 +66,7 @@ const UpdateProfileImage = () => {
         Upload an image of your choosing.
       </p>
 
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <form onSubmit={handleSubmit}>
         <input
           type="file"
           accept="image/*"

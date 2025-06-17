@@ -1,5 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Param, Patch, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Request } from 'express';
+import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, HttpCode, Param, Patch, Post, Put, RawBodyRequest, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,6 +6,8 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { User } from './user.schema';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -55,16 +56,6 @@ export class UsersController {
     return this.usersService.updateProfile(id, dto);
   }
 
-  @Post(':id/upload')
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadUserFile(
-    @Param('id') id: string,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return { success: true, filename: file.filename };
-  }
-
 
   @Put('password')
   @UseGuards(JwtAuthGuard)
@@ -94,25 +85,70 @@ export class UsersController {
     return this.usersService.createUser(dto);
   }
 
-  // @Post('image')
-  // @UseInterceptors(
-  //   FileInterceptor('image', {
-  //     storage: diskS({
-  //       destination: './public/images',
-  //       filename: (req, file, cb) => {
-  //         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-  //         cb(null, uniqueSuffix + path.extname(file.originalname));
-  //       },
-  //     }),
-  //   }),
-  // )
-  // async uploadImage(@Req() req, @UploadedFile() file: Express.Multer.File) {
-  //   return this.usersService.updateProfileImage(req.user.sub, file.filename);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get('me/image')
+  @ApiBearerAuth()
+  async getMeImage(@Req() req: Request, @Res() res: Response): Promise<Response> {
+    const image = await this.usersService.getImage(req.user!._id);
+    if (!image) {
+      return res.status(204).send();
+    }
+    return res.status(200).contentType(image.mimeType).send(image.data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('me/image')
+  @HttpCode(204)
+  @ApiBearerAuth()
+  @ApiConsumes('image/jpeg')
+  @ApiConsumes('image/png')
+  @ApiBody({ type: Buffer })
+  async setMeImage(@Req() req: RawBodyRequest<Request>): Promise<void> {
+    const contentType = req.headers['content-type'];
+    if (!contentType?.startsWith('image/')) {
+      throw new BadRequestException('Only Content-Type: image/* accepted.');
+    }
+    if (!req.rawBody?.length) {
+      throw new BadRequestException('No content sent.');
+    }
+
+    await this.usersService.setImage(req.user!._id, req.rawBody, contentType);
+  }
+
+  @Get(':id/image')
+  async getImage(@Param('id') id: string, @Res() res: Response): Promise<Response> {
+    const image = await this.usersService.getImage(id);
+    if (!image) {
+      return res.status(204).send();
+    }
+    return res.status(200).contentType(image.mimeType).send(image.data);
+  }
 
   @Delete()
   @UseGuards(JwtAuthGuard)
   async deleteAccount(@Req() req: Request, @Body('password') password: string) {
     return this.usersService.deleteAccount(req.user, password);
+  }
+
+  @Post(':id/contract')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadContractPdf(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file || !file.buffer) {
+      throw new BadRequestException('No file received.');
+    }
+
+    return this.usersService.setContractPdf(id, file.buffer, file.mimetype);
+  }
+
+  @Get(':id/contract')
+  @UseGuards(JwtAuthGuard)
+  async downloadContractPdf(@Param('id') id: string, @Res() res: Response) {
+    const blob = await this.usersService.getContractPdf(id);
+    if (!blob) return res.status(204).send();
+    return res.status(200).contentType(blob.mimeType).send(blob.data);
   }
 }
