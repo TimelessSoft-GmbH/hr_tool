@@ -1,0 +1,16 @@
+{{#> mailBody}}
+  {{#*inline "intro-content"}}
+    <div style="padding:10px 40px; text-align:center;">
+      <p style="font-size:30px; margin:0;">
+        <strong>✅ {{type}}-Anfrage genehmigt</strong>
+      </p>
+    </div>
+  {{/inline}}
+
+  <div style="padding:10px 40px; line-height:1.5; color:#555555;">
+    <p>Hallo {{name}},</p>
+    <p>Ihre {{type}}-Anfrage wurde genehmigt.</p>
+    <p><a href="{{dashboardUrl}}">Zum Dashboard</a></p>
+    <p>Viele Grüße,<br/>Ihr TLSoft HR Platform</p>
+  </div>
+{{/mailBody}}

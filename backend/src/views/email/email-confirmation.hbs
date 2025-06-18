@@ -1,0 +1,16 @@
+{{#> mailBody}}
+  {{#*inline "intro-content"}}
+    <div style="padding:10px 40px; text-align:center;">
+      <p style="font-size:30px; margin:0;">
+        <strong>📩 E-Mail bestätigen</strong>
+      </p>
+    </div>
+  {{/inline}}
+
+  <div style="padding:10px 40px; line-height:1.5; color:#555555;">
+    <p>Hallo {{name}},</p>
+    <p>Bitte bestätige deine E-Mail-Adresse mit folgendem Link:</p>
+    <p><a href="{{confirmUrl}}">E-Mail bestätigen</a></p>
+    <p>Viele Grüße,<br/>Dein TLSoft HR Platform</p>
+  </div>
+{{/mailBody}}

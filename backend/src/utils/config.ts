@@ -12,6 +12,8 @@ const config = {
   smtpSecure: process.env.SMTP_SERVICE_SECURE === 'true', 
   smtpUsername: process.env.SMTP_USER_NAME!,
   smtpPassword: process.env.SMTP_USER_PASSWORD!,
+  smtpIgnoreTLS: process.env.SMTP_SERVICE_IGNORE_TLS !== 'false',
+  webAppBaseUrl: process.env.WEB_APP_BASE_URL
 };
 
 

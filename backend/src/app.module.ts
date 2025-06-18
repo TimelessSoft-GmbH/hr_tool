@@ -27,25 +27,7 @@ console.log(smtpConfig);
   imports: [
     PassportModule,
     MongooseModule.forRoot(config.dbConnectionString),
-    MailerModule.forRoot({
-      transport: {
-        host: config.smtpHost,
-        port: config.smtpPort,
-        secure: config.smtpSecure,
-        ...(config.smtpUsername
-          ? {
-            auth: {
-              user: config.smtpUsername,
-              pass: config.smtpPassword,
-            },
-          }
-          : {}),
-        tls: { rejectUnauthorized: false },
-      },
-      defaults: {
-        from: config.emailDefaultFrom,
-      },
-    }),
+    MailerModule,
     AuthModule,
     DashboardModule,
     WorkHoursModule

@@ -8,8 +8,6 @@ RUN npm install
 COPY . .
 
 RUN npm run build
-COPY templates dist/templates/
-COPY assets dist/assets/
 
 
 EXPOSE 3000

@@ -1,0 +1,17 @@
+{{#> mailBody}}
+  {{#*inline "intro-content"}}
+    <div style="padding:10px 40px; text-align:center;">
+      <p style="font-size:30px; margin:0;">
+        <strong>👤 Konto erstellt</strong>
+      </p>
+    </div>
+  {{/inline}}
+
+  <div style="padding:10px 40px; line-height:1.5; color:#555555;">
+    <p>Hallo {{name}},</p>
+    <p>Ein Benutzerkonto wurde für dich erstellt.</p>
+    <p><strong>Passwort:</strong> {{password}}</p>
+    <p><a href="{{confirmUrl}}">E-Mail bestätigen</a></p>
+    <p>Viele Grüße,<br/>Dein TLSoft HR Platform</p>
+  </div>
+{{/mailBody}}
