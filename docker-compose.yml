@@ -1,65 +1,75 @@
 version: "3"
 services:
-  app:
-    build:
-      args:
-        user: ticket
-        uid: 1000
-      context: ./.docker
-      dockerfile: Dockerfile
-    container_name: ${DOCKER_CONTAINER_BACKEND:-tlsoft_hr}
-    restart: unless-stopped
-    working_dir: /var/www/
-    volumes:
-      - ./:/var/www
-      - ./.docker:/data
-    networks:
-      - tlsoft_hr_network
-    depends_on:
-      - db
-  nginx:
-    image: nginx:alpine
-    container_name: ${DOCKER_CONTAINER_NGINX:-tlsoft_hr_nginx}
-    restart: unless-stopped
-    ports:
-      - "${DOCKER_APP_PORT:-8008}:80"
-    volumes:
-      - ./:/var/www
-      - ./.docker/nginx:/etc/nginx/conf.d/
-    networks:
-      - tlsoft_hr_network
-    depends_on:
-      - app
-  db:
-    image: "mariadb"
-    restart: unless-stopped
-    container_name: ${DOCKER_CONTAINER_MARIADB:-tlsoft_hr_mariadb}
-    environment:
-      MARIADB_ROOT_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: tlsoft_hr
-      MYSQL_USER: user
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_PASSWORD: password
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
-    volumes:
-      - "tlsoft-hr-mariadb:/var/lib/mysql"
-    networks:
-      - tlsoft_hr_network
-  phpmyadmin:
-    image: "phpmyadmin"
-    container_name: ${DOCKER_CONTAINER_PHPMYADMIN:-tlsoft_hr_phpmyadmin}
-    environment:
-      - PMA_HOST=${DOCKER_CONTAINER_MARIADB:-tlsoft_hr_mariadb}
-      - PMA_PORT=3306
-    ports:
-      - "${DOCKER_PHPMYADMIN_PORT:-8009}:80"
-    networks:
-      - tlsoft_hr_network
+    app:
+        build:
+            args:
+                user: hr
+                uid: 1000
+                WWWGROUP: "${WWWGROUP:-sail}"
+            # context: ./.docker
+            context: ./.docker/8.2
+            dockerfile: Dockerfile
+        container_name: ${DOCKER_CONTAINER_BACKEND:-tlsoft_hr}
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+            - ./.docker:/data
+        networks:
+            - tlsoft_hr_network
+        depends_on:
+            - mariadb
+    nginx:
+        image: nginx:alpine
+        container_name: ${DOCKER_CONTAINER_NGINX:-tlsoft_hr_nginx}
+        restart: unless-stopped
+        ports:
+            - "${DOCKER_APP_PORT:-8008}:80"
+        volumes:
+            - ./:/var/www
+            - ./.docker/nginx:/etc/nginx/conf.d/
+        networks:
+            - tlsoft_hr_network
+        depends_on:
+            - app
+    mariadb:
+        image: "mariadb:latest"
+        restart: unless-stopped
+        container_name: ${DOCKER_CONTAINER_MARIADB:-tlsoft_hr_mariadb}
+        environment:
+            MARIADB_ROOT_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: tlsoft_hr
+            MYSQL_USER: user
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_PASSWORD: password
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+            MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+        volumes:
+            - "tlsoft-hr-mariadb:/var/lib/mysql"
+        networks:
+            - tlsoft_hr_network
+    adminer:
+        image: "adminer:latest"
+        ports:
+            - "${FORWARD_ADMINER_PORT:-8081}:8080"
+        networks:
+            - tlsoft_hr_network
+        depends_on:
+            - mariadb
+    # phpmyadmin:
+    #     image: "phpmyadmin"
+    #     container_name: ${DOCKER_CONTAINER_PHPMYADMIN:-tlsoft_hr_phpmyadmin}
+    #     environment:
+    #         - PMA_HOST=${DOCKER_CONTAINER_MARIADB:-tlsoft_hr_mariadb}
+    #         - PMA_PORT=3306
+    #     ports:
+    #         - "${DOCKER_PHPMYADMIN_PORT:-8009}:80"
+    #     networks:
+    #         - tlsoft_hr_network
 networks:
-  tlsoft_hr_network:
-    driver: bridge
+    tlsoft_hr_network:
+        driver: bridge
 volumes:
-  tlsoft-hr-mariadb:
-    driver: local
+    tlsoft-hr-mariadb:
+        driver: local
